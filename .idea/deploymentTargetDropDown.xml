@@ -2,6 +2,15 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
+      <entry key="ChallengeCardPreview">
+        <State />
+      </entry>
+      <entry key="QuestionScreenPreview">
+        <State />
+      </entry>
+      <entry key="SereneNavBarPreview">
+        <State />
+      </entry>
       <entry key="app">
         <State />
       </entry>
