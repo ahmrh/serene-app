@@ -19,12 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
 import com.ahmrh.serene.ui.component.card.ActivityCard
-import com.ahmrh.serene.ui.component.card.RecommendationCard
 import com.ahmrh.serene.ui.component.navbar.SereneNavBar
 import com.ahmrh.serene.ui.theme.SereneTheme
 
@@ -55,7 +53,7 @@ fun ActivityScreen(
                     IconButton(onClick = { /*TODO*/ }) {
 
                         Icon(
-                            painterResource(id = R.drawable.serene_icon_bookmarks),
+                            painterResource(id = R.drawable.serene_icon_bookmarks_collection),
                             contentDescription = null,
                             modifier = Modifier.size(24.dp)
                         )
