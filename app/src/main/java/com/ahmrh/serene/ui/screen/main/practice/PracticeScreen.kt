@@ -1,11 +1,10 @@
-package com.ahmrh.serene.ui.screen.main.selfcare
+package com.ahmrh.serene.ui.screen.main.practice
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,12 +23,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
+import com.ahmrh.serene.ui.navigation.Screen
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SelfCarePractice(){
+fun PracticeScreen(
+
+    navController: NavHostController = rememberNavController()
+){
     Scaffold(
         topBar = {
             Box(
@@ -110,7 +116,16 @@ fun SelfCarePractice(){
                 }
 
                 Button(
-                    onClick = { },
+                    onClick = {
+
+                        navController.navigate(
+                            Screen.Home.route){
+
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Done")
@@ -127,8 +142,8 @@ fun SelfCarePractice(){
 
 @Preview(showBackground = true)
 @Composable
-fun SelfCarePracticePreview(){
+fun PracticePreview(){
     SereneTheme {
-        SelfCarePractice()
+        PracticeScreen()
     }
 }

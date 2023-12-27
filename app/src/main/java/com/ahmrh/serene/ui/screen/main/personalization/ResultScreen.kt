@@ -32,12 +32,19 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
 import com.ahmrh.serene.common.CategoryUtils
+import com.ahmrh.serene.ui.navigation.Screen
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 @Composable
-fun ResultScreen(){
+fun ResultScreen(
+
+    navController: NavHostController = rememberNavController()
+){
 
 
     Scaffold(
@@ -112,7 +119,15 @@ fun ResultScreen(){
                 }
 
                 Button(
-                    onClick = { },
+                    onClick = {
+                              navController.navigate(
+                                  Screen.Home.route){
+
+                                  popUpTo(navController.graph.findStartDestination().id) {
+                                      saveState = true
+                                  }
+                              }
+                    },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Go to Activities")

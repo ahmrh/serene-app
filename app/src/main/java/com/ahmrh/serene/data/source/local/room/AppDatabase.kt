@@ -10,7 +10,7 @@ import com.ahmrh.serene.data.source.local.room.entity.SelfCare
 @Database(
     entities = [SelfCare::class],
     version = 1,
-    exportSchema = true,
+    exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun selfCareDao(): SelfCareDao

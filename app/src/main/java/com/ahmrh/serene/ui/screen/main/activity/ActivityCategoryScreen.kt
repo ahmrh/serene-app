@@ -24,23 +24,25 @@ import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
 import com.ahmrh.serene.ui.component.card.ActivityCard
 import com.ahmrh.serene.ui.component.navbar.SereneNavBar
+import com.ahmrh.serene.ui.navigation.Screen
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 @Composable
-fun ActivityScreen(
+fun ActivityCategoryScreen(
     navController: NavHostController = rememberNavController()
 ) {
-    Scaffold (
+    Scaffold(
         bottomBar = {
-            SereneNavBar()
+            SereneNavBar(navController)
         }
-    ){
+    ) {
         Surface(
             modifier = Modifier.padding(it)
         ) {
             Column(
                 modifier = Modifier
-                    .padding(vertical = 24.dp, horizontal = 16.dp),
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 24.dp),
             ) {
 
                 Row(
@@ -49,22 +51,41 @@ fun ActivityScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
 
-                    Text("Activities", style = MaterialTheme.typography.titleLarge)
-                    IconButton(onClick = { /*TODO*/ }) {
+                    Text(
+                        "Activities",
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    IconButton(
+                        onClick = { /*TODO*/ }) {
 
                         Icon(
-                            painterResource(id = R.drawable.serene_icon_bookmarks_collection),
+                            painterResource(
+                                id = R.drawable.serene_icon_bookmarks_collection
+                            ),
                             contentDescription = null,
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(
+                                24.dp
+                            )
                         )
                     }
                 }
 
                 LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ){
-                    items(7){ index ->
-                        ActivityCard(categoryId = index + 1)
+                    verticalArrangement = Arrangement.spacedBy(
+                        16.dp
+                    )
+                ) {
+                    items(7) { index ->
+                        ActivityCard(
+                            categoryId = index + 1,
+                            onClick = {
+
+                                navController.navigate(
+                                    Screen.ActivityList.createRoute(
+                                        categoryId = index + 1
+                                    )
+                                )
+                            })
                     }
                 }
             }
@@ -77,8 +98,8 @@ fun ActivityScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun ActivityScreenPreview() {
+fun ActivityCategoryScreenPreview() {
     SereneTheme {
-        ActivityScreen()
+        ActivityCategoryScreen()
     }
 }

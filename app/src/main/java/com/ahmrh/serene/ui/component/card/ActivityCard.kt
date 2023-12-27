@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +22,7 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -47,13 +49,13 @@ fun ActivityCard(
             defaultElevation = 6.dp
         ),
         modifier = Modifier
+            .clip(RoundedCornerShape(12.dp))
             .clickable { onClick() }
     ){
         Row(
             modifier = Modifier
                 .padding(12.dp)
                 .height(132.dp)
-                .width(328.dp)
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),

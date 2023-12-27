@@ -1,5 +1,6 @@
 package com.ahmrh.serene.ui.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -24,10 +25,14 @@ import com.ahmrh.serene.ui.theme.SereneTheme
 @Composable
 fun ActivityItem(
     modifier: Modifier = Modifier,
-    selfCare: SelfCare? = null
+    selfCare: SelfCare? = null,
+    onClick: () -> Unit = {}
 ) {
     val category = CategoryUtils.getCategory(selfCare?.category ?: 1)
-    Column {
+    Column(
+        modifier = Modifier
+            .clickable { onClick() }
+    ) {
         ListItem(
             colors = ListItemDefaults.colors(
                 headlineColor = MaterialTheme.colorScheme.onSurfaceVariant,

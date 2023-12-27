@@ -36,11 +36,16 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
+import com.ahmrh.serene.ui.navigation.Screen
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 @Composable
 fun QuestionScreen(
+    navController: NavHostController = rememberNavController()
 
 ) {
     Scaffold(
@@ -50,7 +55,9 @@ fun QuestionScreen(
             ) {
                 IconButton(onClick = {}) {
                     Icon(
-                        painter = painterResource(id = R.drawable.serene_icon_arrow_back),
+                        painter = painterResource(
+                            id = R.drawable.serene_icon_arrow_back
+                        ),
                         contentDescription = null
                     )
                 }
@@ -60,24 +67,35 @@ fun QuestionScreen(
         Surface(
             modifier = Modifier.padding(it)
         ) {
-            var progress by remember { mutableStateOf(1) }
+            var progress by remember {
+                mutableStateOf(
+                    1
+                )
+            }
             val maxProgress = 4
-            
+
             Column(
                 modifier = Modifier
                     .padding(horizontal = 24.dp)
-                    .padding(top = 18.dp, bottom = 36.dp)
+                    .padding(
+                        top = 18.dp,
+                        bottom = 36.dp
+                    )
                     .fillMaxHeight(),
                 Arrangement.SpaceBetween
             ) {
 
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(
+                        16.dp
+                    )
                 ) {
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(
+                            8.dp
+                        )
                     ) {
 
                         LinearProgressIndicator(
@@ -85,12 +103,17 @@ fun QuestionScreen(
                             modifier = Modifier
                                 .weight(1f)
                         )
-                        Text("$progress of $maxProgress", style = MaterialTheme.typography.labelMedium)
+                        Text(
+                            "$progress of $maxProgress",
+                            style = MaterialTheme.typography.labelMedium
+                        )
 
                     }
 
                     Box(
-                        modifier = Modifier.padding(vertical = 16.dp)
+                        modifier = Modifier.padding(
+                            vertical = 16.dp
+                        )
                     ) {
 
                         Text(
@@ -106,15 +129,42 @@ fun QuestionScreen(
                     AnswerSection()
                 }
 
-                Button(
-                    onClick = {
-                        progress += 1
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Next")
+                if (progress >= maxProgress) {
+
+                    Button(
+                        onClick = {
+                            navController.navigate(
+                                Screen.Result.route
+                            ) {
+
+                                popUpTo(
+                                    navController.graph.findStartDestination().id
+                                ) {
+                                    saveState =
+                                        true
+                                }
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+
+                        Text("Show Result")
 
 
+                    }
+                } else {
+
+                    Button(
+                        onClick = {
+                            progress += 1
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+
+                        Text("Next")
+
+
+                    }
                 }
             }
 
@@ -132,11 +182,17 @@ fun AnswerSection() {
         "Earthly Clay",
         "Honeyed Self-Acceptance"
     )
-    var (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
+    var (selectedOption, onOptionSelected) = remember {
+        mutableStateOf(
+            radioOptions[0]
+        )
+    }
 // Note that Modifier.selectableGroup() is essential to ensure correct accessibility behavior
     Column(
         Modifier.selectableGroup(),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(
+            16.dp
+        )
     ) {
         radioOptions.forEach { text ->
             Row(
@@ -151,8 +207,11 @@ fun AnswerSection() {
                         role = Role.RadioButton
                     )
                     .border(
-                        1.dp, color = MaterialTheme.colorScheme.outlineVariant,
-                        shape = RoundedCornerShape(4.dp)
+                        1.dp,
+                        color = MaterialTheme.colorScheme.outlineVariant,
+                        shape = RoundedCornerShape(
+                            4.dp
+                        )
                     )
                     .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
