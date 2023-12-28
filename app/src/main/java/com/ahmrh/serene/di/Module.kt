@@ -1,13 +1,10 @@
 package com.ahmrh.serene.di
 
-import android.app.Activity
 import android.content.Context
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.findNavController
-import com.ahmrh.serene.MainActivity
-import com.ahmrh.serene.R
+import com.ahmrh.serene.data.repository.GamificationRepository
+import com.ahmrh.serene.data.repository.PersonalizationRepository
+import com.ahmrh.serene.data.repository.SelfCareRepository
+import com.ahmrh.serene.data.repository.UserRepository
 import com.ahmrh.serene.data.source.local.room.AppDatabase
 import dagger.Module
 import dagger.Provides
@@ -19,5 +16,38 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object Module {
+
+
+    @Provides
+    @Singleton
+    fun provideGamificationRepository(
+        @ApplicationContext context: Context
+    ): GamificationRepository {
+        return GamificationRepository(
+            AppDatabase.getDatabase(context).achievementDao(),
+            AppDatabase.getDatabase(context).challengeDao()
+        )
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideSelfCareRepository(
+        @ApplicationContext context: Context
+    ): SelfCareRepository {
+        return SelfCareRepository(
+            AppDatabase.getDatabase(context).selfCareDao(),
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(
+        @ApplicationContext context: Context
+    ): UserRepository {
+        return UserRepository(
+            AppDatabase.getDatabase(context).profileDao(),
+        )
+    }
 
 }

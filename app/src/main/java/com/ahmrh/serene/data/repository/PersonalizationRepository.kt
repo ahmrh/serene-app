@@ -1,4 +1,10 @@
 package com.ahmrh.serene.data.repository
 
-class PersonalizationRepository {
+import com.ahmrh.serene.data.source.local.room.dao.ChallengeDao
+import com.ahmrh.serene.data.source.local.room.dao.PersonalizationDao
+
+class PersonalizationRepository(
+
+    private val personalizationDao: PersonalizationDao,
+) {
 }

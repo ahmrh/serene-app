@@ -4,6 +4,10 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.ahmrh.serene.data.source.local.room.dao.AchievementDao
+import com.ahmrh.serene.data.source.local.room.dao.ChallengeDao
+import com.ahmrh.serene.data.source.local.room.dao.PersonalizationDao
+import com.ahmrh.serene.data.source.local.room.dao.ProfileDao
 import com.ahmrh.serene.data.source.local.room.dao.SelfCareDao
 import com.ahmrh.serene.data.source.local.room.entity.selfcare.SelfCare
 
@@ -13,6 +17,10 @@ import com.ahmrh.serene.data.source.local.room.entity.selfcare.SelfCare
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
+    abstract fun achievementDao(): AchievementDao
+    abstract fun challengeDao(): ChallengeDao
+    abstract fun personalizationDao(): PersonalizationDao
+    abstract fun profileDao(): ProfileDao
     abstract fun selfCareDao(): SelfCareDao
 
     companion object {
