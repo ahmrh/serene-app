@@ -3,8 +3,6 @@ package com.ahmrh.serene.ui.component
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -19,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ahmrh.serene.R
 import com.ahmrh.serene.common.CategoryUtils
-import com.ahmrh.serene.data.source.local.room.entity.SelfCare
+import com.ahmrh.serene.data.source.local.room.entity.selfcare.SelfCare
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 @Composable
@@ -28,7 +26,7 @@ fun ActivityItem(
     selfCare: SelfCare? = null,
     onClick: () -> Unit = {}
 ) {
-    val category = CategoryUtils.getCategory(selfCare?.category ?: 1)
+    val category = CategoryUtils.getCategory(selfCare?.categoryId ?: 1)
     Column(
         modifier = Modifier
             .clickable { onClick() }

@@ -7,19 +7,20 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.ahmrh.serene.data.source.local.room.entity.selfcare.SelfCare
 import com.ahmrh.serene.data.source.local.room.entity.selfcare.SelfCareHistory
+import com.ahmrh.serene.data.source.local.room.entity.user.Profile
 
 @Dao
-interface SelfCareDao {
+interface ProfileDao {
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(selfCare: SelfCare)
+    suspend fun insert(profile: Profile)
 
     @Delete
-    suspend fun delete(selfCare: SelfCare)
+    suspend fun delete(profile: Profile)
 
-    @Query("DELETE FROM selfcare WHERE id = :id")
+    @Query("DELETE FROM profile WHERE id = :id")
     suspend fun deleteById(id: Int)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertHistory(selfCareHistory: SelfCareHistory)
-
 }

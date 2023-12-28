@@ -5,21 +5,21 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.ahmrh.serene.data.source.local.room.entity.selfcare.SelfCare
-import com.ahmrh.serene.data.source.local.room.entity.selfcare.SelfCareHistory
+import com.ahmrh.serene.data.source.local.room.entity.gamification.achievement.Achievement
+import com.ahmrh.serene.data.source.local.room.entity.gamification.achievement.AchievementHistory
 
 @Dao
-interface SelfCareDao {
+interface AchievementDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(selfCare: SelfCare)
+    suspend fun  insert(achievement: Achievement)
 
     @Delete
-    suspend fun delete(selfCare: SelfCare)
+    suspend fun delete(achievement: Achievement)
 
     @Query("DELETE FROM selfcare WHERE id = :id")
     suspend fun deleteById(id: Int)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertHistory(selfCareHistory: SelfCareHistory)
+    suspend fun  insertHistory(achievementHistory: AchievementHistory)
 
 }

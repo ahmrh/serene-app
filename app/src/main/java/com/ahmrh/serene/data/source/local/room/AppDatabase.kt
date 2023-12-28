@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.ahmrh.serene.data.source.local.room.dao.SelfCareDao
-import com.ahmrh.serene.data.source.local.room.entity.SelfCare
+import com.ahmrh.serene.data.source.local.room.entity.selfcare.SelfCare
 
 @Database(
     entities = [SelfCare::class],

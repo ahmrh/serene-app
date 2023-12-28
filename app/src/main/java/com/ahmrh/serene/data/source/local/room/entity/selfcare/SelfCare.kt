@@ -1,4 +1,4 @@
-package com.ahmrh.serene.data.source.local.room.entity
+package com.ahmrh.serene.data.source.local.room.entity.selfcare
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -6,9 +6,10 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "selfcare")
 data class SelfCare(
-    @PrimaryKey (autoGenerate = true) val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Long,
     @ColumnInfo(name = "name") val name: String,
-    @ColumnInfo(name = "category") val category: Int,
+    @ColumnInfo(name = "description") val description: String,
+    @ColumnInfo(name = "category_id") val categoryId: Long,
     @ColumnInfo(name = "guide") val guide: String,
     @ColumnInfo(name = "benefit") val benefit: String,
 )

@@ -19,7 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ahmrh.serene.common.CategoryUtils
-import com.ahmrh.serene.data.source.local.room.entity.SelfCare
+import com.ahmrh.serene.data.source.local.room.entity.selfcare.SelfCare
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 @Composable
