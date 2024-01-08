@@ -257,9 +257,11 @@ fun StatisticTab() {
             }
         }
 
-        LazyRow {
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
             items(4) {
-                AchievementItem()
+                AchievementItem(variant = 1)
             }
         }
     }

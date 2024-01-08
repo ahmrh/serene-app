@@ -2,7 +2,7 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="ChallengeCardPreview">
+      <entry key="AchievementScreenPreview">
         <State />
       </entry>
       <entry key="HomeScreenPreview">
@@ -11,10 +11,10 @@
       <entry key="ProfileScreenPreview">
         <State />
       </entry>
-      <entry key="QuestionScreenPreview">
+      <entry key="SettingScreenPreview - Dark Mode">
         <State />
       </entry>
-      <entry key="SereneNavBarPreview">
+      <entry key="SettingScreenPreview - Light Mode">
         <State />
       </entry>
       <entry key="app">

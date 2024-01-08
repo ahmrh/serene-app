@@ -30,7 +30,11 @@ import com.ahmrh.serene.ui.theme.SereneTheme
 
 @Composable
 fun ChallengeCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    value: Long = 1,
+    maxValue: Long = 10,
+    title: String = "For your mental",
+    description: String = "Do 10 mental Self-care today"
 ){
 
     Card(
@@ -57,10 +61,13 @@ fun ChallengeCard(
                 modifier = Modifier
                     .weight(1f)
             ){
-                Text("For your mental", style = MaterialTheme.typography.titleMedium)
-                Text("Do 10 mental Self-care today")
+                Text(title, style = MaterialTheme.typography.titleMedium)
+                Text(description)
             }
-            ChallengeProgressIndicator()
+            ChallengeProgressIndicator(
+                value = value,
+                maxValue = maxValue
+            )
         }
     }
 

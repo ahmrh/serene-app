@@ -7,12 +7,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +29,7 @@ import com.ahmrh.serene.ui.component.navbar.SereneNavBar
 import com.ahmrh.serene.ui.navigation.Screen
 import com.ahmrh.serene.ui.theme.SereneTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActivityCategoryScreen(
     navController: NavHostController = rememberNavController()
@@ -34,27 +37,11 @@ fun ActivityCategoryScreen(
     Scaffold(
         bottomBar = {
             SereneNavBar(navController)
-        }
-    ) {
-        Surface(
-            modifier = Modifier.padding(it)
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 24.dp),
-            ) {
-
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-
-                    Text(
-                        "Activities",
-                        style = MaterialTheme.typography.titleLarge
-                    )
+        },
+        topBar = {
+            TopAppBar(
+                title = { Text("Activities") },
+                actions = {
                     IconButton(
                         onClick = { /*TODO*/ }) {
 
@@ -68,6 +55,24 @@ fun ActivityCategoryScreen(
                             )
                         )
                     }
+                }
+            )
+        }
+    ) {
+        Surface(
+            modifier = Modifier.padding(it)
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+            ) {
+
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+
                 }
 
                 LazyColumn(

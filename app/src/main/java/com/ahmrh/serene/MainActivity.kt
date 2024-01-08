@@ -42,10 +42,9 @@ fun SereneApp(){
     NavHost(navController = navController, startDestination = Screen.Home.route) {
         composable(Screen.Home.route){
             HomeScreen(navController)
-
         }
-        composable(Screen.ActivityCategory.route){
 
+        composable(Screen.ActivityCategory.route){
             ActivityCategoryScreen(navController)
         }
         composable(Screen.ActivityList.route,  arguments = listOf(navArgument("categoryId") { defaultValue = "1" })){
@@ -69,7 +68,7 @@ fun SereneApp(){
         }
 
         composable(Screen.Question.route){
-            QuestionScreen()
+            QuestionScreen(navController)
         }
         composable(Screen.Result.route){
 

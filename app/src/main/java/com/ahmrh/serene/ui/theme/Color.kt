@@ -3,10 +3,10 @@ package com.ahmrh.serene.ui.theme
 import androidx.compose.ui.graphics.Color
 
 
-val primaryLight = Color(0xFF4C5C92)
+val primaryLight = Color(0xFF2A55C9)
 val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFFDCE1FF)
-val onPrimaryContainerLight = Color(0xFF02174B)
+val onPrimaryContainerLight = Color(0xFF00164E)
 val secondaryLight = Color(0xFF595E72)
 val onSecondaryLight = Color(0xFFFFFFFF)
 val secondaryContainerLight = Color(0xFFDEE1F9)
@@ -113,7 +113,7 @@ val surfaceContainerHighestLightHighContrast = Color(0xFFE3E1E9)
 
 val primaryDark = Color(0xFFB5C4FF)
 val onPrimaryDark = Color(0xFF1C2D61)
-val primaryContainerDark = Color(0xFF344479)
+val primaryContainerDark = Color(0xFF003CAE)
 val onPrimaryContainerDark = Color(0xFFDCE1FF)
 val secondaryDark = Color(0xFFC1C5DD)
 val onSecondaryDark = Color(0xFF2B3042)

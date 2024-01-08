@@ -1,4 +1,4 @@
-package com.ahmrh.serene.ui.screen.auth.register
+package com.ahmrh.serene.ui.screen.auth.recovery
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
@@ -35,7 +35,7 @@ import com.ahmrh.serene.ui.theme.SereneTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterScreen() {
+fun ForgotPasswordScreen() {
 
     Scaffold(topBar = {
         TopAppBar(
@@ -65,12 +65,12 @@ fun RegisterScreen() {
             Column {
 
                 Text(
-                    "Register",
+                    "Forgot Password",
                     style = MaterialTheme.typography.titleLarge
                 )
                 Spacer(Modifier.height(8.dp))
                 Text(
-                    "Please fill your registered credential below",
+                    "Please fill your registered email",
                     style = MaterialTheme.typography.bodyMedium
                 )
 
@@ -84,17 +84,6 @@ fun RegisterScreen() {
                     )
                 ) {
 
-                    var nameValue by remember {
-                        mutableStateOf(
-                            ""
-                        )
-                    }
-                    SereneTextField(
-                        value = nameValue,
-                        label = "Username",
-                        onValueChange = {
-                            nameValue = it
-                        })
                     var emailValue by remember {
                         mutableStateOf(
                             ""
@@ -107,50 +96,7 @@ fun RegisterScreen() {
                             emailValue = it
                         })
 
-                    var passwordValue by remember {
-                        mutableStateOf(
-                            ""
-                        )
-                    }
-                    var passwordVisible by remember {
-                        mutableStateOf(
-                            false
-                        )
-                    }
-                    SereneHiddenTextField(
-                        label = "Password",
-                        value = passwordValue,
-                        visible = passwordVisible,
-                        onValueChange = {
-                            passwordValue = it
-                        }, onVisibilityChange = {
-                            passwordVisible =
-                                !passwordVisible
-                        })
 
-                    var confirmPasswordValue by remember {
-                        mutableStateOf(
-                            ""
-                        )
-                    }
-                    var confirmPasswordVisible by remember {
-                        mutableStateOf(
-                            false
-                        )
-                    }
-                    SereneHiddenTextField(
-                        label = "Confirm Password",
-                        value = passwordValue,
-                        visible = passwordVisible,
-                        onValueChange = {
-                            passwordValue = it
-                        }, onVisibilityChange = {
-                            passwordVisible =
-                                !passwordVisible
-                        })
-                    TextButton(onClick = {}) {
-                        Text("Forgot password?")
-                    }
                 }
 
             }
@@ -158,7 +104,7 @@ fun RegisterScreen() {
                 onClick = {},
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Register")
+                Text(text = "Continue")
 
             }
 
@@ -177,8 +123,8 @@ fun RegisterScreen() {
     showBackground = true
 )
 @Composable
-fun RegisterScreenPreview() {
+fun ForgotPasswordScreenPreview() {
     SereneTheme {
-        RegisterScreen()
+        ForgotPasswordScreen()
     }
 }

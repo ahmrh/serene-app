@@ -50,7 +50,13 @@ fun ActivityListScreen(
                 Column{
 
                     Row {
-                        IconButton(onClick = { /*TODO*/ }) {
+                        IconButton(onClick = {
+
+                            navController.navigate(
+                                Screen.ActivityDetail.route){
+
+                            }
+                        }) {
                             Icon(
                                 painter = painterResource(id = R.drawable.serene_icon_arrow_back),
                                 contentDescription = null,
@@ -89,14 +95,14 @@ fun ActivityListScreen(
 
         ) {
             Column(
-                Modifier.padding(vertical = 24.dp)
+                Modifier.padding(vertical = 16.dp)
             ){
                 Text(
                     "Activity List",
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
-                        .padding(horizontal = 16.dp)
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
                 )
 
                 LazyColumn{

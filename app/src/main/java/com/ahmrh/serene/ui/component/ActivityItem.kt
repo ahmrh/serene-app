@@ -26,7 +26,7 @@ fun ActivityItem(
     selfCare: SelfCare? = null,
     onClick: () -> Unit = {}
 ) {
-    val category = CategoryUtils.getCategory(selfCare?.categoryId ?: 1)
+    val category = CategoryUtils.getCategory(selfCare?.categoryId?.toInt() ?: 1 )
     Column(
         modifier = Modifier
             .clickable { onClick() }

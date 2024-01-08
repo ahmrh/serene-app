@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.ui.component.dialog.SereneAlertDialog
@@ -21,6 +22,7 @@ import com.ahmrh.serene.ui.component.card.ChallengeCard
 import com.ahmrh.serene.ui.component.card.RecommendationCard
 import com.ahmrh.serene.ui.component.dialog.SurveyAlertDialog
 import com.ahmrh.serene.ui.component.navbar.SereneNavBar
+import com.ahmrh.serene.ui.navigation.Screen
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 @Composable
@@ -47,7 +49,7 @@ fun HomeScreen(
                     Text("Mr. Hyobanshi", style = MaterialTheme.typography.titleMedium)
                 }
 
-                RecommendationSection()
+                RecommendationSection(navController)
 
                 ChallengesSection()
 
@@ -59,7 +61,10 @@ fun HomeScreen(
 }
 
 @Composable
-fun RecommendationSection(){
+fun RecommendationSection(
+
+    navController: NavHostController = rememberNavController()
+){
 
     Column{
         Text("For you", style = MaterialTheme.typography.titleMedium)
@@ -69,7 +74,16 @@ fun RecommendationSection(){
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ){
         items(5){
-            RecommendationCard()
+            RecommendationCard(
+                onClick = {
+
+                    navController.navigate(Screen.ActivityDetail.route){
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                    }
+                }
+            )
         }
     }
 }
@@ -85,10 +99,25 @@ fun ChallengesSection(){
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ){
         ChallengeCard(
-
+            value = 1,
+            maxValue = 5,
+            title = "For your mental",
+            description = "Do 5 mental Self-care today"
         )
-        ChallengeCard()
-        ChallengeCard()
+        ChallengeCard(
+
+            value = 4,
+            maxValue = 10,
+            title = "Beat the laziness",
+            description = "Do 10 Physical Self-care today"
+        )
+        ChallengeCard(
+
+            value = 2,
+            maxValue = 10,
+            title = "Mind your emotion",
+            description = "Do 10 Emotional Self-care today"
+        )
     }
 
 }
