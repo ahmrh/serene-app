@@ -1,7 +1,7 @@
 package com.ahmrh.serene.ui.screen.main.profile
 
 import androidx.lifecycle.ViewModel
-import com.ahmrh.serene.common.UiState
+import com.ahmrh.serene.common.state.UiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

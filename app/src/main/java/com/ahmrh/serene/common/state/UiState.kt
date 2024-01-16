@@ -1,4 +1,4 @@
-package com.ahmrh.serene.common
+package com.ahmrh.serene.common.state
 
 sealed class UiState<out T: Any?> {
     object Loading: UiState<Nothing>()

@@ -19,7 +19,7 @@ interface ChallengeDao {
     @Delete
     suspend fun delete(challenge: Challenge)
 
-    @Query("DELETE FROM selfcare WHERE id = :id")
+    @Query("DELETE FROM challenge WHERE id = :id")
     suspend fun deleteById(id: Int)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

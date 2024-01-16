@@ -16,7 +16,7 @@ interface AchievementDao {
     @Delete
     suspend fun delete(achievement: Achievement)
 
-    @Query("DELETE FROM selfcare WHERE id = :id")
+    @Query("DELETE FROM achievement WHERE id = :id")
     suspend fun deleteById(id: Int)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

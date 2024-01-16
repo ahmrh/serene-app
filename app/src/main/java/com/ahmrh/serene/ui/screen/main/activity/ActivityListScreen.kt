@@ -27,7 +27,7 @@ import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
 import com.ahmrh.serene.common.CategoryUtils
 import com.ahmrh.serene.ui.component.ActivityItem
-import com.ahmrh.serene.ui.navigation.Screen
+import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 @Composable
@@ -53,7 +53,7 @@ fun ActivityListScreen(
                         IconButton(onClick = {
 
                             navController.navigate(
-                                Screen.ActivityDetail.route){
+                                Destination.ActivityDetail.route){
 
                             }
                         }) {
@@ -110,7 +110,7 @@ fun ActivityListScreen(
                         ActivityItem(
                             onClick = {
                                 navController.navigate(
-                                    Screen.ActivityDetail.route){
+                                    Destination.ActivityDetail.route){
 
                                 }
                             }

@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -17,12 +15,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.ahmrh.serene.ui.component.dialog.SereneAlertDialog
 import com.ahmrh.serene.ui.component.card.ChallengeCard
 import com.ahmrh.serene.ui.component.card.RecommendationCard
-import com.ahmrh.serene.ui.component.dialog.SurveyAlertDialog
 import com.ahmrh.serene.ui.component.navbar.SereneNavBar
-import com.ahmrh.serene.ui.navigation.Screen
+import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 @Composable
@@ -77,7 +73,7 @@ fun RecommendationSection(
             RecommendationCard(
                 onClick = {
 
-                    navController.navigate(Screen.ActivityDetail.route){
+                    navController.navigate(Destination.ActivityDetail.route){
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }

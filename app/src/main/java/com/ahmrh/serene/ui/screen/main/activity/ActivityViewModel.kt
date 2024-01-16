@@ -2,8 +2,8 @@ package com.ahmrh.serene.ui.screen.main.activity
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ahmrh.serene.common.UiState
-import com.ahmrh.serene.data.source.local.room.entity.selfcare.SelfCare
+import com.ahmrh.serene.common.state.UiState
+import com.ahmrh.serene.data.source.local.room.entity.selfcare.SelfCareActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,16 +15,16 @@ class ActivityViewModel @Inject constructor(
 
 ) : ViewModel() {
 
-    private var _activityDetailUiState: MutableStateFlow<UiState<SelfCare>> =
+    private var _activityDetailUiState: MutableStateFlow<UiState<SelfCareActivity>> =
         MutableStateFlow(UiState.Loading)
 
-    private var _activityListUiState: MutableStateFlow<UiState<List<SelfCare>>> =
+    private var _activityListUiState: MutableStateFlow<UiState<List<SelfCareActivity>>> =
         MutableStateFlow(UiState.Loading)
 
-    val activityDetailUiState: StateFlow<UiState<SelfCare>>
+    val activityDetailUiState: StateFlow<UiState<SelfCareActivity>>
         get() = _activityDetailUiState
 
-    val activityListUiState: StateFlow<UiState<List<SelfCare>>>
+    val activityListUiState: StateFlow<UiState<List<SelfCareActivity>>>
         get() = _activityListUiState
 
     init {

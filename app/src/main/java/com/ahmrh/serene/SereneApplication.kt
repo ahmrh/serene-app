@@ -6,4 +6,8 @@ import dagger.hilt.android.HiltAndroidApp
 @HiltAndroidApp
 class SereneApplication: Application() {
 
+    override fun onCreate() {
+        super.onCreate()
+
+    }
 }

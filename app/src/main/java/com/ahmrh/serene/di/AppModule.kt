@@ -15,7 +15,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object Module {
+object AppModule {
 
 
     @Provides
@@ -26,6 +26,16 @@ object Module {
         return GamificationRepository(
             AppDatabase.getDatabase(context).achievementDao(),
             AppDatabase.getDatabase(context).challengeDao()
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providePersonalizationRepository(
+        @ApplicationContext context: Context
+    ): PersonalizationRepository {
+        return PersonalizationRepository(
+            AppDatabase.getDatabase(context).personalizationDao()
         )
     }
 

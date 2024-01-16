@@ -34,7 +34,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
-import com.ahmrh.serene.ui.navigation.Screen
+import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 
@@ -51,9 +51,9 @@ fun SereneNavBar(
         NavigationBarItem(
             icon = { Icon(Icons.Filled.List, contentDescription = "Activities") },
             label = { Text("Activities") },
-            selected = currentDestination?.hierarchy?.any { it.route == Screen.ActivityCategory.route } == true,
+            selected = currentDestination?.hierarchy?.any { it.route == Destination.ActivityCategory.route } == true,
             onClick = {
-                navController.navigate(Screen.ActivityCategory.route){
+                navController.navigate(Destination.ActivityCategory.route){
                     popUpTo(navController.graph.findStartDestination().id) {
                         saveState = true
                     }
@@ -61,7 +61,7 @@ fun SereneNavBar(
             }
         )
 
-        if(currentDestination?.hierarchy?.any { it.route == Screen.Home.route } == false){
+        if(currentDestination?.hierarchy?.any { it.route == Destination.Home.route } == false){
 
             NavigationBarItem(
                 icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
@@ -69,7 +69,7 @@ fun SereneNavBar(
                 selected = false,
                 onClick = {
 
-                    navController.navigate(Screen.Home.route){
+                    navController.navigate(Destination.Home.route){
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
@@ -86,7 +86,7 @@ fun SereneNavBar(
                 SereneButton (
                     onClick = {
                         Log.d("Navigation Bar", "I pressed Self-care button!")
-                        navController.navigate(Screen.Question.route)
+                        navController.navigate(Destination.Question.route)
                     }
                 )
             }
@@ -96,9 +96,9 @@ fun SereneNavBar(
         NavigationBarItem(
             icon = { Icon(Icons.Filled.Person, contentDescription = "Profile") },
             label = { Text("Profile") },
-            selected = currentDestination?.hierarchy?.any { it.route == Screen.Profile.route } == true,
+            selected = currentDestination?.hierarchy?.any { it.route == Destination.Profile.route } == true,
             onClick = {
-                navController.navigate(Screen.Profile.route){
+                navController.navigate(Destination.Profile.route){
                     popUpTo(navController.graph.findStartDestination().id) {
                         saveState = true
                     }

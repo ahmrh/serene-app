@@ -20,11 +20,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
-import com.ahmrh.serene.ui.navigation.Screen
+import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -157,7 +156,7 @@ fun ActivityDetailScreen(
                     onClick = {
 
                         navController.navigate(
-                            Screen.Practice.route
+                            Destination.Practice.route
                         )
                     },
                     modifier = Modifier.fillMaxWidth()

@@ -140,13 +140,13 @@ fun RegisterScreen() {
                     }
                     SereneHiddenTextField(
                         label = "Confirm Password",
-                        value = passwordValue,
-                        visible = passwordVisible,
+                        value = confirmPasswordValue,
+                        visible = confirmPasswordVisible,
                         onValueChange = {
-                            passwordValue = it
+                            confirmPasswordValue = it
                         }, onVisibilityChange = {
-                            passwordVisible =
-                                !passwordVisible
+                            confirmPasswordVisible =
+                                !confirmPasswordVisible
                         })
                     TextButton(onClick = {}) {
                         Text("Forgot password?")

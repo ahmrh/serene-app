@@ -5,7 +5,6 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.ahmrh.serene.data.source.local.room.entity.selfcare.SelfCare
 import com.ahmrh.serene.data.source.local.room.entity.selfcare.SelfCareHistory
 import com.ahmrh.serene.data.source.local.room.entity.user.Profile
 

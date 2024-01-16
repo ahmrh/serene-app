@@ -27,7 +27,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
-import com.ahmrh.serene.ui.navigation.Screen
+import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -119,7 +119,7 @@ fun PracticeScreen(
                     onClick = {
 
                         navController.navigate(
-                            Screen.Home.route){
+                            Destination.Home.route){
 
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true

@@ -17,13 +17,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ahmrh.serene.R
 import com.ahmrh.serene.common.CategoryUtils
-import com.ahmrh.serene.data.source.local.room.entity.selfcare.SelfCare
+import com.ahmrh.serene.data.source.local.room.entity.selfcare.SelfCareActivity
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 @Composable
 fun ActivityItem(
     modifier: Modifier = Modifier,
-    selfCare: SelfCare? = null,
+    selfCare: SelfCareActivity? = null,
     onClick: () -> Unit = {}
 ) {
     val category = CategoryUtils.getCategory(selfCare?.categoryId?.toInt() ?: 1 )
