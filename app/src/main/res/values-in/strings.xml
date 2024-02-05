@@ -1,7 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Serene</string>
 
-    <string name="serene_introduction_1">Before that, i need you to know each category of Self-care. \n\nIt won’t take a lot of your time, we just want to let you know what this app is all about</string>
+    <string name="serene_introduction_1">Before that, i need you to know each category of Self-care. \n\nIt won’t take a lot of your time, we just want to let you know what is this app all about</string>
     <string name="serene_introduction_2">Based on Catherine Beard, M.A. of Health of Wellness Coaching, Integrative Health Practice, \n\nThere are 7 Category of Self-care Activities</string>
 
     <string name="serene_selfcare_activity_emotional">Embrace your feelings, understand their whispers and treat yourself with gentle understanding.</string>
@@ -27,7 +28,6 @@
     <string name="serene_selfcare_introduction_recreational">involves taking care of your inner child with hobbies, fun activities, and new experiences.\n\nRecreation is important because it lets you get away from the pressure of your to-do list and simply enjoy the pleasures that life has to offer. </string>
     <string name="serene_selfcare_introduction_social">means cultivating healthy relationships and connecting with people who get you.\n\n Seeking out positive social connections helps us create a sense of belonging and acceptance.</string>
     <string name="serene_selfcare_introduction_spiritual">involves taking care of your soul through activities or practices that provide a sense of purpose, direction, or meaning to your life.\n\nIt can help you find more meaning in life, feel more grounded, and develop a sense of belonging in life.</string>
-
 
 
 </resources>

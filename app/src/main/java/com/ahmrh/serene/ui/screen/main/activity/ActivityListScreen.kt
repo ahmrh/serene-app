@@ -27,7 +27,7 @@ import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
 import com.ahmrh.serene.common.CategoryUtils
 import com.ahmrh.serene.ui.component.ActivityItem
-import com.ahmrh.serene.ui.navigation.Destination
+import com.ahmrh.serene.navigation.Destination
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 @Composable
@@ -80,7 +80,7 @@ fun ActivityListScreen(
                         .align(Alignment.TopEnd),
                 ) {
                     Image(
-                        painterResource(id = category.image),
+                        painterResource(id = category.imageResource),
                         contentDescription = null,
                         modifier = Modifier
                             .wrapContentSize(unbounded = true, align = Alignment.TopCenter)

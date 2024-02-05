@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,7 +34,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
 import com.ahmrh.serene.common.CategoryUtils
-import com.ahmrh.serene.ui.navigation.Destination
+import com.ahmrh.serene.navigation.Destination
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 @Composable
@@ -75,7 +76,10 @@ fun ResultScreen(
             Column(
                 modifier = Modifier
                     .padding(horizontal = 24.dp)
-                    .padding(top = 18.dp, bottom = 36.dp)
+                    .padding(
+                        top = 18.dp,
+                        bottom = 36.dp
+                    )
                     .fillMaxHeight(),
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -202,7 +206,10 @@ fun ResultScreenVariant(
             Column(
                 modifier = Modifier
                     .padding(horizontal = 24.dp)
-                    .padding(top = 18.dp, bottom = 36.dp)
+                    .padding(
+                        top = 18.dp,
+                        bottom = 36.dp
+                    )
                     .fillMaxHeight(),
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -213,7 +220,7 @@ fun ResultScreenVariant(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Image(
-                        painterResource(id = category.image),
+                        painterResource(id = category.imageResource),
                         contentDescription = null,
                         modifier = Modifier.height(200.dp)
                     )
@@ -230,7 +237,7 @@ fun ResultScreenVariant(
                     Spacer(Modifier.height(8.dp))
 
 
-                    Text(category.resultDescription, style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
+                    Text(stringResource(id = category.resultDescriptionResource), style = MaterialTheme.typography.bodyLarge, textAlign = TextAlign.Center)
 
                 }
 

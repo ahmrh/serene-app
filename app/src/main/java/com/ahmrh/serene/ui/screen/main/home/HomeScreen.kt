@@ -18,7 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.ui.component.card.ChallengeCard
 import com.ahmrh.serene.ui.component.card.RecommendationCard
 import com.ahmrh.serene.ui.component.navbar.SereneNavBar
-import com.ahmrh.serene.ui.navigation.Destination
+import com.ahmrh.serene.navigation.Destination
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 @Composable
@@ -73,7 +73,8 @@ fun RecommendationSection(
             RecommendationCard(
                 onClick = {
 
-                    navController.navigate(Destination.ActivityDetail.route){
+                    navController.navigate(
+                        Destination.ActivityDetail.route){
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }

@@ -26,8 +26,9 @@ class GetResultUseCase @Inject constructor(
                 }
         }
         catch(e: Exception){
-            emit(
-                ResourceState.Error(message = e.localizedMessage ?: "An unexpected error occured"))
+            emit(ResourceState.Error(message = e.localizedMessage ?: "An unexpected error occured"))
         }
     }
+
+    
 }

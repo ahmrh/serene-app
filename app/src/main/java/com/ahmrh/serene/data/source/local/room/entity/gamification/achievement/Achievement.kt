@@ -8,8 +8,10 @@ import androidx.room.PrimaryKey
 data class Achievement(
     @PrimaryKey val id: Long,
     @ColumnInfo(name = "name") val name: String,
-    @ColumnInfo(name = "image_uri") val imageUri: String,
-
-    /* TODO */
-    // need some work on how the condition work
+    @ColumnInfo(
+        name = "image_uri"
+    ) val imageUri: String,
+    @ColumnInfo(
+        name = "is_unlocked"
+    ) val isUnlocked: Boolean,
 )

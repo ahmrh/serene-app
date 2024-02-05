@@ -16,7 +16,7 @@ import com.ahmrh.serene.data.source.local.room.entity.gamification.achievement.A
 import com.ahmrh.serene.data.source.local.room.entity.gamification.challenge.Challenge
 import com.ahmrh.serene.data.source.local.room.entity.gamification.challenge.ChallengeHistory
 import com.ahmrh.serene.data.source.local.room.entity.personalization.Question
-import com.ahmrh.serene.data.source.local.room.entity.personalization.ResultHistory
+import com.ahmrh.serene.data.source.local.room.entity.personalization.Result
 import com.ahmrh.serene.data.source.local.room.entity.selfcare.SelfCareActivity
 import com.ahmrh.serene.data.source.local.room.entity.selfcare.SelfCareCategory
 import com.ahmrh.serene.data.source.local.room.entity.selfcare.SelfCareHistory
@@ -31,14 +31,14 @@ import com.ahmrh.serene.data.source.local.room.entity.user.Profile
         SelfCareRecommendation::class,
         Profile::class,
         Question::class,
-        ResultHistory::class,
+        Result::class,
         Challenge::class,
         ChallengeHistory::class,
         Achievement::class,
         AchievementHistory::class
     ],
     version = 1,
-    exportSchema = false,
+    exportSchema = true,
 )
 @TypeConverters(PersonalizationPointConverter::class)
 abstract class AppDatabase : RoomDatabase() {
@@ -65,6 +65,7 @@ abstract class AppDatabase : RoomDatabase() {
                 ).build().also { Instance = it }
             }
         }
+
 
     }
 

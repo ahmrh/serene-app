@@ -10,8 +10,6 @@ import androidx.room.PrimaryKey
 data class Question(
     @PrimaryKey(autoGenerate = true) val id: Long,
     @ColumnInfo(name = "description") val description: String,
-    @ColumnInfo(name = "answers") val answers: String,
-    @ColumnInfo(name = "question_json") val questionJson: String,
 )
 
 

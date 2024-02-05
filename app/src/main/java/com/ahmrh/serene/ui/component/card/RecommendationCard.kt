@@ -54,7 +54,7 @@ fun RecommendationCard(
 
             Icon(
                 painterResource(
-                    id = category.icon
+                    id = category.iconResource
                 ),
                 contentDescription = "${category.name} Self-care Icon",
                 modifier = Modifier

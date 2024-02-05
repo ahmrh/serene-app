@@ -48,7 +48,7 @@ fun ActivityItem(
             },
             leadingContent = {
                 Icon(
-                    painterResource(id = category.icon),
+                    painterResource(id = category.iconResource),
                     contentDescription = "Localized description",
                 )
             },

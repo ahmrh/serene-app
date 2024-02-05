@@ -5,8 +5,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.ahmrh.serene.domain.model.PersonalizationPoint
 
-@Entity(tableName = "result_history")
-data class ResultHistory(
+@Entity(tableName = "result")
+data class Result(
     @PrimaryKey(autoGenerate = true) val id: Long,
     @ColumnInfo(name = "point") val point: PersonalizationPoint, // point for each selfcare category
     @ColumnInfo(
@@ -14,6 +14,7 @@ data class ResultHistory(
         defaultValue = "CURRENT_TIMESTAMP"
     ) val createdAt: String,
 )
+
 
 //point json
 //{

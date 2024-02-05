@@ -29,23 +29,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
-import com.ahmrh.serene.ui.navigation.Destination
+import com.ahmrh.serene.navigation.Destination
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 
 @Composable
 fun SereneNavBar(
-    navController: NavController = rememberNavController()
+    navController: NavController = rememberNavController(),
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    var selectedItem by remember { mutableIntStateOf(0) }
     NavigationBar {
 
         NavigationBarItem(
@@ -53,7 +53,8 @@ fun SereneNavBar(
             label = { Text("Activities") },
             selected = currentDestination?.hierarchy?.any { it.route == Destination.ActivityCategory.route } == true,
             onClick = {
-                navController.navigate(Destination.ActivityCategory.route){
+                navController.navigate(
+                    Destination.ActivityCategory.route){
                     popUpTo(navController.graph.findStartDestination().id) {
                         saveState = true
                     }
@@ -69,7 +70,8 @@ fun SereneNavBar(
                 selected = false,
                 onClick = {
 
-                    navController.navigate(Destination.Home.route){
+                    navController.navigate(
+                        Destination.Home.route){
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
@@ -86,7 +88,8 @@ fun SereneNavBar(
                 SereneButton (
                     onClick = {
                         Log.d("Navigation Bar", "I pressed Self-care button!")
-                        navController.navigate(Destination.Question.route)
+                        navController.navigate(
+                            Destination.Introduction.createRoute(1))
                     }
                 )
             }
@@ -98,7 +101,8 @@ fun SereneNavBar(
             label = { Text("Profile") },
             selected = currentDestination?.hierarchy?.any { it.route == Destination.Profile.route } == true,
             onClick = {
-                navController.navigate(Destination.Profile.route){
+                navController.navigate(
+                    Destination.Profile.route){
                     popUpTo(navController.graph.findStartDestination().id) {
                         saveState = true
                     }

@@ -5,10 +5,10 @@
       <entry key="AchievementScreenPreview">
         <State />
       </entry>
-      <entry key="HomeScreenPreview">
+      <entry key="BaseQuestionScreenPreview">
         <State />
       </entry>
-      <entry key="ProfileScreenPreview">
+      <entry key="IntroductionScreenPreview">
         <State />
       </entry>
       <entry key="SettingScreenPreview - Dark Mode">
