@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
@@ -31,8 +32,9 @@ import com.ahmrh.serene.ui.theme.SereneTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActivityCategoryScreen(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
 ) {
+    // 
     Scaffold(
         bottomBar = {
             SereneNavBar(navController)
@@ -40,21 +42,21 @@ fun ActivityCategoryScreen(
         topBar = {
             TopAppBar(
                 title = { Text("Activities") },
-                actions = {
-                    IconButton(
-                        onClick = { /*TODO*/ }) {
-
-                        Icon(
-                            painterResource(
-                                id = R.drawable.serene_icon_bookmarks_collection
-                            ),
-                            contentDescription = null,
-                            modifier = Modifier.size(
-                                24.dp
-                            )
-                        )
-                    }
-                }
+//                actions = {
+//                    IconButton(
+//                        onClick = { /*TODO*/ }) {
+//
+//                        Icon(
+//                            painterResource(
+//                                id = R.drawable.serene_icon_bookmarks_collection
+//                            ),
+//                            contentDescription = null,
+//                            modifier = Modifier.size(
+//                                24.dp
+//                            )
+//                        )
+//                    }
+//                }
             )
         }
     ) {
@@ -83,13 +85,13 @@ fun ActivityCategoryScreen(
                         ActivityCard(
                             categoryId = index + 1,
                             onClick = {
-
                                 navController.navigate(
                                     Destination.ActivityList.createRoute(
                                         categoryId = index + 1
                                     )
                                 )
-                            })
+                            }
+                        )
                     }
                 }
             }

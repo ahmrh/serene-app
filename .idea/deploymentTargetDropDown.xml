@@ -2,23 +2,37 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="AchievementScreenPreview">
-        <State />
-      </entry>
-      <entry key="BaseQuestionScreenPreview">
-        <State />
-      </entry>
-      <entry key="IntroductionScreenPreview">
-        <State />
-      </entry>
-      <entry key="SettingScreenPreview - Dark Mode">
-        <State />
-      </entry>
-      <entry key="SettingScreenPreview - Light Mode">
-        <State />
+      <entry key="ActivityDetailScreenPreview">
+        <State>
+          <targetSelectedWithDropDown>
+            <Target>
+              <type value="QUICK_BOOT_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="$USER_HOME$/.android/avd/Resizable_Experimental_API_34.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </targetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-02-25T02:50:36.826843678Z" />
+        </State>
       </entry>
       <entry key="app">
-        <State />
+        <State>
+          <targetSelectedWithDropDown>
+            <Target>
+              <type value="QUICK_BOOT_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="$USER_HOME$/.android/avd/Resizable_Experimental_API_34.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </targetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-02-24T10:32:10.527151114Z" />
+        </State>
       </entry>
     </value>
   </component>

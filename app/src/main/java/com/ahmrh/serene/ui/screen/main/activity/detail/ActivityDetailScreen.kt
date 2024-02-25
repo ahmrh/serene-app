@@ -1,0 +1,324 @@
+package com.ahmrh.serene.ui.screen.main.activity.detail
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.surfaceColorAtElevation
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.ParagraphStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextIndent
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import coil.compose.AsyncImagePainter
+import coil.compose.SubcomposeAsyncImage
+import coil.compose.SubcomposeAsyncImageContent
+import coil.request.ImageRequest
+import com.ahmrh.serene.R
+import com.ahmrh.serene.common.CategoryUtils
+import com.ahmrh.serene.common.state.UiState
+import com.ahmrh.serene.domain.model.SelfCareActivity
+import com.ahmrh.serene.ui.theme.SereneTheme
+import kotlin.text.Typography.bullet
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ActivityDetailScreen(
+
+    navController: NavHostController = rememberNavController(),
+    activityId: String? = null,
+    viewModel: ActivityDetailViewModel = hiltViewModel()
+) {
+
+    viewModel.getActivityDetail(activityId ?: "null")
+
+    val activityState = viewModel.activityDetailUiState.collectAsState()
+
+    when (activityState.value) {
+        is UiState.Loading -> {
+            LoadingScreen()
+
+        }
+
+        is UiState.Error -> {
+            Text("Error ")
+
+        }
+
+        is UiState.Success -> {
+            ActivityDetailContent(
+                navigateBack = {
+                    navController.popBackStack()
+                },
+                navigateToPractice = {
+
+                },
+                activity = (activityState.value as UiState.Success).data
+            )
+
+        }
+    }
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ActivityDetailContent(
+    navigateBack: () -> Unit = {},
+    navigateToPractice: () -> Unit = {},
+    activity: SelfCareActivity
+) {
+
+    // TODO : Fix this so it become like the figma i created yesterday
+
+    val category = CategoryUtils.getCategory(activity.category ?: "")
+
+    Scaffold(
+        topBar = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.dp)
+            ) {
+                TopAppBar(
+                    title = {},
+                    navigationIcon = {
+                        IconButton(onClick = navigateBack) {
+                            Icon(
+                                painterResource(
+                                    id = R.drawable.serene_icon_arrow_back
+                                ),
+                                contentDescription = null
+                            )
+                        }
+                    },
+//                    actions = {
+//
+//                        IconButton(
+//                            onClick = {},
+//                            modifier = Modifier
+//                        ) {
+//                            Icon(
+//                                painterResource(
+//                                    id = R.drawable.serene_icon_bookmark
+//                                ),
+//                                contentDescription = null
+//                            )
+//                        }
+//
+//                        IconButton(onClick = {}) {
+//                            Icon(
+//                                painterResource(
+//                                    id = R.drawable.serene_icon_more_vert
+//                                ),
+//                                contentDescription = null
+//                            )
+//                        }
+//                    },
+                )
+
+
+//                Box(
+//                    modifier = Modifier
+//                        .align(Alignment.TopCenter),
+//                ) {
+//                    Image(
+//                        painterResource(id = R.drawable.serene_selfcare_image_environmental),
+//                        contentDescription = null,
+//                        modifier = Modifier
+//                            .wrapContentSize(unbounded = true, align = Alignment.TopCenter)
+//                            .size(180.dp)
+//                    )
+//                }
+            }
+        }
+    ) {
+        Surface(
+            modifier = Modifier.padding(it),
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(bottom = 36.dp)
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.SpaceBetween,
+            ) {
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(
+                        16.dp
+                    ),
+                ) {
+                    Icon(
+                        painterResource(
+                            id = category.iconResource
+                        ),
+                        contentDescription = null,
+                        modifier = Modifier.size(40.dp)
+                    )
+
+                    Column {
+                        Text(
+                            "${activity.name}",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                        Text(
+                            "${activity.category} Self-care",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+
+                    SubcomposeAsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(activity.imageUri)
+                            .build(),
+                        contentDescription = "Supporting Image",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(165.dp)
+                            .clip(RoundedCornerShape(8.dp)),
+                        contentScale = ContentScale.Crop
+                    ) {
+                        val state = painter.state
+                        if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {
+                            Box(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surfaceColorAtElevation(8.dp)))
+                        } else {
+                            SubcomposeAsyncImageContent()
+                        }
+                    }
+
+//                    CoilImage(
+//                        imageModel = { activity.imageUri },
+//                        imageOptions = ImageOptions(
+//                            contentScale = ContentScale.Crop,
+//                        ),
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .height(165.dp)
+//                            .clip(RoundedCornerShape(8.dp)),
+//                        component = rememberImageComponent {
+//                            +ShimmerPlugin(
+//                                Shimmer.Fade(
+//                                    baseColor = MaterialTheme.colorScheme.surfaceContainerLow,
+//                                    highlightColor = MaterialTheme.colorScheme.onSurface,
+//                                ),
+//                            )
+//                            +CrossfadePlugin(
+//                                duration = 550
+//                            )
+//
+//                        },
+//                        failure = {
+//                            Text(text = "image request failed.")
+//                        }
+//                    )
+
+                    Text(
+                        "${activity.description}",
+                        style = MaterialTheme.typography.bodyLarge,
+                        textAlign = TextAlign.Justify
+                    )
+
+
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(
+                            8.dp
+                        )
+                    ) {
+                        Text(
+                            "Benefit",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+
+                        val paragraphStyle = ParagraphStyle(
+                            textIndent = TextIndent(restLine = 12.sp)
+                        )
+                        Text(
+                            buildAnnotatedString {
+                                activity.benefit?.forEach {
+                                    withStyle(style = paragraphStyle) {
+                                        append(bullet)
+                                        append("\t\t")
+                                        append(it)
+                                    }
+                                }
+                            },
+
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+
+                    }
+
+
+                }
+
+                Button(
+                    onClick = navigateToPractice,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Practice Self-care")
+                }
+
+            }
+        }
+
+    }
+}
+
+@Composable
+fun LoadingScreen() {
+    Surface {
+        Box(
+            Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator()
+
+        }
+    }
+
+}
+
+@Composable
+fun ErrorDialog() {
+
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ActivityDetailScreenPreview() {
+    SereneTheme {
+//        ActivityDetailContent(activity = SelfCareActivity("id"))
+    }
+}

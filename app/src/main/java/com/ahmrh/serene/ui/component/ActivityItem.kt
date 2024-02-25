@@ -2,6 +2,7 @@ package com.ahmrh.serene.ui.component
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
@@ -16,17 +17,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ahmrh.serene.R
+import com.ahmrh.serene.common.Category
 import com.ahmrh.serene.common.CategoryUtils
-import com.ahmrh.serene.data.source.local.room.entity.selfcare.SelfCareActivity
+import com.ahmrh.serene.domain.model.SelfCareActivity
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 @Composable
 fun ActivityItem(
     modifier: Modifier = Modifier,
-    selfCare: SelfCareActivity? = null,
+    activity: SelfCareActivity? = null,
     onClick: () -> Unit = {}
 ) {
-    val category = CategoryUtils.getCategory(selfCare?.categoryId?.toInt() ?: 1 )
+    val category = CategoryUtils.getCategory(activity?.category ?: "Emotional")
     Column(
         modifier = Modifier
             .clickable { onClick() }
@@ -38,13 +40,13 @@ fun ActivityItem(
             ),
             headlineContent = {
                 Text(
-                    "${category.stringValue} Self-care",
+                    "${activity?.category} Self-care",
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold
                 )
             },
             supportingContent = {
-                Text(selfCare?.name ?: "Unidetified Self-care", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
+                Text(activity?.name ?: "Unidetified Self-care", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onSurface)
             },
             leadingContent = {
                 Icon(
@@ -59,7 +61,9 @@ fun ActivityItem(
                     contentDescription = "Localized description",
                     modifier = Modifier.size(24.dp)
                 )
-            }
+            },
+            modifier = Modifier
+                .padding(vertical = 8.dp)
         )
         Divider()
     }

@@ -1,4 +1,4 @@
-package com.ahmrh.serene.data.source.local.preference
+package com.ahmrh.serene.data.source.local
 
 import android.content.Context
 import androidx.datastore.core.DataStore

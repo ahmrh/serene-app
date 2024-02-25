@@ -6,6 +6,9 @@ object CategoryUtils {
 
     fun getCategory(id: Int): Category =
         Category.fromId(id)
+
+    fun getCategory(name: String): Category =
+        Category.fromName(name)
 }
 
 enum class Category(
@@ -82,6 +85,8 @@ enum class Category(
     companion object {
         fun fromId(id: Int): Category =
             entries.single { it.id == id }
+        fun fromName(name: String): Category =
+            entries.single { it.stringValue == name }
 
         override fun toString(): String =
             entries.single().stringValue

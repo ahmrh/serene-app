@@ -11,7 +11,6 @@ import javax.inject.Inject
 class PreferencesRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) {
-
     companion object {
         val FIRST_TIME_KEY = booleanPreferencesKey("first_time_key")
         val NOTIFICATION_KEY = booleanPreferencesKey("notification_key")

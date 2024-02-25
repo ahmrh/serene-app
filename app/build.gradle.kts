@@ -106,6 +106,12 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
+    implementation("io.coil-kt:coil-compose:2.6.0")
+
+//    implementation("com.github.skydoves:landscapist-bom:2.3.1")
+//    implementation("com.github.skydoves:landscapist-placeholder")
+//    implementation("com.github.skydoves:landscapist-coil")
+//    implementation("com.github.skydoves:landscapist-animation")
 
     // Compose runtime
     implementation("androidx.compose.runtime:runtime:1.6.0")
@@ -129,6 +135,8 @@ dependencies {
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
     implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-storage")
 
     // Typewriter
     implementation("tech.dev-scion:typist:1.3.0")
