@@ -1,5 +1,6 @@
 package com.ahmrh.serene.ui.screen.main.activity
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,13 +16,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
 import com.ahmrh.serene.ui.component.card.ActivityCard
@@ -34,17 +38,49 @@ import com.ahmrh.serene.ui.theme.SereneTheme
 fun ActivityCategoryScreen(
     navController: NavHostController = rememberNavController(),
 ) {
-    // 
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+
     Scaffold(
         bottomBar = {
-            SereneNavBar(navController)
+            SereneNavBar(
+                navigateToActivities = {
+                    navController?.navigate(
+                        Destination.ActivityCategory.route
+                    ) {
+                        popUpTo(
+                            navController.graph.findStartDestination().id
+                        ) {
+                            saveState = true
+                        }
+                    }
+                },
+                navigateToProfile = {
+                    navController?.navigate(
+                        Destination.Profile.route){
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                    }
+                },
+                navigateToHome = {
+                    navController?.navigate(
+                        Destination.Home.route){
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                    }
+                },
+                currentDestination = currentDestination
+            )
         },
         topBar = {
             TopAppBar(
                 title = { Text("Activities") },
 //                actions = {
 //                    IconButton(
-//                        onClick = { /*TODO*/ }) {
+//                        onClick = { }) {
 //
 //                        Icon(
 //                            painterResource(
@@ -76,11 +112,7 @@ fun ActivityCategoryScreen(
 
                 }
 
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(
-                        16.dp
-                    )
-                ) {
+                LazyColumn{
                     items(7) { index ->
                         ActivityCard(
                             categoryId = index + 1,
@@ -90,7 +122,8 @@ fun ActivityCategoryScreen(
                                         categoryId = index + 1
                                     )
                                 )
-                            }
+                            },
+                            modifier = Modifier.padding(bottom = 16.dp)
                         )
                     }
                 }

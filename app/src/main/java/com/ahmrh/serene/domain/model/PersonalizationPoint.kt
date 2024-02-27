@@ -2,7 +2,6 @@ package com.ahmrh.serene.domain.model
 
 import com.google.gson.annotations.SerializedName
 
-// TODO add type converter in room database
 data class PersonalizationPoint(
 
 	@field:SerializedName("1")

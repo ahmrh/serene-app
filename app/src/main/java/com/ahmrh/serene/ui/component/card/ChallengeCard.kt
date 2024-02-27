@@ -62,7 +62,7 @@ fun ChallengeCard(
                     .weight(1f)
             ){
                 Text(title, style = MaterialTheme.typography.titleMedium)
-                Text(description)
+                Text(description, style = MaterialTheme.typography.bodySmall)
             }
             ChallengeProgressIndicator(
                 value = value,

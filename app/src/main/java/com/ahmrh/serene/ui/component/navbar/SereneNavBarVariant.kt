@@ -59,6 +59,6 @@ fun SereneNavBarVariant(
 @Composable
 fun SereneNavBarVariantPreview() {
     SereneTheme {
-        SereneNavBarVariant()
+//        SereneNavBarVariant()
     }
 }

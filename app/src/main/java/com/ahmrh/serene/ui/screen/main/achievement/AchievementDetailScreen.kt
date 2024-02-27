@@ -87,7 +87,7 @@ fun AchievementDetailScreen() {
 
             ElevatedFilterChip(
                 selected = false,
-                onClick = { /*TODO*/ },
+                onClick = {  },
                 label = {
                     Text("Dec 19, 2023", style = MaterialTheme.typography.titleSmall)
                 })

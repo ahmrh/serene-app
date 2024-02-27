@@ -6,47 +6,69 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import com.ahmrh.serene.ui.theme.SereneTheme
 
 @Composable
-fun SereneAlertDialog(
-    onDismissRequest: () -> Unit,
-    onConfirmation: () -> Unit,
+fun SereneDialog(
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit,
+    dismissText: String? = null,
+    confirmText: String? = null,
     dialogTitle: String,
     dialogText: String,
-    icon: ImageVector,
+    icon: ImageVector? = null,
 ) {
     AlertDialog(
         icon = {
-            Icon(icon, contentDescription = "Example Icon")
+            if (icon != null) {
+                Icon(icon, contentDescription = "Example Icon")
+            }
         },
         title = {
             Text(text = dialogTitle)
         },
         text = {
-            Text(text = dialogText)
+            Text(text = dialogText, textAlign = TextAlign.Justify)
         },
         onDismissRequest = {
-            onDismissRequest()
+            onDismiss()
         },
         confirmButton = {
             TextButton(
                 onClick = {
-                    onConfirmation()
+                    onConfirm()
                 }
             ) {
-                Text("Confirm")
+                Text(confirmText ?: "Confirm")
             }
         },
         dismissButton = {
             TextButton(
                 onClick = {
-                    onDismissRequest()
+                    onDismiss()
                 }
             ) {
-                Text("Dismiss")
+                Text(dismissText ?: "Dismiss")
             }
         }
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SereneDialogPreview() {
+    SereneTheme {
+        SereneDialog(
+            onDismiss = {},
+            onConfirm = {},
+            dialogTitle = "test",
+            dialogText = "text,"
+
+        )
+    }
+
 }
 
 

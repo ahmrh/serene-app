@@ -1,5 +1,6 @@
 package com.ahmrh.serene.ui.screen.main.profile
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,6 +27,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,9 +39,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
+import com.ahmrh.serene.common.state.UiState
+import com.ahmrh.serene.navigation.Destination
 import com.ahmrh.serene.ui.component.AchievementItem
 import com.ahmrh.serene.ui.component.card.StatCard
 import com.ahmrh.serene.ui.component.navbar.SereneNavBar
@@ -47,8 +55,13 @@ import com.ahmrh.serene.ui.theme.SereneTheme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    viewModel: ProfileViewModel = hiltViewModel()
 ) {
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -74,15 +87,89 @@ fun ProfileScreen(
             )
         },
         bottomBar = {
-            SereneNavBar(navController)
+            SereneNavBar(
+                navigateToActivities = {
+                    navController?.navigate(
+                        Destination.ActivityCategory.route
+                    ) {
+                        popUpTo(
+                            navController.graph.findStartDestination().id
+                        ) {
+                            saveState = true
+                        }
+                    }
+                },
+                navigateToProfile = {
+                    navController?.navigate(
+                        Destination.Profile.route){
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                    }
+                },
+                navigateToHome = {
+                    navController?.navigate(
+                        Destination.Home.route){
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                    }
+                },
+                currentDestination = currentDestination
+            )
         }
     ) {
+
         Surface(modifier = Modifier.padding(it)) {
 
             Column(
                 modifier = Modifier
                     .padding(horizontal = 24.dp)
             ) {
+
+//                val selfCareUIState = viewModel.selfCareStartedUiState.collectAsState()
+//
+//                when(selfCareUIState.value){
+//                    is UiState.Success -> {
+//                        val value = (selfCareUIState.value as UiState.Success<Boolean>).data
+//
+//                        Text("Self care started value : $value")
+//
+//
+//                        Button(onClick = {
+//                            viewModel.changeSelfCareStartedValue(!value)
+//                        }) {
+//                            Text("Change Self Care Value")
+//                        }
+//                    }
+//                    else -> {
+//                        Text("Self care started value : loading...")
+//                        Button(onClick = {
+//                        }, enabled = false
+//                        ) {
+//                            Text("Change Self Care Value")
+//                        }
+//                    }
+//                }
+
+
+                val selfCareUIState = viewModel.selfCareStartedUiState.collectAsState()
+
+
+                Text("Self care started value : ${selfCareUIState.value}")
+
+
+
+                Button(onClick = {
+                    if(selfCareUIState.value)
+                        viewModel.clearSelfCareActivityValue()
+                    else
+                        viewModel.changeSelfCareActivityIdValue("random id goes brr")
+                }) {
+                    Text("Toggle Self Care Started Value")
+                }
+
+
                 Row(
                     Modifier
                         .fillMaxWidth()

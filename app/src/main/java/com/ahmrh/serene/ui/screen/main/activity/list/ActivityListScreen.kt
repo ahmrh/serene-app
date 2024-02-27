@@ -124,7 +124,7 @@ fun ActivityListScreenContent(
                         "${category.stringValue}\nSelf-care",
                         style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier
-                            .padding(horizontal = 16.dp)
+                            .padding(horizontal = 24.dp)
                     )
                 }
 
@@ -154,13 +154,14 @@ fun ActivityListScreenContent(
             ) {
             Column(
                 Modifier.padding(vertical = 16.dp)
+
             ){
                 Text(
                     "Activity List",
                     style = MaterialTheme.typography.titleSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .padding(horizontal = 24.dp, vertical = 8.dp)
                 )
 
                 LazyColumn{

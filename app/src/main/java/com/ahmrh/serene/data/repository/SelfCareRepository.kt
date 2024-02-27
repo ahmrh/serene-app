@@ -47,7 +47,6 @@ class SelfCareRepository @Inject constructor(
         }
     }
 
-    // TODO: Make the image work somehow
     fun fetchActivities(
         category: Category
     ): Flow<ResourceState<List<SelfCareActivity>>> =

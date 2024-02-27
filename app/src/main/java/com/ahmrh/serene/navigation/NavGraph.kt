@@ -13,7 +13,7 @@ import com.ahmrh.serene.ui.screen.main.home.HomeScreen
 import com.ahmrh.serene.ui.screen.main.introduction.IntroductionScreen
 import com.ahmrh.serene.ui.screen.main.personalization.ResultScreen
 import com.ahmrh.serene.ui.screen.main.personalization.question.BaseQuestionScreen
-import com.ahmrh.serene.ui.screen.main.practice.PracticeScreen
+import com.ahmrh.serene.ui.screen.main.activity.practice.PracticeScreen
 import com.ahmrh.serene.ui.screen.main.profile.ProfileScreen
 
 
@@ -39,9 +39,9 @@ fun SereneNavGraph(
             ActivityDetailScreen(navController, it.arguments?.getString("activityId") ?: "null")
         }
 
-        composable(Destination.Practice.route){
+        composable(Destination.Practice.route,  arguments =  listOf(navArgument("activityId") { defaultValue = "null" })){
 
-            PracticeScreen(navController)
+            PracticeScreen(navController, it.arguments?.getString("activityId") ?: "null")
         }
 
         composable(Destination.Profile.route){

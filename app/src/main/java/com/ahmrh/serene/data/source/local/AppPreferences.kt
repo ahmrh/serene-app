@@ -10,6 +10,7 @@ import javax.inject.Singleton
 
 //val Context.dataStore: DataStore<Preferences> by preferencesDataStore("preference")
 
+// ! It is not used i think
 @Singleton
 class AppPreferences @Inject constructor(
     @ApplicationContext context: Context

@@ -1,6 +1,7 @@
 package com.ahmrh.serene.ui.screen.main.activity.detail
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,8 +11,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -24,9 +30,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -49,7 +58,10 @@ import com.ahmrh.serene.R
 import com.ahmrh.serene.common.CategoryUtils
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.domain.model.SelfCareActivity
+import com.ahmrh.serene.navigation.Destination
+import com.ahmrh.serene.ui.component.dialog.SereneDialog
 import com.ahmrh.serene.ui.theme.SereneTheme
+import com.ahmrh.serene.ui.theme.backgroundDark
 import kotlin.text.Typography.bullet
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,6 +76,11 @@ fun ActivityDetailScreen(
     viewModel.getActivityDetail(activityId ?: "null")
 
     val activityState = viewModel.activityDetailUiState.collectAsState()
+    val practiceEnabled =
+        viewModel.enabledPracticeButtonUiState.collectAsState().value
+
+    val startedActivityIdState = viewModel.startedActivityIdState.collectAsState()
+
 
     when (activityState.value) {
         is UiState.Loading -> {
@@ -77,14 +94,22 @@ fun ActivityDetailScreen(
         }
 
         is UiState.Success -> {
+            val activity = (activityState.value as UiState.Success).data
+
+            val startedActivityId = startedActivityIdState.value
+
             ActivityDetailContent(
                 navigateBack = {
                     navController.popBackStack()
                 },
                 navigateToPractice = {
-
+                    viewModel.changeStartedActivityIdValue(activity.id)
+                    navController.navigate(
+                        Destination.Practice.createRoute(activity.id)
+                    )
                 },
-                activity = (activityState.value as UiState.Success).data
+                activity = activity,
+                practiceEnabled = if(startedActivityId == activityId) true else practiceEnabled
             )
 
         }
@@ -97,12 +122,42 @@ fun ActivityDetailScreen(
 fun ActivityDetailContent(
     navigateBack: () -> Unit = {},
     navigateToPractice: () -> Unit = {},
-    activity: SelfCareActivity
+    activity: SelfCareActivity,
+    practiceEnabled: Boolean,
 ) {
 
-    // TODO : Fix this so it become like the figma i created yesterday
-
     val category = CategoryUtils.getCategory(activity.category ?: "")
+
+    val openAlertDialog = remember { mutableStateOf(false) }
+
+    when {
+        openAlertDialog.value -> {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(0.5f)),
+
+                ){
+                SereneDialog(
+                    onDismiss = {
+                        openAlertDialog.value = false
+                    },
+                    onConfirm = {
+                        openAlertDialog.value = false
+                        navigateToPractice()
+
+                    },
+                    dialogTitle = "Oops",
+                    dialogText = "It seems another Self-care activity already started, " +
+                            "do you want to practice this activity instead?",
+                    confirmText = "I wanted to try this",
+                    dismissText = "Nope",
+                    icon = Icons.Default.Info
+
+                )
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -167,10 +222,13 @@ fun ActivityDetailContent(
         Surface(
             modifier = Modifier.padding(it),
         ) {
+
+
+
             Column(
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 36.dp)
+                    .padding(horizontal = 24.dp)
+                    .padding(bottom = 20.dp)
                     .fillMaxHeight(),
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
@@ -179,6 +237,9 @@ fun ActivityDetailContent(
                     verticalArrangement = Arrangement.spacedBy(
                         16.dp
                     ),
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                        .weight(weight = 1f, fill = false)
                 ) {
                     Icon(
                         painterResource(
@@ -188,7 +249,8 @@ fun ActivityDetailContent(
                         modifier = Modifier.size(40.dp)
                     )
 
-                    Column {
+                    Column(
+                    ) {
                         Text(
                             "${activity.name}",
                             style = MaterialTheme.typography.titleLarge
@@ -212,7 +274,15 @@ fun ActivityDetailContent(
                     ) {
                         val state = painter.state
                         if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {
-                            Box(Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surfaceColorAtElevation(8.dp)))
+                            Box(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .background(
+                                        MaterialTheme.colorScheme.surfaceColorAtElevation(
+                                            8.dp
+                                        )
+                                    )
+                            )
                         } else {
                             SubcomposeAsyncImageContent()
                         }
@@ -246,7 +316,7 @@ fun ActivityDetailContent(
 
                     Text(
                         "${activity.description}",
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = MaterialTheme.typography.bodyMedium,
                         textAlign = TextAlign.Justify
                     )
 
@@ -275,25 +345,40 @@ fun ActivityDetailContent(
                                 }
                             },
 
-                            style = MaterialTheme.typography.bodyLarge
+                            style = MaterialTheme.typography.bodyMedium,
+                            textAlign = TextAlign.Justify
                         )
 
                     }
 
-
                 }
 
+
+
                 Button(
-                    onClick = navigateToPractice,
-                    modifier = Modifier.fillMaxWidth()
+                    onClick = {
+                        if (practiceEnabled) navigateToPractice()
+                        else {
+                            openAlertDialog.value = true
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                    colors = if (!practiceEnabled) ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.onSurface.copy(
+                            0.12f
+                        ),
+                        contentColor = MaterialTheme.colorScheme.onSurface
+                    ) else ButtonDefaults.buttonColors()
                 ) {
-                    Text("Practice Self-care")
+                    Text(
+                        if (practiceEnabled) "Practice Self-care" else "You still practiced other Self-care"
+                    )
                 }
 
             }
         }
-
     }
+
 }
 
 @Composable

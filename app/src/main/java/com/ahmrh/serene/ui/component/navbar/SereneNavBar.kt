@@ -1,6 +1,12 @@
 package com.ahmrh.serene.ui.component.navbar
 
-import android.util.Log
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -18,107 +24,120 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
 import com.ahmrh.serene.navigation.Destination
 import com.ahmrh.serene.ui.theme.SereneTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun SereneNavBar(
-    navController: NavController = rememberNavController(),
+    navigateToActivities: () -> Unit = {},
+    navigateToProfile: () -> Unit = {},
+    navigateToHome: () -> Unit = {},
+    navigateToPersonalization: () -> Unit = {},
+    navigateToPractice: () -> Unit = {},
+    currentDestination: NavDestination? = null,
+    selfCareStarted: Boolean? = null
 ) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
-
     NavigationBar {
 
         NavigationBarItem(
-            icon = { Icon(Icons.Filled.List, contentDescription = "Activities") },
+            icon = {
+                Icon(
+                    Icons.Filled.List, contentDescription = "Activities"
+                )
+            },
             label = { Text("Activities") },
             selected = currentDestination?.hierarchy?.any { it.route == Destination.ActivityCategory.route } == true,
-            onClick = {
-                navController.navigate(
-                    Destination.ActivityCategory.route){
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                    }
-                }
-            }
+            onClick = navigateToActivities
         )
 
-        if(currentDestination?.hierarchy?.any { it.route == Destination.Home.route } == false){
+        if (currentDestination?.hierarchy?.any { it.route == Destination.Home.route } == false) {
 
             NavigationBarItem(
-                icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
+                icon = {
+                    Icon(
+                        Icons.Filled.Home, contentDescription = "Home"
+                    )
+                },
                 label = { Text("Home") },
                 selected = false,
-                onClick = {
-
-                    navController.navigate(
-                        Destination.Home.route){
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                    }
-                }
+                onClick = navigateToHome
             )
 
         } else {
 
             Box(
                 contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxHeight(),
-            ){
-                SereneButton (
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1f),
+            ) {
+                SereneButton(
                     onClick = {
-                        Log.d("Navigation Bar", "I pressed Self-care button!")
-                        navController.navigate(
-                            Destination.Introduction.createRoute(1))
-                    }
+                       if(selfCareStarted == true) navigateToPractice()
+                        else navigateToPersonalization()
+                    },
+                    selfCareStarted = selfCareStarted ?: false
                 )
             }
         }
 
 
         NavigationBarItem(
-            icon = { Icon(Icons.Filled.Person, contentDescription = "Profile") },
+            icon = {
+                Icon(
+                    Icons.Filled.Person, contentDescription = "Profile"
+                )
+            },
             label = { Text("Profile") },
             selected = currentDestination?.hierarchy?.any { it.route == Destination.Profile.route } == true,
-            onClick = {
-                navController.navigate(
-                    Destination.Profile.route){
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                    }
-                }
-            }
+            onClick = navigateToProfile
         )
 
     }
 }
 
 @Composable
-fun SereneButton(onClick: () -> Unit){
+fun SereneButton(
+    onClick: () -> Unit,
+    selfCareStarted: Boolean
+) {
+    val infiniteTransition = rememberInfiniteTransition(label = "Infinite transition")
+
+    // Animate opacity from 0f to 1f and back continuously
+    val animatedOpacity by infiniteTransition.animateFloat(
+        initialValue = 0.25f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 500),
+            repeatMode = RepeatMode.Reverse
+        ), label = "Opacity Animation"
+    )
+
 
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(100))
+            .background(
+                color = if (selfCareStarted) MaterialTheme.colorScheme.primaryContainer.copy(alpha = animatedOpacity)
+                else Color.Transparent
+            )
             .border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.onSurface,

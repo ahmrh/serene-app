@@ -4,10 +4,13 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class PreferencesRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) {
@@ -15,6 +18,9 @@ class PreferencesRepository @Inject constructor(
         val FIRST_TIME_KEY = booleanPreferencesKey("first_time_key")
         val NOTIFICATION_KEY = booleanPreferencesKey("notification_key")
         val DARK_MODE_KEY = booleanPreferencesKey("dark_mode_key")
+
+        val SELF_CARE_STARTED_KEY = booleanPreferencesKey("self_care_started_key")
+        val STARTED_ACTIVITY_ID_KEY = stringPreferencesKey("started_activity_id_key")
     }
 
     suspend fun changeFirstTimeValue(boolean: Boolean){
@@ -22,6 +28,7 @@ class PreferencesRepository @Inject constructor(
             preferences[FIRST_TIME_KEY] = boolean
         }
     }
+
 
     fun getFirstTimeValue() : Flow<Boolean> =
         dataStore.data.map {preferences ->
@@ -53,5 +60,30 @@ class PreferencesRepository @Inject constructor(
             preferences[DARK_MODE_KEY] ?: false
         }
 
+    suspend fun changeSelfCareStartedValue(boolean: Boolean) {
+        dataStore.edit {preferences ->
+            preferences[SELF_CARE_STARTED_KEY] = boolean
 
+        }
+    }
+    fun getSelfCareStartedValue() : Flow<Boolean> =
+        dataStore.data.map {preferences ->
+            preferences[SELF_CARE_STARTED_KEY] ?: false
+        }
+
+    suspend fun changeStartedActivityIdValue(activityId: String) {
+        dataStore.edit {preferences ->
+            preferences[STARTED_ACTIVITY_ID_KEY] = activityId
+
+        }
+    }
+    suspend fun clearStartedActivityIdValue() {
+        dataStore.edit {preferences ->
+            preferences.remove(STARTED_ACTIVITY_ID_KEY)
+        }
+    }
+    fun getStartedActivityIdValue() : Flow<String?> =
+        dataStore.data.map {preferences ->
+            preferences[STARTED_ACTIVITY_ID_KEY]
+        }
 }

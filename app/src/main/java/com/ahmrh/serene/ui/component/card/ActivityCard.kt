@@ -31,7 +31,7 @@ import com.ahmrh.serene.ui.theme.SereneTheme
 @Composable
 fun ActivityCard(
     modifier: Modifier = Modifier,
-    categoryId: Int = 1,
+    categoryId: Int = 6,
     onClick: () -> Unit = {}
 ) {
 
@@ -45,7 +45,7 @@ fun ActivityCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
         ),
-        modifier = Modifier
+        modifier = modifier
             .clip(RoundedCornerShape(12.dp))
             .clickable { onClick() }
     ){
@@ -83,7 +83,7 @@ fun ActivityCard(
                         .wrapContentSize(
                             unbounded = true
                         )
-                        .size(155.dp)
+                        .height(180.dp)
                 )
             }
         }

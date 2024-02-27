@@ -17,8 +17,8 @@ sealed class Destination(val route: String) {
     data object ActivityDetail: Destination("activity_detail?id={activityId}"){
         fun createRoute(activityId: String) = "activity_detail?id=$activityId"
     }
-    data object Practice: Destination("practice"){
-        fun createRoute(categoryId: Int) = "practice"
+    data object Practice: Destination("practice?id={activityId}"){
+        fun createRoute(activityId: String) = "practice?id=$activityId"
     }
     data object Question: Destination("question")
     data object Result: Destination("result")
