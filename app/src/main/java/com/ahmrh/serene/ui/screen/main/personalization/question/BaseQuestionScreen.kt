@@ -1,6 +1,7 @@
 package com.ahmrh.serene.ui.screen.main.personalization.question
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -44,11 +44,11 @@ import com.ahmrh.serene.ui.theme.SereneTheme
 
 @Composable
 fun BaseQuestionScreen(
-    navController: NavHostController = rememberNavController(),
-    viewModel: PersonalizationViewModel = hiltViewModel()
+    viewModel: PersonalizationViewModel = hiltViewModel(),
+    onNext: () -> Unit = {}
 ) {
 
-    Scaffold{
+    Scaffold {
         Surface(
             modifier = Modifier.padding(it)
         ) {
@@ -79,7 +79,7 @@ fun BaseQuestionScreen(
                     ) {
 
                         Text(
-                            "What self-care category you never done or rarely done in the past few days?",
+                            "What self-care category you never or rarely done in the past few days?",
                             style = MaterialTheme.typography.bodyLarge,
                             textAlign = TextAlign.Justify
                         )
@@ -88,7 +88,41 @@ fun BaseQuestionScreen(
 
                     Divider()
 
-                    BaseQuestionAnswerSection()
+
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(
+                            16.dp
+                        ),
+                        modifier = Modifier
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        for (index in 1..7) {
+
+                            var selectedState by remember {
+                                mutableStateOf(
+                                    false
+                                )
+                            }
+                            val category = CategoryUtils.getCategory(index)
+
+                            BaseQuestionAnswerField(
+                                category = category,
+                                onClick = {
+                                    selectedState = !selectedState
+
+                                    if(!selectedState){
+                                        viewModel.removeLeastPracticedCategory(category)
+                                    } else {
+                                        viewModel.addLeastPracticedCategory(category)
+                                    }
+
+
+                                },
+                                selectedState = selectedState
+                            )
+                        }
+                    }
+
                 }
 
                 Button(
@@ -112,44 +146,20 @@ fun BaseQuestionScreen(
 
 }
 
-@Composable
-fun BaseQuestionAnswerSection() {
-
-
-    Column(
-        verticalArrangement = Arrangement.spacedBy(
-            16.dp
-        ),
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-    ) {
-        for(index in 1..7){
-
-            BaseQuestionAnswerField(
-                category = CategoryUtils.getCategory(
-                    index
-                ),
-            )
-        }
-
-    }
-
-
-}
 
 @Composable
 fun BaseQuestionAnswerField(
     category: Category,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    selectedState: Boolean
 ) {
 
-    var selectedState by remember { mutableStateOf(false) }
     Card(
         modifier = Modifier.clickable {
-            selectedState = !selectedState
+            onClick()
         },
         colors =
-        if(selectedState) CardDefaults.cardColors(
+        if (selectedState) CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer
         ) else CardDefaults.cardColors()
 

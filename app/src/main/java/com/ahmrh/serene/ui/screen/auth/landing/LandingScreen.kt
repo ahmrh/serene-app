@@ -1,4 +1,4 @@
-package com.ahmrh.serene.ui.screen.landing
+package com.ahmrh.serene.ui.screen.auth.landing
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview

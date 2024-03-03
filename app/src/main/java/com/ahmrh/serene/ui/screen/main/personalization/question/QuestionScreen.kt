@@ -39,172 +39,127 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
+import com.ahmrh.serene.domain.model.QuestionType
 import com.ahmrh.serene.navigation.Destination
 import com.ahmrh.serene.ui.screen.main.personalization.PersonalizationViewModel
 import com.ahmrh.serene.ui.theme.SereneTheme
 
-
-enum class QuestionType {
-    SelfCare,
-    Frequency
-}
-
 @Composable
 fun QuestionScreen(
-    navController: NavHostController = rememberNavController(),
-    personalizationViewModel: PersonalizationViewModel = hiltViewModel()
+    questionString: String = "",
+    onNext: () -> Unit = {},
+    onResult: () -> Unit = {},
+    progress: Int = 0,
+    maxProgress: Int = 0,
 ) {
-
-    when(personalizationViewModel.questionTypeState.value){
-        QuestionType.SelfCare -> {
-
-        }
-
-        QuestionType.Frequency -> {
-
-            Scaffold(
-                topBar = {
-                    Row(
-                        Modifier.padding(top = 24.dp)
-                    ) {
-                        IconButton(onClick = {
-
-                        }) {
-                            Icon(
-                                painter = painterResource(
-                                    id = R.drawable.serene_icon_arrow_back
-                                ),
-                                contentDescription = null
-                            )
-                        }
-                    }
-                }
+    Scaffold(
+        topBar = {
+            Row(
+                Modifier.padding(top = 24.dp)
             ) {
+                IconButton(onClick = {
 
-                Surface(
-                    modifier = Modifier.padding(it)
-                ) {
-                    var progress by remember {
-                        mutableStateOf(
-                            1
-                        )
-                    }
-                    val maxProgress = 4
-
-                    Column(
-                        modifier = Modifier
-                            .padding(
-                                horizontal = 24.dp
-                            )
-                            .padding(
-                                top = 18.dp,
-                                bottom = 36.dp
-                            )
-                            .fillMaxHeight(),
-                        Arrangement.SpaceBetween
-                    ) {
-
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(
-                                16.dp
-                            )
-                        ) {
-
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(
-                                    8.dp
-                                )
-                            ) {
-
-                                LinearProgressIndicator(
-                                    progress = (progress / maxProgress.toFloat()),
-                                    modifier = Modifier
-                                        .weight(1f)
-                                )
-                                Text(
-                                    "$progress of $maxProgress",
-                                    style = MaterialTheme.typography.labelMedium
-                                )
-
-                            }
-
-                            Box(
-                                modifier = Modifier.padding(
-                                    vertical = 16.dp
-                                )
-                            ) {
-
-                                Text(
-                                    "If self-care were a magical potion, what ingredients would it contain to perfectly nourish your mind, body, and soul?",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    textAlign = TextAlign.Justify
-                                )
-                            }
-
-
-                            Divider()
-
-                            AnswerSection()
-                        }
-
-                        if (progress >= maxProgress) {
-
-                            Button(
-                                onClick = {
-                                    navController.navigate(
-                                        Destination.Result.route
-                                    ) {
-
-                                        popUpTo(
-                                            navController.graph.findStartDestination().id
-                                        ) {
-                                            saveState =
-                                                true
-                                        }
-                                    }
-                                },
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-
-                                Text("Show Result")
-
-
-                            }
-                        } else {
-
-                            Button(
-                                onClick = {
-                                    progress += 1
-                                },
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-
-                                Text("Next")
-
-
-                            }
-                        }
-                    }
-
+                }) {
+                    Icon(
+                        painter = painterResource(
+                            id = R.drawable.serene_icon_arrow_back
+                        ),
+                        contentDescription = null
+                    )
                 }
-
             }
         }
+    ) {
+
+        Surface(
+            modifier = Modifier.padding(it)
+        ) {
+
+            Column(
+                modifier = Modifier
+                    .padding(
+                        horizontal = 24.dp
+                    )
+                    .padding(
+                        top = 18.dp,
+                        bottom = 36.dp
+                    )
+                    .fillMaxHeight(),
+                Arrangement.SpaceBetween
+            ) {
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(
+                        16.dp
+                    )
+                ) {
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(
+                            8.dp
+                        )
+                    ) {
+
+                        LinearProgressIndicator(
+                            progress = (progress / maxProgress.toFloat()),
+                            modifier = Modifier
+                                .weight(1f)
+
+                        )
+                        Text(
+                            "$progress of $maxProgress",
+                            style = MaterialTheme.typography.labelMedium
+                        )
+
+                    }
+
+                    Box(
+                        modifier = Modifier.padding(
+                            vertical = 16.dp
+                        )
+                    ) {
+
+                        Text(
+                            text = questionString,
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Justify
+                        )
+                    }
+
+
+                    Divider()
+
+                    AnswerSection()
+                }
+
+                Button(
+                    onClick = if(maxProgress < progress) onNext else onResult,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+
+                    Text(
+                        if(progress < maxProgress) "Next" else "Show Result"
+                    )
+                }
+            }
+
+        }
+
     }
 
-
 }
-
 
 @Composable
 fun AnswerSection() {
     val radioOptions = listOf(
-        "Sparkling Gratitude",
-        "Dancing Ginger Glow",
-        "Earthly Clay",
-        "Honeyed Self-Acceptance"
+        "Regularly",
+        "Sometimes",
+        "Occasionally",
+        "Rarely",
+        "Never",
     )
+
     var (selectedOption, onOptionSelected) = remember {
         mutableStateOf(
             radioOptions[0]
@@ -216,6 +171,7 @@ fun AnswerSection() {
         verticalArrangement = Arrangement.spacedBy(
             16.dp
         )
+
     ) {
         radioOptions.forEach { answerText ->
             FrequencyAnswerField(

@@ -7,7 +7,7 @@ import com.ahmrh.serene.common.Category
 import com.ahmrh.serene.common.state.ResourceState
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.domain.model.SelfCareActivity
-import com.ahmrh.serene.domain.usecase.selfcare.SelfCareUseCases
+import com.ahmrh.serene.domain.usecase.selfcare.activity.ActivityUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ActivityListViewModel @Inject constructor(
-    private val selfCareUseCases: SelfCareUseCases
+    private val activityUseCases: ActivityUseCases
 
 ) : ViewModel() {
 
@@ -36,7 +36,7 @@ class ActivityListViewModel @Inject constructor(
             // get data
             Log.d(TAG, "Fetching data for category: $category")
 
-            selfCareUseCases.getActivities(category).collect{
+            activityUseCases.getActivities(category).collect{
                 when(it){
                     is ResourceState.Success -> {
                         _activityListUiState.value = UiState.Success(it.data as List<SelfCareActivity>)

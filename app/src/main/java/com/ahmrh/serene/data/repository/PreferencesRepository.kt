@@ -23,19 +23,19 @@ class PreferencesRepository @Inject constructor(
         val STARTED_ACTIVITY_ID_KEY = stringPreferencesKey("started_activity_id_key")
     }
 
+    // FIRST TIME
     suspend fun changeFirstTimeValue(boolean: Boolean){
         dataStore.edit {preferences ->
             preferences[FIRST_TIME_KEY] = boolean
         }
     }
-
-
     fun getFirstTimeValue() : Flow<Boolean> =
         dataStore.data.map {preferences ->
             preferences[FIRST_TIME_KEY] ?: false
         }
 
 
+    // NOTIFICATION
     suspend fun changeNotificationValue(boolean: Boolean) {
         dataStore.edit {preferences ->
             preferences[NOTIFICATION_KEY] = boolean
@@ -48,7 +48,7 @@ class PreferencesRepository @Inject constructor(
         }
 
 
-
+    // DARK MODE
     suspend fun changeDarkModeValue(boolean: Boolean) {
         dataStore.edit {preferences ->
             preferences[DARK_MODE_KEY] = boolean
@@ -60,6 +60,7 @@ class PreferencesRepository @Inject constructor(
             preferences[DARK_MODE_KEY] ?: false
         }
 
+    // SELF CARE STARTED
     suspend fun changeSelfCareStartedValue(boolean: Boolean) {
         dataStore.edit {preferences ->
             preferences[SELF_CARE_STARTED_KEY] = boolean
@@ -71,6 +72,7 @@ class PreferencesRepository @Inject constructor(
             preferences[SELF_CARE_STARTED_KEY] ?: false
         }
 
+    // STARTED ACTIVITY ID
     suspend fun changeStartedActivityIdValue(activityId: String) {
         dataStore.edit {preferences ->
             preferences[STARTED_ACTIVITY_ID_KEY] = activityId
@@ -86,4 +88,5 @@ class PreferencesRepository @Inject constructor(
         dataStore.data.map {preferences ->
             preferences[STARTED_ACTIVITY_ID_KEY]
         }
+
 }

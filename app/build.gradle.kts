@@ -99,6 +99,7 @@ dependencies {
     // optional - Paging 3 Integration
     implementation("androidx.room:room-paging:$roomVersion")
 
+
     // UI
     implementation(platform("androidx.compose:compose-bom:2023.10.01"))
     implementation("androidx.compose.ui:ui")

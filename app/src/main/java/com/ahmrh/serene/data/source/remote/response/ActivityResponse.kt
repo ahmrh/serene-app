@@ -20,5 +20,9 @@ data class ActivityResponse(
 	val guide: List<String?>? = null,
 
 	@field:SerializedName("benefit")
-	val benefit: List<String?>? = null
+	val benefit: List<String?>? = null,
+
+	@field:SerializedName("question")
+	val question: String? = null,
+
 )

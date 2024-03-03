@@ -1,12 +1,10 @@
-package com.ahmrh.serene.domain.usecase.selfcare
+package com.ahmrh.serene.domain.usecase.selfcare.activity
 
 import com.ahmrh.serene.domain.usecase.selfcare.activity.GetActivitiesUseCase
 import com.ahmrh.serene.domain.usecase.selfcare.activity.GetActivityUseCase
-import com.ahmrh.serene.domain.usecase.selfcare.personalization.PersonalizationUseCase
 import javax.inject.Inject
 
-data class SelfCareUseCases @Inject constructor(
-    val personalize: PersonalizationUseCase,
+data class ActivityUseCases @Inject constructor(
     val getActivities: GetActivitiesUseCase,
     val getActivity: GetActivityUseCase
 )

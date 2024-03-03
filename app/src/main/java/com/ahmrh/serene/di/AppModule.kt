@@ -29,6 +29,7 @@ import javax.inject.Singleton
 object AppModule {
 
 
+
     @Provides
     @Singleton
     fun provideGamificationRepository(
@@ -42,7 +43,11 @@ object AppModule {
     fun providePersonalizationRepository(
         @ApplicationContext context: Context
     ): PersonalizationRepository {
-        return PersonalizationRepository()
+        return PersonalizationRepository(
+            storage = Firebase.storage,
+            firestore = Firebase.firestore
+        )
+
     }
 
     @Provides
@@ -52,7 +57,7 @@ object AppModule {
     ): SelfCareRepository {
         return SelfCareRepository(
             storage = Firebase.storage,
-            db = Firebase.firestore
+            firestore = Firebase.firestore
         )
     }
 

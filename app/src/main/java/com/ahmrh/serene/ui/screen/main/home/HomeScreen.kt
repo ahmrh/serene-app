@@ -71,9 +71,8 @@ fun HomeScreen(
                     }
                 },
                 navigateToPersonalization = {
-
                     navController?.navigate(
-                        Destination.Introduction.createRoute(1))
+                        Destination.Personalization.route)
                 },
                 // TODO : Navigate to practice based on id saved in shared preference
                 navigateToPractice = {

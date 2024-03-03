@@ -21,6 +21,7 @@ sealed class Destination(val route: String) {
         fun createRoute(activityId: String) = "practice?id=$activityId"
     }
     data object Question: Destination("question")
+
     data object Result: Destination("result")
 
     data object Profile: Destination("profile")
@@ -39,4 +40,5 @@ sealed class Destination(val route: String) {
         fun createRoute(index: Int) = "Introduction/$index"
     }
 
+    data object Personalization: Destination("personalization")
 }

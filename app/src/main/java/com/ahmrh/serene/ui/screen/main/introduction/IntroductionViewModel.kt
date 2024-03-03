@@ -18,6 +18,9 @@ class IntroductionViewModel  @Inject constructor(
     val introIndexStateFlow: StateFlow<Int>
         get() = _introIndexStateFlow
 
+    init {
+    }
+
     fun nextIndex(){
          _introIndexStateFlow.value += 1
     }

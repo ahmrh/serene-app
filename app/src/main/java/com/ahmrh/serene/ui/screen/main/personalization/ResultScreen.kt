@@ -42,8 +42,6 @@ fun ResultScreen(
 
     navController: NavHostController = rememberNavController()
 ){
-
-
     Scaffold(
         topBar = {
             Row(
@@ -241,22 +239,37 @@ fun ResultScreenVariant(
 
                 }
 
-                Button(
-                    onClick = {
-                        navController.navigate(
-                            Destination.Home.route){
-
-                            popUpTo(navController.graph.findStartDestination().id) {
-                                saveState = true
-                            }
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth()
+                Column(
+                    modifier = Modifier.padding(16.dp,),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Text("Go to Activities")
+
+                    Text(
+                        text = "This result is based on how well you are performing different a ",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                    )
 
 
+                    Button(
+                        onClick = {
+                            navController.navigate(
+                                Destination.Home.route){
+
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Go to Activities")
+
+
+                    }
                 }
+
             }
 
         }

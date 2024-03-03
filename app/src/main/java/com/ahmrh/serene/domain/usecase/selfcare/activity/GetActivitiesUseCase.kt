@@ -18,4 +18,9 @@ class GetActivitiesUseCase @Inject constructor(
 
 //    operator fun invoke(): Flow<ResourceState<List<SelfCareActivity>>> =
 //        selfCareRepository.fetchActivities()
+
+    operator fun invoke(
+        listSelfCareCategory: List<Category>
+    ): Flow<ResourceState<List<SelfCareActivity>>> =
+        selfCareRepository.fetchActivities(listSelfCareCategory)
 }

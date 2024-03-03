@@ -14,6 +14,7 @@ import com.ahmrh.serene.ui.screen.main.introduction.IntroductionScreen
 import com.ahmrh.serene.ui.screen.main.personalization.ResultScreen
 import com.ahmrh.serene.ui.screen.main.personalization.question.BaseQuestionScreen
 import com.ahmrh.serene.ui.screen.main.activity.practice.PracticeScreen
+import com.ahmrh.serene.ui.screen.main.personalization.PersonalizationScreen
 import com.ahmrh.serene.ui.screen.main.profile.ProfileScreen
 
 
@@ -44,16 +45,14 @@ fun SereneNavGraph(
             PracticeScreen(navController, it.arguments?.getString("activityId") ?: "null")
         }
 
+        composable(Destination.Personalization.route){
+            PersonalizationScreen(navController)
+        }
+
         composable(Destination.Profile.route){
             ProfileScreen(navController)
         }
 
-        composable(Destination.Question.route){
-            BaseQuestionScreen(navController)
-        }
-        composable(Destination.Result.route){
-            ResultScreen(navController)
-        }
 
         composable(Destination.Introduction.route){
             IntroductionScreen(navController)

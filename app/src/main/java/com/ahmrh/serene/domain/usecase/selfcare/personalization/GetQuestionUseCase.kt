@@ -1,5 +1,6 @@
 package com.ahmrh.serene.domain.usecase.selfcare.personalization
 
+import com.ahmrh.serene.common.Category
 import com.ahmrh.serene.common.state.ResourceState
 import com.ahmrh.serene.data.repository.PersonalizationRepository
 import kotlinx.coroutines.flow.Flow
@@ -11,21 +12,10 @@ class GetQuestionUseCase @Inject constructor(
 
 ){
 
-    operator fun invoke(
+    operator fun invoke(): Flow<ResourceState<List<String>>> = repository.fetchQuestions()
 
-    ): Flow<ResourceState<List<String>>> = flow {
-//        try{
-//            repository.getAllQuestionsStream()
-//                .catch{
-//                    throw(it)
-//                }
-//                .collect{
-//                    emit(ResourceState.Success(it))
-//                }
-//        }
-//        catch(e: Exception){
-//            emit(
-//                ResourceState.Error(message = e.localizedMessage ?: "An unexpected error occured"))
-//        }
-    }
+    operator fun invoke(
+        listCategory: List<Category>
+    ) : Flow<ResourceState<List<String>>> = repository.fetchQuestions(listCategory)
+
 }

@@ -1,6 +1,5 @@
 package com.ahmrh.serene.data.repository
 
-import android.net.Uri
 import android.util.Log
 import com.ahmrh.serene.common.Category
 import com.ahmrh.serene.common.state.ResourceState
@@ -20,32 +19,8 @@ import javax.inject.Singleton
 @Singleton
 class SelfCareRepository @Inject constructor(
     private val storage: FirebaseStorage,
-    private val db: FirebaseFirestore
+    private val firestore: FirebaseFirestore
 ) {
-    fun fetchSupportingImageUri(supportingImage: String): Flow<ResourceState<Uri>> = callbackFlow {
-
-        val storageReference = storage.reference
-
-        val imageRef = storageReference.child(
-            "activities/${supportingImage}.png"
-        )
-
-        imageRef.downloadUrl.addOnSuccessListener {
-            trySend(
-                ResourceState.Success(it)
-            )
-        }.addOnFailureListener{ exception ->
-            trySend(
-                ResourceState.Failed(
-                    exception
-                )
-            )
-        }
-
-        awaitClose {
-            close()
-        }
-    }
 
     fun fetchActivities(
         category: Category
@@ -53,12 +28,75 @@ class SelfCareRepository @Inject constructor(
         callbackFlow {
 
             val collectionReference =
-                db.collection("activities")
+                firestore.collection("activities")
 
             val storageReference = storage.reference
 
             collectionReference
                 .whereEqualTo("category", category.stringValue)
+                .get()
+                .addOnSuccessListener { document ->
+                    async {
+                        val activities: List<SelfCareActivity> =
+                            document.map { data ->
+                                val activityResponse =
+                                    data.toObject<ActivityResponse>()
+
+                                val imageRef = storageReference.child(
+                                    "activities/${activityResponse.image}.png"
+                                )
+                                val imageUri = imageRef.downloadUrl.await()
+
+                                SelfCareActivity(
+                                    id = data.id,
+                                    imageUri = imageUri,
+                                    name = activityResponse.name,
+                                    description = activityResponse.description,
+                                    category = activityResponse.category,
+                                    guide = activityResponse.guide,
+                                    benefit = activityResponse.benefit
+                                )
+                            }
+
+                        trySend(
+                            ResourceState.Success(
+                                activities
+                            )
+                        )
+                    }
+
+
+                }
+                .addOnFailureListener { exception ->
+                    trySend(
+                        ResourceState.Failed(
+                            exception
+                        )
+                    )
+                    Log.d(TAG, "Error occurred: $exception")
+                }
+
+            awaitClose {
+                close()
+            }
+        }
+
+    fun fetchActivities(
+        listCategory: List<Category>
+    ): Flow<ResourceState<List<SelfCareActivity>>> =
+        callbackFlow {
+
+            val collectionReference =
+                firestore.collection("activities")
+
+            val storageReference = storage.reference
+
+            val listCategoryString = listCategory.map{ category ->
+                category.stringValue
+            }
+
+            collectionReference
+                .whereIn("category", listCategoryString)
                 .get()
                 .addOnSuccessListener { document ->
                     async {
@@ -161,7 +199,7 @@ class SelfCareRepository @Inject constructor(
             val storageReference = storage.reference
 
             val collectionReference =
-                db.collection("activities")
+                firestore.collection("activities")
 
             collectionReference.document(id).get()
                 .addOnSuccessListener {data ->

@@ -1,7 +1,6 @@
 package com.ahmrh.serene.ui.screen.main.activity.detail
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,7 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -61,7 +59,6 @@ import com.ahmrh.serene.domain.model.SelfCareActivity
 import com.ahmrh.serene.navigation.Destination
 import com.ahmrh.serene.ui.component.dialog.SereneDialog
 import com.ahmrh.serene.ui.theme.SereneTheme
-import com.ahmrh.serene.ui.theme.backgroundDark
 import kotlin.text.Typography.bullet
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -128,34 +125,50 @@ fun ActivityDetailContent(
 
     val category = CategoryUtils.getCategory(activity.category ?: "")
 
-    val openAlertDialog = remember { mutableStateOf(false) }
+    val otherSelfCareStartedAlertDialog = remember { mutableStateOf(false) }
+
+    val startingSelfCareAlertDialog = remember { mutableStateOf(false) }
 
     when {
-        openAlertDialog.value -> {
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(0.5f)),
+        otherSelfCareStartedAlertDialog.value -> {
+            SereneDialog(
+                onDismiss = {
+                    otherSelfCareStartedAlertDialog.value = false
+                },
+                onConfirm = {
+                    otherSelfCareStartedAlertDialog.value = false
+                    navigateToPractice()
 
-                ){
-                SereneDialog(
-                    onDismiss = {
-                        openAlertDialog.value = false
-                    },
-                    onConfirm = {
-                        openAlertDialog.value = false
-                        navigateToPractice()
+                },
+                dialogTitle = "Oops",
+                dialogText = "It seems another Self-care activity already started, " +
+                        "do you want to practice this activity instead?",
+                confirmText = "I wanted to try this",
+                dismissText = "Nope",
+                icon = Icons.Default.Info
 
-                    },
-                    dialogTitle = "Oops",
-                    dialogText = "It seems another Self-care activity already started, " +
-                            "do you want to practice this activity instead?",
-                    confirmText = "I wanted to try this",
-                    dismissText = "Nope",
-                    icon = Icons.Default.Info
+            )
+        }
+    }
 
-                )
-            }
+    when {
+        startingSelfCareAlertDialog.value -> {
+            SereneDialog(
+                onDismiss = {
+                    startingSelfCareAlertDialog.value = false
+                },
+                onConfirm = {
+                    startingSelfCareAlertDialog.value = false
+                    navigateToPractice()
+
+                },
+                dialogTitle = "Hey, ",
+                dialogText = "Do you want to start practicing this Self-care Activity today? You had to finish one first before starting another",
+                confirmText = "Yup",
+                dismissText = "Nah, please take me back",
+                icon = Icons.Default.Info
+
+            )
         }
     }
 
@@ -357,9 +370,11 @@ fun ActivityDetailContent(
 
                 Button(
                     onClick = {
-                        if (practiceEnabled) navigateToPractice()
+                        if (practiceEnabled) {
+                            startingSelfCareAlertDialog.value = true
+                        }
                         else {
-                            openAlertDialog.value = true
+                            otherSelfCareStartedAlertDialog.value = true
                         }
                     },
                     modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
