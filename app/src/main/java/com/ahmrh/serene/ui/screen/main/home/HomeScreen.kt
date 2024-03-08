@@ -1,11 +1,11 @@
 package com.ahmrh.serene.ui.screen.main.home
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -13,6 +13,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -21,10 +23,11 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.ahmrh.serene.common.state.UiState
+import com.ahmrh.serene.common.Category
 import com.ahmrh.serene.navigation.Destination
 import com.ahmrh.serene.ui.component.card.ChallengeCard
 import com.ahmrh.serene.ui.component.card.RecommendationCard
+import com.ahmrh.serene.ui.component.dialog.SereneDialog
 import com.ahmrh.serene.ui.component.navbar.SereneNavBar
 import com.ahmrh.serene.ui.theme.SereneTheme
 
@@ -37,52 +40,103 @@ fun HomeScreen(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    val selfCareStartedUiState = viewModel.selfCareStartedUiState.collectAsState()
-    val startedActivityIdState = viewModel.startedActivityIdState.collectAsState()
+    val selfCareStartedUiState =
+        viewModel.selfCareStartedUiState.collectAsState()
+    val startedActivityIdState =
+        viewModel.startedActivityIdState.collectAsState()
+
+    val personalizationResultState =
+        viewModel.personalizationResultState.collectAsState()
+
+    val personalizationResultDialog = remember { mutableStateOf(false) }
+
+    val navigateToActivities = {
+        navController?.navigate(
+            Destination.ActivityCategory.route
+        ) {
+            popUpTo(
+                navController.graph.findStartDestination().id
+            ) {
+                saveState = true
+            }
+        }
+    }
+    val navigateToProfile = {
+        navController?.navigate(
+            Destination.Profile.route
+        ) {
+            popUpTo(
+                navController.graph.findStartDestination().id
+            ) {
+                saveState = true
+            }
+        }
+    }
+    val navigateToHome = {
+        navController?.navigate(
+            Destination.Home.route
+        ) {
+            popUpTo(
+                navController.graph.findStartDestination().id
+            ) {
+                saveState = true
+            }
+        }
+    }
+    val navigateToPersonalization = {
+        navController?.navigate(
+            Destination.Personalization.route
+        )
+    }
+
+    val navigateToPractice = {
+        val startedActivityId = startedActivityIdState.value
+        if (startedActivityId != null) {
+            navController?.navigate(
+                Destination.Practice.createRoute(
+                    startedActivityId
+                )
+            )
+        }
+    }
+
+    val navigateToResult: (category: Category) -> Unit = {
+        val categoryId = it.id
+
+        navController.navigate(
+            Destination.Result.createRoute(
+                categoryId
+            )
+        )
+
+    }
 
     Scaffold(
         bottomBar = {
             SereneNavBar(
-                navigateToActivities = {
-                    navController?.navigate(
-                        Destination.ActivityCategory.route
-                    ) {
-                        popUpTo(
-                            navController.graph.findStartDestination().id
-                        ) {
-                            saveState = true
-                        }
-                    }
-                },
-                navigateToProfile = {
-                    navController?.navigate(
-                        Destination.Profile.route){
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                    }
-                },
-                navigateToHome = {
-                    navController?.navigate(
-                        Destination.Home.route){
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                    }
-                },
-                navigateToPersonalization = {
-                    navController?.navigate(
-                        Destination.Personalization.route)
-                },
-                // TODO : Navigate to practice based on id saved in shared preference
-                navigateToPractice = {
-                    val startedActivityId = startedActivityIdState.value
-                    if(startedActivityId != null){
-                        navController?.navigate(
-                            Destination.Practice.createRoute(startedActivityId))
 
+                onActivityNavigation = {
+                    navigateToActivities()
+                },
+                onSereneNavigation = {
+                    val selfCareStarted = selfCareStartedUiState.value
+
+                    if (selfCareStarted) navigateToPractice()
+                    else {
+                        if(personalizationResultState.value != null) {
+                            personalizationResultDialog.value = true
+                        } else {
+                            navigateToPersonalization()
+                        }
                     }
                 },
+                onHomeNavigation = {
+                    navigateToHome()
+                },
+                onProfileNavigation = {
+                    navigateToProfile()
+                },
+
                 currentDestination = currentDestination,
                 selfCareStarted = selfCareStartedUiState.value
 
@@ -112,7 +166,7 @@ fun HomeScreen(
                 }
 
 
-                RecommendationSection(navigateToDetail = {activityId ->
+                RecommendationSection(navigateToDetail = { activityId ->
 
                     navController?.navigate(
                         Destination.ActivityDetail.createRoute(activityId)
@@ -132,12 +186,31 @@ fun HomeScreen(
         }
     }
 
+    when {
+        personalizationResultDialog.value -> {
+            SereneDialog(
+                onDismiss = {
+                    personalizationResultDialog.value = false
+                    navigateToResult(personalizationResultState.value!!)
+                },
+                onConfirm = {
+                    personalizationResultDialog.value = false
+                    navigateToPersonalization()
+                },
+                dialogTitle = "Hey, ",
+                dialogText = "It seems you have done personalization before, would you like to see your result or start a new personalization again?",
+                confirmText = "Yep",
+                dismissText = "See my previous result",
+                icon = Icons.Default.Info
+
+            )
+        }
+    }
+
 }
 
 @Composable
 fun RecommendationSection(
-
-    navController: NavHostController? = null,
     navigateToDetail: (id: String) -> Unit = {}
 ) {
 
@@ -192,7 +265,9 @@ fun ChallengesSection() {
             title = "Mind your emotion",
             description = "Do 10 Emotional Self-care today"
         )
+
     }
+
 
 }
 

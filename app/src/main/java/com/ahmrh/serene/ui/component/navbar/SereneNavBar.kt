@@ -51,6 +51,10 @@ fun SereneNavBar(
     navigateToHome: () -> Unit = {},
     navigateToPersonalization: () -> Unit = {},
     navigateToPractice: () -> Unit = {},
+    onProfileNavigation: () -> Unit = {},
+    onActivityNavigation: () -> Unit = {},
+    onSereneNavigation: () -> Unit = {},
+    onHomeNavigation: () -> Unit = {},
     currentDestination: NavDestination? = null,
     selfCareStarted: Boolean? = null
 ) {
@@ -64,7 +68,7 @@ fun SereneNavBar(
             },
             label = { Text("Activities") },
             selected = currentDestination?.hierarchy?.any { it.route == Destination.ActivityCategory.route } == true,
-            onClick = navigateToActivities
+            onClick = onActivityNavigation
         )
 
         if (currentDestination?.hierarchy?.any { it.route == Destination.Home.route } == false) {
@@ -77,7 +81,7 @@ fun SereneNavBar(
                 },
                 label = { Text("Home") },
                 selected = false,
-                onClick = navigateToHome
+                onClick = onHomeNavigation
             )
 
         } else {
@@ -89,10 +93,11 @@ fun SereneNavBar(
                     .weight(1f),
             ) {
                 SereneButton(
-                    onClick = {
-                       if(selfCareStarted == true) navigateToPractice()
-                        else navigateToPersonalization()
-                    },
+//                    onClick = {
+//                       if(selfCareStarted == true) navigateToPractice()
+//                        else navigateToPersonalization()
+//                    },
+                    onClick = onSereneNavigation,
                     selfCareStarted = selfCareStarted ?: false
                 )
             }
@@ -107,7 +112,7 @@ fun SereneNavBar(
             },
             label = { Text("Profile") },
             selected = currentDestination?.hierarchy?.any { it.route == Destination.Profile.route } == true,
-            onClick = navigateToProfile
+            onClick = onProfileNavigation,
         )
 
     }

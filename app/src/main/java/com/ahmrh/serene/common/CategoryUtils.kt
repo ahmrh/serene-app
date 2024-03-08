@@ -9,6 +9,7 @@ object CategoryUtils {
 
     fun getCategory(name: String): Category =
         Category.fromName(name)
+
 }
 
 enum class Category(
@@ -90,6 +91,8 @@ enum class Category(
 
         override fun toString(): String =
             entries.single().stringValue
+
+        fun getId(): Int = entries.single().id
 
     }
 }

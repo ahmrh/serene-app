@@ -36,6 +36,7 @@ import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.domain.model.SelfCareActivity
 import com.ahmrh.serene.navigation.Destination
 import com.ahmrh.serene.ui.component.ActivityItem
+import com.ahmrh.serene.ui.component.CircularLoading
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 @Composable
@@ -52,13 +53,15 @@ fun ActivityListScreen(
 
     when(activityListState.value){
         is UiState.Loading -> {
-            LoadingScreen()
+            CircularLoading()
 
         }
         is UiState.Error -> {
             Text("Error ")
 
         }
+
+        
         is UiState.Success -> {
 
             val activityList = (activityListState.value as UiState.Success<List<SelfCareActivity>>).data
@@ -78,19 +81,6 @@ fun ActivityListScreen(
 
 }
 
-@Composable
-fun LoadingScreen(){
-
-    Surface {
-        Box(
-            Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
-
-        }
-    }
-}
 
 @Composable
 fun ActivityListScreenContent(
@@ -188,6 +178,6 @@ fun ActivityListScreenPreview() {
 
     SereneTheme {
 //        ActivityListScreen()
-        LoadingScreen()
+//        LoadingScreen()
     }
 }

@@ -8,21 +8,53 @@ data class ActivityResponse(
 	val image: String? = null,
 
 	@field:SerializedName("name")
-	val name: String? = null,
+	val name: Name? = null,
 
 	@field:SerializedName("description")
-	val description: String? = null,
+	val description: Description? = null,
 
 	@field:SerializedName("category")
 	val category: String? = null,
 
-	@field:SerializedName("guide")
-	val guide: List<String?>? = null,
-
 	@field:SerializedName("benefit")
-	val benefit: List<String?>? = null,
+	val benefit: Benefit? = null,
 
-	@field:SerializedName("question")
-	val question: String? = null,
+	@field:SerializedName("guide")
+	val guide: Guide? = null
+)
 
+data class Name(
+
+	@field:SerializedName("en")
+	val en: String? = null,
+
+	@field:SerializedName("id")
+	val id: String? = null
+)
+
+data class Benefit(
+
+	@field:SerializedName("en")
+	val en: List<String?>? = null,
+
+	@field:SerializedName("id")
+	val id: List<String?>? = null
+)
+
+data class Description(
+
+	@field:SerializedName("en")
+	val en: String? = null,
+
+	@field:SerializedName("id")
+	val id: String? = null
+)
+
+data class Guide(
+
+	@field:SerializedName("en")
+	val en: List<String?>? = null,
+
+	@field:SerializedName("id")
+	val id: List<String?>? = null
 )

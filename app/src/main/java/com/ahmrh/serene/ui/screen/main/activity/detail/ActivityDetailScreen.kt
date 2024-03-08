@@ -57,6 +57,7 @@ import com.ahmrh.serene.common.CategoryUtils
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.domain.model.SelfCareActivity
 import com.ahmrh.serene.navigation.Destination
+import com.ahmrh.serene.ui.component.CircularLoading
 import com.ahmrh.serene.ui.component.dialog.SereneDialog
 import com.ahmrh.serene.ui.theme.SereneTheme
 import kotlin.text.Typography.bullet
@@ -72,26 +73,16 @@ fun ActivityDetailScreen(
 
     viewModel.getActivityDetail(activityId ?: "null")
 
-    val activityState = viewModel.activityDetailUiState.collectAsState()
+    val activityState = viewModel.activityDetailUiState.collectAsState().value
     val practiceEnabled =
         viewModel.enabledPracticeButtonUiState.collectAsState().value
 
     val startedActivityIdState = viewModel.startedActivityIdState.collectAsState()
 
 
-    when (activityState.value) {
-        is UiState.Loading -> {
-            LoadingScreen()
-
-        }
-
-        is UiState.Error -> {
-            Text("Error ")
-
-        }
-
+    when (activityState) {
         is UiState.Success -> {
-            val activity = (activityState.value as UiState.Success).data
+            val activity = activityState.data
 
             val startedActivityId = startedActivityIdState.value
 
@@ -110,6 +101,16 @@ fun ActivityDetailScreen(
             )
 
         }
+
+        is UiState.Loading -> {
+            CircularLoading()
+        }
+
+        is UiState.Error -> {
+            Text("Error ")
+
+        }
+
     }
 
 }
@@ -396,24 +397,6 @@ fun ActivityDetailContent(
 
 }
 
-@Composable
-fun LoadingScreen() {
-    Surface {
-        Box(
-            Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
-
-        }
-    }
-
-}
-
-@Composable
-fun ErrorDialog() {
-
-}
 
 @Preview(showBackground = true)
 @Composable

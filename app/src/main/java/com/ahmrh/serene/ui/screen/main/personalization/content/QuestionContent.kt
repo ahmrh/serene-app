@@ -1,4 +1,4 @@
-package com.ahmrh.serene.ui.screen.main.personalization.question
+package com.ahmrh.serene.ui.screen.main.personalization.content
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +23,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,31 +36,75 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
-import com.ahmrh.serene.domain.model.QuestionType
-import com.ahmrh.serene.navigation.Destination
+import com.ahmrh.serene.common.Category
+import com.ahmrh.serene.common.CategoryUtils
+import com.ahmrh.serene.common.state.UiState
+import com.ahmrh.serene.domain.model.PersonalizationQuestion
+import com.ahmrh.serene.ui.component.CircularLoading
+import com.ahmrh.serene.ui.screen.main.personalization.FrequencyAnswer
 import com.ahmrh.serene.ui.screen.main.personalization.PersonalizationViewModel
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 @Composable
-fun QuestionScreen(
-    questionString: String = "",
-    onNext: () -> Unit = {},
-    onResult: () -> Unit = {},
-    progress: Int = 0,
-    maxProgress: Int = 0,
+fun QuestionContent(
+    navigateToResult: (category: Category)-> Unit = {},
+    questionList: List<PersonalizationQuestion> = listOf(),
+    viewModel: PersonalizationViewModel? = null,
 ) {
+
+
+    // TODO: idk why the next button doesn't work, gotta fix this
+    var progress by remember { mutableStateOf(1) }
+    val maxProgress = questionList.size
+
+    val questionString = questionList[progress - 1].questionString
+    val questionCategory = CategoryUtils.getCategory( questionList[progress - 1].category ?: "Default")
+
+    val radioOptions = listOf(
+        FrequencyAnswer.REGULARLY.stringValue,
+        FrequencyAnswer.SOMETIMES.stringValue,
+        FrequencyAnswer.OCCASIONALLY.stringValue,
+        FrequencyAnswer.RARELY.stringValue,
+        FrequencyAnswer.NEVER.stringValue,
+    )
+
+    val (selectedOption, onOptionSelected) = remember {
+        mutableStateOf(
+           ""
+        )
+    }
+
+    val onBackPressed = {
+        if(progress == 1) {
+            viewModel?.changeToBaseType()
+        } else {
+            viewModel?.revertAnswerQuestion()
+            progress -= 1
+        }
+    }
+
+//    val resultCategory = viewModel?.resultCategoryState?.collectAsState()?.value
+//    when(resultCategory){
+//        is UiState.Loading -> {
+//            CircularLoading()
+//        }
+//        is UiState.Success -> {
+//            LaunchedEffect(key1 = null) {
+//                navigateToResult(resultCategory.data)
+//            }
+//        }
+//        is UiState.Error -> {}
+//        null -> {}
+//    }
+
     Scaffold(
         topBar = {
             Row(
                 Modifier.padding(top = 24.dp)
             ) {
                 IconButton(onClick = {
-
+                    onBackPressed()
                 }) {
                     Icon(
                         painter = painterResource(
@@ -121,7 +167,7 @@ fun QuestionScreen(
                     ) {
 
                         Text(
-                            text = questionString,
+                            text = "$questionString",
                             style = MaterialTheme.typography.bodyLarge,
                             textAlign = TextAlign.Justify
                         )
@@ -130,16 +176,32 @@ fun QuestionScreen(
 
                     Divider()
 
-                    AnswerSection()
+                    AnswerSection(
+                        selectedAnswer = selectedOption,
+                        onAnswerSelected = onOptionSelected,
+                        answers = radioOptions
+                    )
+
                 }
 
                 Button(
-                    onClick = if(maxProgress < progress) onNext else onResult,
+                    onClick = {
+                        if(progress < maxProgress) {
+                            if(selectedOption == "") return@Button
+                            progress += 1
+                            viewModel?.answerQuestion(questionCategory, selectedOption)
+                            onOptionSelected("")
+                        } else {
+                            viewModel?.calculateResult()
+                            viewModel?.changeToResultType()
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth()
                 ) {
 
                     Text(
-                        if(progress < maxProgress) "Next" else "Show Result"
+                        if(progress < maxProgress) "Next"
+                        else "Show Result"
                     )
                 }
             }
@@ -151,20 +213,11 @@ fun QuestionScreen(
 }
 
 @Composable
-fun AnswerSection() {
-    val radioOptions = listOf(
-        "Regularly",
-        "Sometimes",
-        "Occasionally",
-        "Rarely",
-        "Never",
-    )
-
-    var (selectedOption, onOptionSelected) = remember {
-        mutableStateOf(
-            radioOptions[0]
-        )
-    }
+fun AnswerSection(
+    selectedAnswer: String,
+    onAnswerSelected: (String) -> Unit,
+    answers: List<String>
+) {
 
     Column(
         Modifier.selectableGroup(),
@@ -173,14 +226,13 @@ fun AnswerSection() {
         )
 
     ) {
-        radioOptions.forEach { answerText ->
-            FrequencyAnswerField(
+        answers.forEach { answerText ->
+            QuestionAnswerField(
                 text = answerText,
                 onClick = {
-
-                    onOptionSelected(answerText)
+                    onAnswerSelected(answerText)
                 },
-                isSelected = (answerText == selectedOption)
+                isSelected = (answerText == selectedAnswer)
 
             )
         }
@@ -188,7 +240,7 @@ fun AnswerSection() {
 }
 
 @Composable
-fun FrequencyAnswerField(
+fun QuestionAnswerField(
     text: String = "",
     onClick: () -> Unit = {},
     isSelected : Boolean = false
@@ -227,8 +279,8 @@ fun FrequencyAnswerField(
 
 @Preview(showBackground = true)
 @Composable
-fun QuestionScreenPreview() {
+fun QuestionContentPreview() {
     SereneTheme {
-        QuestionScreen()
+//        QuestionContent()
     }
 }

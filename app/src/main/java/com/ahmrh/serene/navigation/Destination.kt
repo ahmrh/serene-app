@@ -22,7 +22,10 @@ sealed class Destination(val route: String) {
     }
     data object Question: Destination("question")
 
-    data object Result: Destination("result")
+    data object Personalization: Destination("personalization")
+    data object Result: Destination("result?category={categoryId}"){
+        fun createRoute(categoryId: Int) = "result?category=$categoryId"
+    }
 
     data object Profile: Destination("profile")
     data object Setting: Destination("setting")
@@ -40,5 +43,4 @@ sealed class Destination(val route: String) {
         fun createRoute(index: Int) = "Introduction/$index"
     }
 
-    data object Personalization: Destination("personalization")
 }

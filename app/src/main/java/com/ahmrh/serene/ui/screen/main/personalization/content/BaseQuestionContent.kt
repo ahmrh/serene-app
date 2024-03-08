@@ -1,7 +1,7 @@
-package com.ahmrh.serene.ui.screen.main.personalization.question
+package com.ahmrh.serene.ui.screen.main.personalization.content
 
 import android.content.res.Configuration
-import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,18 +35,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.common.Category
 import com.ahmrh.serene.common.CategoryUtils
 import com.ahmrh.serene.ui.screen.main.personalization.PersonalizationViewModel
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 @Composable
-fun BaseQuestionScreen(
-    viewModel: PersonalizationViewModel = hiltViewModel(),
+fun BaseQuestionContent(
+    viewModel: PersonalizationViewModel? = null,
+    onBackHandler: () -> Unit = {},
     onNext: () -> Unit = {}
 ) {
+    BackHandler {
+        onBackHandler()
+    }
 
     Scaffold {
         Surface(
@@ -79,7 +81,7 @@ fun BaseQuestionScreen(
                     ) {
 
                         Text(
-                            "What self-care category you never or rarely done in the past few days?",
+                            "What self-care category you never or rarely done in the past few days? or you just want to try practicing that self care category?",
                             style = MaterialTheme.typography.bodyLarge,
                             textAlign = TextAlign.Justify
                         )
@@ -111,9 +113,9 @@ fun BaseQuestionScreen(
                                     selectedState = !selectedState
 
                                     if(!selectedState){
-                                        viewModel.removeLeastPracticedCategory(category)
+                                        viewModel?.removeLeastPracticedCategory(category)
                                     } else {
-                                        viewModel.addLeastPracticedCategory(category)
+                                        viewModel?.addLeastPracticedCategory(category)
                                     }
 
 
@@ -126,8 +128,7 @@ fun BaseQuestionScreen(
                 }
 
                 Button(
-                    onClick = {
-                    },
+                    onClick = onNext,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp)
@@ -207,9 +208,9 @@ fun BaseQuestionAnswerField(
 )
 @Preview(showBackground = true)
 @Composable
-fun BaseQuestionScreenPreview() {
+fun BaseQuestionContentPreview() {
     SereneTheme {
-        BaseQuestionScreen()
+        BaseQuestionContent()
     }
 
 }

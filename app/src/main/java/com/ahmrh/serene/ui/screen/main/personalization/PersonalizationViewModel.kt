@@ -1,10 +1,15 @@
 package com.ahmrh.serene.ui.screen.main.personalization
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmrh.serene.common.Category
+import com.ahmrh.serene.common.CategoryUtils
 import com.ahmrh.serene.common.state.ResourceState
+import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.data.repository.PreferencesRepository
+import com.ahmrh.serene.domain.model.PersonalizationPoint
+import com.ahmrh.serene.domain.model.PersonalizationQuestion
 import com.ahmrh.serene.domain.usecase.selfcare.personalization.PersonalizationUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,13 +22,13 @@ class PersonalizationViewModel @Inject constructor(
 
     private val preferencesRepository: PreferencesRepository,
     private val personalizationUseCases: PersonalizationUseCases
-): ViewModel() {
+) : ViewModel() {
 
-    companion object{
+    companion object {
         const val TAG = "Personalization View Model"
     }
 
-
+    // Personalization Screen
     private var _personalizationTypeState: MutableStateFlow<PersonalizationType> =
         MutableStateFlow(PersonalizationType.BASE)
 
@@ -31,26 +36,24 @@ class PersonalizationViewModel @Inject constructor(
         get() = _personalizationTypeState
 
 
-    private var _isFirstTimeUsage: MutableStateFlow<Boolean> =
-        MutableStateFlow(false)
-    val isFirstTimeUsage: StateFlow<Boolean>
-        get() = _isFirstTimeUsage
-
-
-    private var _questionIndexState: MutableStateFlow<Int> =
-        MutableStateFlow(0)
-    val questionIndexState: StateFlow<Int>
-        get() = _questionIndexState
-
-
-
-    private var _questionListState: MutableStateFlow<List<String>> =
-        MutableStateFlow(listOf())
-    val questionListState: StateFlow<List<String>>
+    // Frequency Question
+    private var _questionListState: MutableStateFlow<UiState<List<PersonalizationQuestion>>> =
+        MutableStateFlow(UiState.Loading)
+    val questionListState: StateFlow<UiState<List<PersonalizationQuestion>>>
         get() = _questionListState
 
+    private var _personalizationPoint: MutableStateFlow<PersonalizationPoint> =
+        MutableStateFlow(PersonalizationPoint())
+    val personalizationPoint: StateFlow<PersonalizationPoint>
+        get() = _personalizationPoint
+
+    private var _personalizationPointList: MutableList<PersonalizationPoint> =
+        mutableListOf()
+    val personalizationPointList: List<PersonalizationPoint>
+        get() = _personalizationPointList
 
 
+    // Base Question
     private var _leastPracticedCategory: MutableList<Category> =
         mutableListOf()
 
@@ -58,55 +61,143 @@ class PersonalizationViewModel @Inject constructor(
         get() = _leastPracticedCategory
 
 
+    // TODO: idk how but make a firebase to save this result
+    // Result
+    private var _resultCategoryState: MutableStateFlow<Category> =
+        MutableStateFlow(Category.SPIRITUAL)
+
+    val resultCategoryState: StateFlow<Category>
+        get() = _resultCategoryState
 
     init {
-        fetchQuestionList()
+        // TODO: fix this, it shows name instead of question
+
     }
 
-    fun addLeastPracticedCategory(category: Category){
+    fun addLeastPracticedCategory(category: Category) {
         _leastPracticedCategory.add(category)
         println(leastPracticedCategory)
     }
 
-    fun removeLeastPracticedCategory(category: Category){
+    fun removeLeastPracticedCategory(category: Category) {
         _leastPracticedCategory.remove(category)
         println(leastPracticedCategory)
     }
 
+    fun answerQuestion(category: Category, answerString: String) {
+        val personalizationPoint = PersonalizationPoint()
+        val point = when (FrequencyAnswer.fromString(answerString)) {
+            FrequencyAnswer.NEVER -> 5
+            FrequencyAnswer.RARELY -> 4
+            FrequencyAnswer.OCCASIONALLY -> 3
+            FrequencyAnswer.SOMETIMES -> 2
+            FrequencyAnswer.REGULARLY -> 1
+        }
+        when (category) {
+            Category.EMOTIONAL -> personalizationPoint.emotional += point
+            Category.ENVIRONMENTAL -> personalizationPoint.environmental += point
+            Category.PHYSICAL -> personalizationPoint.physical += point
+            Category.RECREATIONAL -> personalizationPoint.recreational += point
+            Category.MENTAL -> personalizationPoint.mental += point
+            Category.SOCIAL -> personalizationPoint.social += point
+            Category.SPIRITUAL -> personalizationPoint.spiritual += point
+        }
 
-    private fun fetchQuestionList(){
-        viewModelScope.launch{
-            personalizationUseCases.getQuestion().collect {
-                when(it){
-                    is ResourceState.Success -> {
-                        _questionListState.value = it.data!!
-                    }
-                    is ResourceState.Failed -> {
-                        throw(it.exception!!)
+        _personalizationPointList.add(personalizationPoint)
+        Log.d(TAG, "$personalizationPointList")
+    }
+
+    fun revertAnswerQuestion() {
+        _personalizationPointList.removeLast()
+        Log.d(TAG, "$personalizationPointList")
+    }
+
+
+    fun fetchQuestionList() {
+        viewModelScope.launch {
+            personalizationUseCases.getQuestion(leastPracticedCategory)
+                .collect {
+
+                    when (it) {
+                        is ResourceState.Success -> {
+                            Log.d(TAG, "${it.data}")
+                            _questionListState.value =
+                                UiState.Success(it.data!!)
+                        }
+
+                        is ResourceState.Failed -> {
+                            _questionListState.value = UiState.Error(
+                                it.exception?.message ?: "Unexpected Error"
+                            )
+                        }
                     }
                 }
-            }
 
         }
     }
 
 
-    fun getQuestionList(questionCategory: List<Category>){
+    // TODO: calculate the result based on the least self care practiced
 
+    fun calculateResult() {
+
+        viewModelScope.launch {
+            val pointSum = mutableListOf(0, 0, 0, 0, 0, 0, 0)
+
+            _personalizationPointList.forEach {
+                pointSum[0] += it.emotional
+                pointSum[1] += it.environmental
+                pointSum[2] += it.mental
+                pointSum[3] += it.physical
+                pointSum[4] += it.recreational
+                pointSum[5] += it.social
+                pointSum[6] += it.spiritual
+            }
+
+            val maxIndex = pointSum.indexOf(pointSum.maxOrNull())
+
+            val category = CategoryUtils.getCategory(maxIndex + 1)
+
+            _resultCategoryState.value = category
+
+            preferencesRepository.changePersonalizationResultValue(
+                category
+            )
+        }
 
     }
 
-    fun changePersonalizationType(){
-        _per
+    fun changeToQuestionType() {
+        _personalizationTypeState.value = PersonalizationType.QUESTION
     }
 
+    fun changeToResultType(){
+        _personalizationTypeState.value = PersonalizationType.RESULT
+    }
 
-
+    fun changeToBaseType() {
+        _personalizationTypeState.value = PersonalizationType.BASE
+    }
 
 }
 
-enum class PersonalizationType{
+enum class PersonalizationType {
     BASE,
-    RESULT,
+
+        RESULT,
     QUESTION
+}
+
+enum class FrequencyAnswer(val stringValue: String) {
+    REGULARLY("Regularly"),
+    SOMETIMES("Sometimes"),
+    OCCASIONALLY("Occasionally"),
+    RARELY("Rarely"),
+    NEVER("Never");
+
+
+    companion object {
+        fun fromString(string: String): FrequencyAnswer =
+            FrequencyAnswer.entries.single { it.stringValue == string }
+    }
 }
