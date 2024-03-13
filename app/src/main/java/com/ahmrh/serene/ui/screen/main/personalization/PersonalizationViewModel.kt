@@ -63,10 +63,10 @@ class PersonalizationViewModel @Inject constructor(
 
     // TODO: idk how but make a firebase to save this result
     // Result
-    private var _resultCategoryState: MutableStateFlow<Category> =
-        MutableStateFlow(Category.SPIRITUAL)
+    private var _resultCategoryState: MutableStateFlow<Int?> =
+        MutableStateFlow(null)
 
-    val resultCategoryState: StateFlow<Category>
+    val resultCategoryState: StateFlow<Int?>
         get() = _resultCategoryState
 
     init {
@@ -142,6 +142,7 @@ class PersonalizationViewModel @Inject constructor(
     fun calculateResult() {
 
         viewModelScope.launch {
+
             val pointSum = mutableListOf(0, 0, 0, 0, 0, 0, 0)
 
             _personalizationPointList.forEach {
@@ -158,7 +159,7 @@ class PersonalizationViewModel @Inject constructor(
 
             val category = CategoryUtils.getCategory(maxIndex + 1)
 
-            _resultCategoryState.value = category
+            _resultCategoryState.value = category.id
 
             preferencesRepository.changePersonalizationResultValue(
                 category
@@ -171,9 +172,9 @@ class PersonalizationViewModel @Inject constructor(
         _personalizationTypeState.value = PersonalizationType.QUESTION
     }
 
-    fun changeToResultType(){
-        _personalizationTypeState.value = PersonalizationType.RESULT
-    }
+//    fun changeToResultType(){
+//        _personalizationTypeState.value = PersonalizationType.RESULT
+//    }
 
     fun changeToBaseType() {
         _personalizationTypeState.value = PersonalizationType.BASE
@@ -183,8 +184,7 @@ class PersonalizationViewModel @Inject constructor(
 
 enum class PersonalizationType {
     BASE,
-
-        RESULT,
+//    RESULT,
     QUESTION
 }
 

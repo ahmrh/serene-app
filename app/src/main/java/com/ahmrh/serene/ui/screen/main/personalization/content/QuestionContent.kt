@@ -1,5 +1,6 @@
 package com.ahmrh.serene.ui.screen.main.personalization.content
 
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,18 +40,16 @@ import androidx.compose.ui.unit.dp
 import com.ahmrh.serene.R
 import com.ahmrh.serene.common.Category
 import com.ahmrh.serene.common.CategoryUtils
-import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.domain.model.PersonalizationQuestion
-import com.ahmrh.serene.ui.component.CircularLoading
 import com.ahmrh.serene.ui.screen.main.personalization.FrequencyAnswer
 import com.ahmrh.serene.ui.screen.main.personalization.PersonalizationViewModel
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 @Composable
 fun QuestionContent(
-    navigateToResult: (category: Category)-> Unit = {},
+    navigateToResult: (int: Int)-> Unit = {},
     questionList: List<PersonalizationQuestion> = listOf(),
-    viewModel: PersonalizationViewModel? = null,
+    viewModel: PersonalizationViewModel
 ) {
 
 
@@ -83,20 +82,6 @@ fun QuestionContent(
             progress -= 1
         }
     }
-
-//    val resultCategory = viewModel?.resultCategoryState?.collectAsState()?.value
-//    when(resultCategory){
-//        is UiState.Loading -> {
-//            CircularLoading()
-//        }
-//        is UiState.Success -> {
-//            LaunchedEffect(key1 = null) {
-//                navigateToResult(resultCategory.data)
-//            }
-//        }
-//        is UiState.Error -> {}
-//        null -> {}
-//    }
 
     Scaffold(
         topBar = {
@@ -183,6 +168,19 @@ fun QuestionContent(
                     )
 
                 }
+                val categoryId = viewModel.resultCategoryState.collectAsState().value
+
+
+                when{
+                    categoryId != null -> {
+                        LaunchedEffect(key1 = categoryId) {
+                            Log.d("PersonalizationQuestion", "category id = ${categoryId}")
+
+                            navigateToResult(categoryId)
+                        }
+
+                    }
+                }
 
                 Button(
                     onClick = {
@@ -192,8 +190,7 @@ fun QuestionContent(
                             viewModel?.answerQuestion(questionCategory, selectedOption)
                             onOptionSelected("")
                         } else {
-                            viewModel?.calculateResult()
-                            viewModel?.changeToResultType()
+                            viewModel.calculateResult()
                         }
                     },
                     modifier = Modifier.fillMaxWidth()
@@ -203,6 +200,7 @@ fun QuestionContent(
                         if(progress < maxProgress) "Next"
                         else "Show Result"
                     )
+                    
                 }
             }
 

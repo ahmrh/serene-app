@@ -36,7 +36,7 @@ import com.ahmrh.serene.ui.theme.SereneTheme
 @Composable
 fun ResultScreen(
     navController: NavHostController,
-    categoryId: Int,
+    categoryId: Int?,
 ){
     val navigateToHome = {
         navController?.navigate(
@@ -69,7 +69,7 @@ fun ResultScreen(
         navigateToHome()
     }
 
-    val category = CategoryUtils.getCategory(categoryId)
+    val category = CategoryUtils.getCategory(categoryId ?: -1)
 
     Scaffold(
         topBar = {

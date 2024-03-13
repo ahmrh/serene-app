@@ -1,16 +1,14 @@
 package com.ahmrh.serene.ui.screen.main.home
 
-import androidx.compose.runtime.MutableState
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmrh.serene.common.Category
-import com.ahmrh.serene.common.state.UiState
+import com.ahmrh.serene.common.CategoryUtils
 import com.ahmrh.serene.data.repository.PreferencesRepository
-import com.ahmrh.serene.domain.model.SelfCareActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,7 +16,6 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository
 ): ViewModel() {
-
 
     private var _selfCareStartedUiState: MutableStateFlow<Boolean> =
         MutableStateFlow(false)
@@ -32,7 +29,6 @@ class HomeViewModel @Inject constructor(
     val startedActivityIdState: StateFlow<String?>
         get() = _startedActivityIdState
 
-
     private var _personalizationResultState: MutableStateFlow<Category?> =
         MutableStateFlow(null)
 
@@ -40,14 +36,8 @@ class HomeViewModel @Inject constructor(
         get() = _personalizationResultState
 
 
-    init {
+    private fun getPersonalizationResult(){
         viewModelScope.launch {
-            // get data
-
-            preferencesRepository.getStartedActivityIdValue().collect{
-                _selfCareStartedUiState.value = it != null
-                _startedActivityIdState.value = it
-            }
 
             preferencesRepository.getPersonalizationResultValue().collect{
                 _personalizationResultState.value  = it
@@ -55,6 +45,25 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun getStartedActivityId(){
+
+        viewModelScope.launch {
+            // get data
+            preferencesRepository.getStartedActivityIdValue().collect{
+                _selfCareStartedUiState.value = it != null
+                _startedActivityIdState.value = it
+            }
+
+        }
+    }
+
+
+    init {
+        getPersonalizationResult()
+        getStartedActivityId()
+
+        Log.d(TAG, "Init : ${personalizationResultState.value} and ${selfCareStartedUiState.value}")
+    }
 
     fun addSelfCareStartedValue() {
         viewModelScope.launch {
@@ -69,5 +78,8 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    companion object{
+        const val TAG = "HomeViewModel"
+    }
 
 }

@@ -46,11 +46,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SereneNavBar(
-    navigateToActivities: () -> Unit = {},
-    navigateToProfile: () -> Unit = {},
-    navigateToHome: () -> Unit = {},
-    navigateToPersonalization: () -> Unit = {},
-    navigateToPractice: () -> Unit = {},
     onProfileNavigation: () -> Unit = {},
     onActivityNavigation: () -> Unit = {},
     onSereneNavigation: () -> Unit = {},

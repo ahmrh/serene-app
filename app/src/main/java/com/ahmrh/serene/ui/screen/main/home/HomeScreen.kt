@@ -111,6 +111,7 @@ fun HomeScreen(
 
     }
 
+
     Scaffold(
         bottomBar = {
             SereneNavBar(
@@ -181,6 +182,8 @@ fun HomeScreen(
 
                 ChallengesSection()
 
+
+                Text("Personalization Result State : ${personalizationResultState.value}")
             }
 
         }
@@ -198,7 +201,7 @@ fun HomeScreen(
                     navigateToPersonalization()
                 },
                 dialogTitle = "Hey, ",
-                dialogText = "It seems you have done personalization before, would you like to see your result or start a new personalization again?",
+                dialogText = "It seems you have done personalization before, would you like to start a new personalization again?",
                 confirmText = "Yep",
                 dismissText = "See my previous result",
                 icon = Icons.Default.Info

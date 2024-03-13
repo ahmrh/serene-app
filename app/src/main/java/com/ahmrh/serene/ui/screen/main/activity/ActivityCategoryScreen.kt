@@ -38,41 +38,62 @@ import com.ahmrh.serene.ui.theme.SereneTheme
 fun ActivityCategoryScreen(
     navController: NavHostController = rememberNavController(),
 ) {
+    val TAG = "ActivityCategoryScreen"
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
+    val navigateToActivities = {
+        navController?.navigate(
+            Destination.ActivityCategory.route
+        ) {
+            popUpTo(
+                navController.graph.findStartDestination().id
+            ) {
+                saveState = true
+            }
+        }
+    }
+    val navigateToProfile = {
+        navController?.navigate(
+            Destination.Profile.route
+        ) {
+            popUpTo(
+                navController.graph.findStartDestination().id
+            ) {
+                saveState = true
+            }
+        }
+    }
+    val navigateToHome = {
+        navController?.navigate(
+            Destination.Home.route
+        ) {
+            popUpTo(
+                navController.graph.findStartDestination().id
+            ) {
+                saveState = true
+            }
+        }
+    }
+
     Scaffold(
         bottomBar = {
             SereneNavBar(
-                navigateToActivities = {
-                    navController?.navigate(
-                        Destination.ActivityCategory.route
-                    ) {
-                        popUpTo(
-                            navController.graph.findStartDestination().id
-                        ) {
-                            saveState = true
-                        }
-                    }
+                onActivityNavigation = {
+                    Log.d(TAG, "Navigate to activity")
+                    navigateToActivities()
                 },
-                navigateToProfile = {
-                    navController?.navigate(
-                        Destination.Profile.route){
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                    }
+                onHomeNavigation = {
+                    Log.d(TAG, "Navigate to home")
+                    navigateToHome()
                 },
-                navigateToHome = {
-                    navController?.navigate(
-                        Destination.Home.route){
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                    }
+                onProfileNavigation = {
+                    Log.d(TAG, "Navigate to profile")
+                    navigateToProfile()
                 },
-                currentDestination = currentDestination
+
+                currentDestination = currentDestination,
             )
         },
         topBar = {

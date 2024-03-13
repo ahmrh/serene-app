@@ -28,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ahmrh.serene.R
 import com.ahmrh.serene.common.Category
+import com.ahmrh.serene.common.CategoryUtils
 import com.ahmrh.serene.ui.screen.main.personalization.PersonalizationViewModel
 import com.ahmrh.serene.ui.theme.SereneTheme
 
@@ -43,7 +44,8 @@ fun ResultContent(
         navigateToHome()
     }
 
-    val category = viewModel.resultCategoryState.collectAsState().value
+    val categoryId = viewModel.resultCategoryState.collectAsState().value!!
+    val category = CategoryUtils.getCategory(categoryId)
 
     Scaffold(
         topBar = {

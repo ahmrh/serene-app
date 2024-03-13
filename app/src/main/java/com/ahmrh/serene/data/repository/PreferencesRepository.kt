@@ -1,5 +1,6 @@
 package com.ahmrh.serene.data.repository
 
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -8,6 +9,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.ahmrh.serene.common.Category
 import com.ahmrh.serene.common.CategoryUtils
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,6 +19,8 @@ class PreferencesRepository @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) {
     companion object {
+        const val TAG = "PreferencesRepository"
+
         val FIRST_TIME_KEY = booleanPreferencesKey("first_time_key")
         val NOTIFICATION_KEY = booleanPreferencesKey("notification_key")
         val DARK_MODE_KEY = booleanPreferencesKey("dark_mode_key")
@@ -54,7 +58,6 @@ class PreferencesRepository @Inject constructor(
         dataStore.data.map { preferences ->
             preferences[NOTIFICATION_KEY] ?: false
         }
-
 
     // DARK MODE
     suspend fun changeDarkModeValue(boolean: Boolean) {
@@ -103,16 +106,17 @@ class PreferencesRepository @Inject constructor(
     // PERSONALIZATION RESULT
     suspend fun changePersonalizationResultValue(category: Category) {
         val categoryString = category.stringValue
+        Log.d(TAG, "Changing personalization result value $categoryString")
         dataStore.edit { preferences ->
             preferences[PERSONALIZATION_RESULT_KEY] = categoryString
         }
     }
 
     fun getPersonalizationResultValue(): Flow<Category?> =
-        dataStore.data.map { preferences ->
-            val categoryString = preferences[PERSONALIZATION_RESULT_KEY]
-            categoryString?.let { CategoryUtils.getCategory(it) }
-        }
+        dataStore.data
+            .map { preferences -> preferences[PERSONALIZATION_RESULT_KEY] }
+            .filterNotNull()
+            .map{ categoryString -> CategoryUtils.getCategory(categoryString)}
 
 
 }

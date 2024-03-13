@@ -56,9 +56,9 @@ fun PersonalizationScreen(
         }
     }
 
-    val navigateToResult: (category: Category) -> Unit = {
+    val navigateToResult: (categoryId: Int) -> Unit = {
         navController.navigate(
-            Destination.Result.createRoute(categoryId = it.id)
+            Destination.Result.createRoute(categoryId = it)
         ) {
             popUpTo(navController.graph.findStartDestination().id) {
                 saveState = true
@@ -117,14 +117,14 @@ fun PersonalizationScreen(
 
         }
 
-        PersonalizationType.RESULT -> {
-            ResultContent(
-                viewModel = viewModel,
-                onClose = { navigateToHome() },
-                navigateToHome = { navigateToHome() },
-                navigateToActivities = navigateToActivities
-            )
-        }
+//        PersonalizationType.RESULT -> {
+//            ResultContent(
+//                viewModel = viewModel,
+//                onClose = { navigateToHome() },
+//                navigateToHome = { navigateToHome() },
+//                navigateToActivities = navigateToActivities
+//            )
+//        }
 
     }
 

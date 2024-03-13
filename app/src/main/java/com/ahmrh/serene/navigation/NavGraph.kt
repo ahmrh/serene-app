@@ -44,7 +44,7 @@ fun SereneNavGraph(
             PracticeScreen(navController, it.arguments?.getString("activityId") ?: "null")
         }
 
-        composable(Destination.Personalization.route,  arguments =  listOf(navArgument("resultCategory") { defaultValue = "null" })){
+        composable(Destination.Personalization.route){
             PersonalizationScreen(navController)
         }
 
@@ -52,8 +52,9 @@ fun SereneNavGraph(
             ProfileScreen(navController)
         }
 
-        composable(Destination.Result.route, arguments = listOf(navArgument("category"){ defaultValue = 1 })){
-            ResultScreen(navController, it.arguments?.getInt("category") ?: 1)
+        composable(Destination.Result.route, arguments = listOf(navArgument("category"){ defaultValue = "1" })){
+
+            ResultScreen(navController, it.arguments?.getString("categoryId")?.toInt() ?: 1)
         }
 
 
