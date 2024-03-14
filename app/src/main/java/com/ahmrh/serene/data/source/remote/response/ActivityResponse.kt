@@ -50,6 +50,7 @@ data class Description(
 	val id: String? = null
 )
 
+
 data class Guide(
 
 	@field:SerializedName("en")

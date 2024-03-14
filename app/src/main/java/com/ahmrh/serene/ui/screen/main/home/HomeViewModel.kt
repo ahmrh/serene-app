@@ -3,8 +3,7 @@ package com.ahmrh.serene.ui.screen.main.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ahmrh.serene.common.Category
-import com.ahmrh.serene.common.CategoryUtils
+import com.ahmrh.serene.common.utils.Category
 import com.ahmrh.serene.data.repository.PreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

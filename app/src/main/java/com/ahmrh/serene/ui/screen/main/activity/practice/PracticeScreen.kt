@@ -43,7 +43,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
-import com.ahmrh.serene.common.CategoryUtils
+import com.ahmrh.serene.common.utils.CategoryUtils
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.domain.model.SelfCareActivity
 import com.ahmrh.serene.navigation.Destination

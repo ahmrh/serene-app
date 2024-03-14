@@ -27,8 +27,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ahmrh.serene.R
-import com.ahmrh.serene.common.Category
-import com.ahmrh.serene.common.CategoryUtils
+import com.ahmrh.serene.common.utils.Category
+import com.ahmrh.serene.common.utils.CategoryUtils
 import com.ahmrh.serene.ui.screen.main.personalization.PersonalizationViewModel
 import com.ahmrh.serene.ui.theme.SereneTheme
 

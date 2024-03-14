@@ -13,6 +13,7 @@ import com.ahmrh.serene.data.repository.PreferencesRepository
 import com.ahmrh.serene.data.repository.SelfCareRepository
 import com.ahmrh.serene.data.repository.UserRepository
 import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.storage
 import dagger.Module
@@ -66,7 +67,9 @@ object AppModule {
     fun provideUserRepository(
         @ApplicationContext context: Context
     ): UserRepository {
-        return UserRepository()
+        return UserRepository(
+            auth = Firebase.auth
+        )
     }
 
     @Provides

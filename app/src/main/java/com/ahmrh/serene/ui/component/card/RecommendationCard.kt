@@ -18,7 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ahmrh.serene.common.CategoryUtils
+import com.ahmrh.serene.common.utils.CategoryUtils
 import com.ahmrh.serene.domain.model.SelfCareActivity
 import com.ahmrh.serene.ui.theme.SereneTheme
 
@@ -29,6 +29,7 @@ fun RecommendationCard(
     onClick: () -> Unit = {}
 ) {
 //    val category = CategoryUtils.getCategory(selfCare.category)
+
     val category = CategoryUtils.getCategory(1)
     ElevatedCard(
         modifier = modifier
@@ -38,8 +39,8 @@ fun RecommendationCard(
                 onClick()
             },
         colors = CardDefaults.cardColors(
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            containerColor = MaterialTheme.colorScheme.primary
         )
     ) {
         Column(

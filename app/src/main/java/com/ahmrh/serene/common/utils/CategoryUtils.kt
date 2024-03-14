@@ -1,4 +1,4 @@
-package com.ahmrh.serene.common
+package com.ahmrh.serene.common.utils
 
 import com.ahmrh.serene.R
 

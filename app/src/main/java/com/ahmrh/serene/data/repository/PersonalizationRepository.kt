@@ -1,10 +1,9 @@
 package com.ahmrh.serene.data.repository
 
 import android.util.Log
-import com.ahmrh.serene.common.Category
-import com.ahmrh.serene.common.Language
+import com.ahmrh.serene.common.utils.Category
+import com.ahmrh.serene.common.utils.Language
 import com.ahmrh.serene.common.state.ResourceState
-import com.ahmrh.serene.data.source.remote.response.ActivityResponse
 import com.ahmrh.serene.data.source.remote.response.QuestionResponse
 import com.ahmrh.serene.domain.model.PersonalizationQuestion
 import com.google.firebase.firestore.FirebaseFirestore

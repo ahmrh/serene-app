@@ -23,7 +23,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.ahmrh.serene.common.Category
+import com.ahmrh.serene.common.utils.Category
 import com.ahmrh.serene.navigation.Destination
 import com.ahmrh.serene.ui.component.card.ChallengeCard
 import com.ahmrh.serene.ui.component.card.RecommendationCard

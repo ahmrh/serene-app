@@ -3,8 +3,8 @@ package com.ahmrh.serene.ui.screen.main.personalization
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ahmrh.serene.common.Category
-import com.ahmrh.serene.common.CategoryUtils
+import com.ahmrh.serene.common.utils.Category
+import com.ahmrh.serene.common.utils.CategoryUtils
 import com.ahmrh.serene.common.state.ResourceState
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.data.repository.PreferencesRepository

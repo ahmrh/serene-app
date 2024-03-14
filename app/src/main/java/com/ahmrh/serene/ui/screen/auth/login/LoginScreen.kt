@@ -25,8 +25,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
 import com.ahmrh.serene.ui.component.textfield.SereneHiddenTextField
 import com.ahmrh.serene.ui.component.textfield.SereneTextField
@@ -34,7 +38,9 @@ import com.ahmrh.serene.ui.theme.SereneTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    navController: NavHostController = rememberNavController(),
+) {
 
     Scaffold(topBar = {
         TopAppBar(
@@ -117,7 +123,7 @@ fun LoginScreen() {
                         })
 
                     TextButton(onClick = {}) {
-                        Text("Forgot password?")
+                        Text("Forgot password?", fontWeight = FontWeight.Bold)
                     }
                 }
 

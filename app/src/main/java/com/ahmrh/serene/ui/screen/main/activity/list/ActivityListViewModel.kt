@@ -3,7 +3,7 @@ package com.ahmrh.serene.ui.screen.main.activity.list
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ahmrh.serene.common.Category
+import com.ahmrh.serene.common.utils.Category
 import com.ahmrh.serene.common.state.ResourceState
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.domain.model.SelfCareActivity

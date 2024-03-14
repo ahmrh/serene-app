@@ -1,4 +1,4 @@
-package com.ahmrh.serene.common
+package com.ahmrh.serene.common.utils
 
 enum class Language(
     val code: String

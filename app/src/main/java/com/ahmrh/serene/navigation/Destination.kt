@@ -4,10 +4,11 @@ sealed class Destination(val route: String) {
     // Authentication
     data object Login: Destination("login")
     data object Register: Destination("register")
+    data object Landing: Destination("landing")
+    data object Recovery: Destination("recovery")
 
 
     // Main Application
-    data object Landing: Destination("landing")
     data object Home: Destination("home")
     data object ActivityCategory: Destination("activity_category")
     data object ActivityList: Destination("activity_list?category={categoryId}"){

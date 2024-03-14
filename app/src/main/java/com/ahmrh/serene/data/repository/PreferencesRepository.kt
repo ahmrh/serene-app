@@ -6,8 +6,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.ahmrh.serene.common.Category
-import com.ahmrh.serene.common.CategoryUtils
+import com.ahmrh.serene.common.utils.Category
+import com.ahmrh.serene.common.utils.CategoryUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
