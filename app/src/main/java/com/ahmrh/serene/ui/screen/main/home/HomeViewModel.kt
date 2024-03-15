@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmrh.serene.common.utils.Category
 import com.ahmrh.serene.data.repository.PreferencesRepository
+import com.ahmrh.serene.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val preferencesRepository: PreferencesRepository
+    private val preferencesRepository: PreferencesRepository,
+    private val userRepository: UserRepository
 ): ViewModel() {
 
     private var _selfCareStartedUiState: MutableStateFlow<Boolean> =
@@ -43,6 +45,7 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
 
     private fun getStartedActivityId(){
 

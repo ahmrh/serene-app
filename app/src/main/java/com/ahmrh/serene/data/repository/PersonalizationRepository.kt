@@ -6,6 +6,10 @@ import com.ahmrh.serene.common.utils.Language
 import com.ahmrh.serene.common.state.ResourceState
 import com.ahmrh.serene.data.source.remote.response.QuestionResponse
 import com.ahmrh.serene.domain.model.PersonalizationQuestion
+import com.ahmrh.serene.domain.model.PersonalizationResult
+import com.ahmrh.serene.domain.model.toMap
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.FirebaseStorage
@@ -13,6 +17,8 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -136,6 +142,26 @@ class PersonalizationRepository @Inject constructor(
             }
         }
 
+    fun savePersonalizationResult(
+        category: Category
+    ){
+        val userId = Firebase.auth.currentUser!!.uid
+        val date = Calendar.getInstance().time;
 
+
+        val personalizationResult = PersonalizationResult(
+            userId,
+            category.stringValue,
+            date
+        )
+        val result = personalizationResult.toMap()
+
+        firestore.collection("personalization_results").document()
+            .set(result)
+            .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
+            .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }
+
+
+    }
 
 }

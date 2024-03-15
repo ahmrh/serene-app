@@ -38,7 +38,7 @@ fun PersonalizationScreen(
 
     val navigateToHome = {
         navController?.navigate(
-            Destination.Home.route
+            Destination.Serene.Home.route
         ) {
             popUpTo(navController.graph.findStartDestination().id) {
                 saveState = true
@@ -47,7 +47,7 @@ fun PersonalizationScreen(
     }
     val navigateToActivities: (category: Category) -> Unit = {
         navController?.navigate(
-            Destination.ActivityList.createRoute(categoryId = it.id)
+            Destination.Serene.ActivityList.createRoute(categoryId = it.id)
         ) {
             popUpTo(navController.graph.findStartDestination().id) {
                 saveState = true
@@ -57,7 +57,7 @@ fun PersonalizationScreen(
 
     val navigateToResult: (categoryId: Int) -> Unit = {
         navController.navigate(
-            Destination.Result.createRoute(categoryId = it)
+            Destination.Serene.Result.createRoute(categoryId = it)
         ) {
             popUpTo(navController.graph.findStartDestination().id) {
                 saveState = true

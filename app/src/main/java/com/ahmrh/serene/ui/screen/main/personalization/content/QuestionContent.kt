@@ -52,7 +52,6 @@ fun QuestionContent(
 ) {
 
 
-    // TODO: idk why the next button doesn't work, gotta fix this
     var progress by remember { mutableStateOf(1) }
     val maxProgress = questionList.size
 

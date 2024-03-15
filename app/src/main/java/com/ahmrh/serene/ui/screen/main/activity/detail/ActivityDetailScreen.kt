@@ -90,7 +90,7 @@ fun ActivityDetailScreen(
                 navigateToPractice = {
                     viewModel.changeStartedActivityIdValue(activity.id)
                     navController.navigate(
-                        Destination.Practice.createRoute(activity.id)
+                        Destination.Serene.Practice.createRoute(activity.id)
                     )
                 },
                 activity = activity,

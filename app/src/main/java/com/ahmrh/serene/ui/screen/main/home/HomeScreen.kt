@@ -1,5 +1,7 @@
 package com.ahmrh.serene.ui.screen.main.home
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -11,11 +13,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -52,7 +56,7 @@ fun HomeScreen(
 
     val navigateToActivities = {
         navController?.navigate(
-            Destination.ActivityCategory.route
+            Destination.Serene.ActivityCategory.route
         ) {
             popUpTo(
                 navController.graph.findStartDestination().id
@@ -63,7 +67,7 @@ fun HomeScreen(
     }
     val navigateToProfile = {
         navController?.navigate(
-            Destination.Profile.route
+            Destination.Serene.Profile.route
         ) {
             popUpTo(
                 navController.graph.findStartDestination().id
@@ -74,7 +78,7 @@ fun HomeScreen(
     }
     val navigateToHome = {
         navController?.navigate(
-            Destination.Home.route
+            Destination.Serene.Home.route
         ) {
             popUpTo(
                 navController.graph.findStartDestination().id
@@ -85,7 +89,7 @@ fun HomeScreen(
     }
     val navigateToPersonalization = {
         navController?.navigate(
-            Destination.Personalization.route
+            Destination.Serene.Personalization.route
         )
     }
 
@@ -93,7 +97,7 @@ fun HomeScreen(
         val startedActivityId = startedActivityIdState.value
         if (startedActivityId != null) {
             navController?.navigate(
-                Destination.Practice.createRoute(
+                Destination.Serene.Practice.createRoute(
                     startedActivityId
                 )
             )
@@ -104,11 +108,17 @@ fun HomeScreen(
         val categoryId = it.id
 
         navController.navigate(
-            Destination.Result.createRoute(
+            Destination.Serene.Result.createRoute(
                 categoryId
             )
         )
 
+    }
+
+    val activity = LocalContext.current as? Activity
+    BackHandler {
+
+        activity?.finish()
     }
 
 
@@ -170,7 +180,7 @@ fun HomeScreen(
                 RecommendationSection(navigateToDetail = { activityId ->
 
                     navController?.navigate(
-                        Destination.ActivityDetail.createRoute(activityId)
+                        Destination.Serene.ActivityDetail.createRoute(activityId)
                     ) {
                         popUpTo(
                             navController.graph.findStartDestination().id

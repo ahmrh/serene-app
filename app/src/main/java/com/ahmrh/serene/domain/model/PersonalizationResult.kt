@@ -5,13 +5,22 @@ import java.util.Date
 
 data class PersonalizationResult (
 
-    // TODO: add user id to make it available to fetch again for registered user, also search how to put this into firebase
-    val resultCategory: String? = null,
+    val userId: String,
 
-    val personalizationPoint: PersonalizationPoint,
+    val category: String,
+
 
     val date: Date
 
 
 )
 
+
+fun PersonalizationResult.toMap(): Map<String, Any> {
+    val map = mutableMapOf<String, Any>()
+    map["userId"] = userId
+    map["category"] = category
+    map["date"] = date.time // Store date as milliseconds since epoch
+
+    return map.toMap()
+}

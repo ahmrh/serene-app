@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
+import com.ahmrh.serene.navigation.Destination
 import com.ahmrh.serene.ui.component.textfield.SereneHiddenTextField
 import com.ahmrh.serene.ui.component.textfield.SereneTextField
 import com.ahmrh.serene.ui.theme.SereneTheme
@@ -40,14 +41,17 @@ import com.ahmrh.serene.ui.theme.SereneTheme
 @Composable
 fun RegisterScreen(
 
-    navController: NavHostController = rememberNavController(),
+    navController: NavHostController
 ) {
-
+    // TODO: Register firebase
     Scaffold(topBar = {
         TopAppBar(
             title = {},
             navigationIcon = {
-                IconButton(onClick = {}) {
+                IconButton(onClick = {
+
+                    navController.popBackStack()
+                }) {
 
                     Icon(
                         painter = painterResource(
@@ -144,6 +148,8 @@ fun RegisterScreen(
                             false
                         )
                     }
+
+
                     SereneHiddenTextField(
                         label = "Confirm Password",
                         value = confirmPasswordValue,
@@ -155,7 +161,13 @@ fun RegisterScreen(
                                 !confirmPasswordVisible
                         })
 
-                    TextButton(onClick = {}) {
+                    TextButton(onClick = {
+                        navController.navigate(Destination.Auth.Login.route){
+                            popUpTo(Destination.Auth.SetUpProfile.route) {
+                                saveState = true
+                            }
+                        }
+                    }) {
                         Text("Already have an account?", fontWeight = FontWeight.Bold)
                     }
                 }
@@ -186,6 +198,6 @@ fun RegisterScreen(
 @Composable
 fun RegisterScreenPreview() {
     SereneTheme {
-        RegisterScreen()
+        RegisterScreen( rememberNavController() )
     }
 }

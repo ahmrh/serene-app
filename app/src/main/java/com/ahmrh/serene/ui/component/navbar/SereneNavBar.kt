@@ -62,11 +62,11 @@ fun SereneNavBar(
                 )
             },
             label = { Text("Activities") },
-            selected = currentDestination?.hierarchy?.any { it.route == Destination.ActivityCategory.route } == true,
+            selected = currentDestination?.hierarchy?.any { it.route == Destination.Serene.ActivityCategory.route } == true,
             onClick = onActivityNavigation
         )
 
-        if (currentDestination?.hierarchy?.any { it.route == Destination.Home.route } == false) {
+        if (currentDestination?.hierarchy?.any { it.route == Destination.Serene.Home.route } == false) {
 
             NavigationBarItem(
                 icon = {
@@ -106,7 +106,7 @@ fun SereneNavBar(
                 )
             },
             label = { Text("Profile") },
-            selected = currentDestination?.hierarchy?.any { it.route == Destination.Profile.route } == true,
+            selected = currentDestination?.hierarchy?.any { it.route == Destination.Serene.Profile.route } == true,
             onClick = onProfileNavigation,
         )
 

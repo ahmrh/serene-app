@@ -67,7 +67,7 @@ fun ActivityListScreen(
                 category = category,
                 activityList = activityList,
                 navigateToDetail = {
-                    navController.navigate(Destination.ActivityDetail.createRoute(it))
+                    navController.navigate(Destination.Serene.ActivityDetail.createRoute(it))
                 },
                 navigateBack = {
                     navController.popBackStack()

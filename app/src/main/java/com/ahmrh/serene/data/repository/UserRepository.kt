@@ -18,59 +18,78 @@ class UserRepository @Inject constructor(
     private val auth: FirebaseAuth
 ) {
 
-    fun createAnonymousAccount(): Flow<ResourceState<AuthResult>> = callbackFlow {
+
+    fun createAnonymousAccount(onResult: (Throwable?) -> Unit) {
 
         auth.signInAnonymously()
-            .addOnSuccessListener {
-                trySend(ResourceState.Success(it))
-            }
-            .addOnFailureListener { exception ->
-                trySend(
-                    ResourceState.Failed(exception)
-                )
-            }
+            .addOnCompleteListener{ onResult(it.exception) }
 
-        awaitClose{ close() }
     }
-
-
-    fun createAccount(email: String, password: String) : Flow<ResourceState<AuthResult>> = callbackFlow {
-    }
-
-     fun authenticate(email: String, password: String): Flow<ResourceState<AuthResult>> = callbackFlow {
+    fun authenticate(email: String, password: String, onResult: (Throwable?) -> Unit) {
         auth.signInWithEmailAndPassword(email, password)
-            .addOnSuccessListener {
-                trySend(ResourceState.Success(it))
-            }
-            .addOnFailureListener { exception ->
-                trySend(
-                    ResourceState.Failed(exception)
-                )
-            }
-
-         awaitClose {
-             close()
-         }
+            .addOnCompleteListener { onResult(it.exception) }
     }
 
-
-    fun linkAccount(email: String, password: String): Flow<ResourceState<AuthResult>> = callbackFlow {
-
+    fun linkAccount(email: String, password: String, onResult: (Throwable?) -> Unit) {
         val credential = EmailAuthProvider.getCredential(email, password)
-        auth.currentUser!!.linkWithCredential(credential)
-            .addOnSuccessListener {
-                trySend(ResourceState.Success(it))
-            }
-            .addOnFailureListener { exception ->
-                trySend(
-                    ResourceState.Failed(exception)
-                )
-            }
 
-        awaitClose {
-            close()
-        }
+        auth.currentUser!!.linkWithCredential(credential)
+            .addOnCompleteListener { onResult(it.exception) }
     }
+
+//    fun createAnonymousAccount(): Flow<ResourceState<AuthResult>> = callbackFlow {
+//
+//        auth.signInAnonymously()
+//            .addOnSuccessListener {
+//                trySend(ResourceState.Success(it))
+//            }
+//            .addOnFailureListener { exception ->
+//                trySend(
+//                    ResourceState.Failed(exception)
+//                )
+//            }
+//
+//        awaitClose{ close() }
+//    }
+
+//    fun createAccount(email: String, password: String) : Flow<ResourceState<AuthResult>> = callbackFlow {
+//
+//    }
+//
+//     fun authenticate(email: String, password: String): Flow<ResourceState<AuthResult>> = callbackFlow {
+//        auth.signInWithEmailAndPassword(email, password)
+//            .addOnSuccessListener {
+//                trySend(ResourceState.Success(it))
+//            }
+//            .addOnFailureListener { exception ->
+//                trySend(
+//                    ResourceState.Failed(exception)
+//                )
+//            }
+//
+//         awaitClose {
+//             close()
+//         }
+//    }
+//
+//
+//    fun linkAccount(email: String, password: String): Flow<ResourceState<AuthResult>> = callbackFlow {
+//
+//        val credential = EmailAuthProvider.getCredential(email, password)
+//        auth.currentUser!!.linkWithCredential(credential)
+//            .addOnSuccessListener {
+//                trySend(ResourceState.Success(it))
+//            }
+//            .addOnFailureListener { exception ->
+//                trySend(
+//                    ResourceState.Failed(exception)
+//                )
+//            }
+//
+//        awaitClose {
+//            close()
+//        }
+//    }
 
 //    fun authenticateWithGoogle() {
 //

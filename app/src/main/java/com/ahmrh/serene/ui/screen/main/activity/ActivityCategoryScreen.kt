@@ -45,7 +45,7 @@ fun ActivityCategoryScreen(
 
     val navigateToActivities = {
         navController?.navigate(
-            Destination.ActivityCategory.route
+            Destination.Serene.ActivityCategory.route
         ) {
             popUpTo(
                 navController.graph.findStartDestination().id
@@ -56,7 +56,7 @@ fun ActivityCategoryScreen(
     }
     val navigateToProfile = {
         navController?.navigate(
-            Destination.Profile.route
+            Destination.Serene.Profile.route
         ) {
             popUpTo(
                 navController.graph.findStartDestination().id
@@ -67,7 +67,7 @@ fun ActivityCategoryScreen(
     }
     val navigateToHome = {
         navController?.navigate(
-            Destination.Home.route
+            Destination.Serene.Home.route
         ) {
             popUpTo(
                 navController.graph.findStartDestination().id
@@ -139,7 +139,7 @@ fun ActivityCategoryScreen(
                             categoryId = index + 1,
                             onClick = {
                                 navController.navigate(
-                                    Destination.ActivityList.createRoute(
+                                    Destination.Serene.ActivityList.createRoute(
                                         categoryId = index + 1
                                     )
                                 )

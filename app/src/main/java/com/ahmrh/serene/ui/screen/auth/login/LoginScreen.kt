@@ -28,10 +28,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
+import com.ahmrh.serene.navigation.Destination
 import com.ahmrh.serene.ui.component.textfield.SereneHiddenTextField
 import com.ahmrh.serene.ui.component.textfield.SereneTextField
 import com.ahmrh.serene.ui.theme.SereneTheme
@@ -42,6 +42,8 @@ fun LoginScreen(
     navController: NavHostController = rememberNavController(),
 ) {
 
+    // TODO: Login firebase
+    
     Scaffold(topBar = {
         TopAppBar(
             title = {},
@@ -111,19 +113,38 @@ fun LoginScreen(
                             false
                         )
                     }
-                    SereneHiddenTextField(
-                        label = "Password",
-                        value = passwordValue,
-                        visible = passwordVisible,
-                        onValueChange = {
-                            passwordValue = it
-                        }, onVisibilityChange = {
-                            passwordVisible =
-                                !passwordVisible
-                        })
 
-                    TextButton(onClick = {}) {
-                        Text("Forgot password?", fontWeight = FontWeight.Bold)
+                    Column(
+                        horizontalAlignment = Alignment.End,
+                        ) {
+
+                        SereneHiddenTextField(
+                            label = "Password",
+                            value = passwordValue,
+                            visible = passwordVisible,
+                            onValueChange = {
+                                passwordValue = it
+                            }, onVisibilityChange = {
+                                passwordVisible =
+                                    !passwordVisible
+                            })
+
+                        TextButton(onClick = {
+
+                            navController.navigate(Destination.Auth.ForgotPassword.route)
+                        }) {
+                            Text("Forgot password?", fontWeight = FontWeight.Bold)
+                        }
+                    }
+
+                    TextButton(onClick = {
+                        navController.navigate(Destination.Auth.Register.route){
+                            popUpTo(Destination.Auth.SetUpProfile.route) {
+                                saveState = true
+                            }
+                        }
+                    }) {
+                        Text("Don't have an account?", fontWeight = FontWeight.Bold)
                     }
                 }
 

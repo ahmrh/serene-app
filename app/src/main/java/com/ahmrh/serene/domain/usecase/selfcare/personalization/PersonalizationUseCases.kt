@@ -5,4 +5,5 @@ import javax.inject.Inject
 data class PersonalizationUseCases @Inject constructor(
     val getResult: GetResultUseCase,
     val getQuestion: GetQuestionUseCase,
+    val savePersonalizationResult: SavePersonalizationResultUseCase
 )

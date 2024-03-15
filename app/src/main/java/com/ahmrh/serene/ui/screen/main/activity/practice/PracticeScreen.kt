@@ -70,7 +70,7 @@ fun PracticeScreen(
                 activity = activity,
                 onPracticeDone = {
                     viewModel.clearSelfCareActivityValue()
-                    navController.navigate(Destination.Home.route)
+                    navController.navigate(Destination.Serene.Home.route)
                 }
             )
         }

@@ -46,7 +46,6 @@ fun IntroductionScreen(
     navController: NavController = rememberNavController(),
     viewModel: IntroductionViewModel = hiltViewModel()
 ) {
-    // TODO : create introduction TLDR if user is not first time for personalization purpose
     val index = viewModel.introIndexStateFlow.collectAsState().value
 
     val interactionSource = remember { MutableInteractionSource() }
@@ -56,7 +55,7 @@ fun IntroductionScreen(
     BackHandler{
         if(index == 0)
             navController?.navigate(
-                Destination.Home.route){
+                Destination.Serene.Home.route){
                 popUpTo(navController.graph.findStartDestination().id) {
                     saveState = true
                 }
@@ -87,7 +86,7 @@ fun IntroductionScreen(
                     if(index < 9)
                         viewModel.nextIndex()
                     else
-                        navController.navigate(Destination.Personalization.route)
+                        navController.navigate(Destination.Serene.Personalization.route)
 
                 }
         ) {

@@ -61,7 +61,6 @@ class PersonalizationViewModel @Inject constructor(
         get() = _leastPracticedCategory
 
 
-    // TODO: idk how but make a firebase to save this result
     // Result
     private var _resultCategoryState: MutableStateFlow<Int?> =
         MutableStateFlow(null)
@@ -69,10 +68,6 @@ class PersonalizationViewModel @Inject constructor(
     val resultCategoryState: StateFlow<Int?>
         get() = _resultCategoryState
 
-    init {
-        // TODO: fix this, it shows name instead of question
-
-    }
 
     fun addLeastPracticedCategory(category: Category) {
         _leastPracticedCategory.add(category)
@@ -137,8 +132,6 @@ class PersonalizationViewModel @Inject constructor(
     }
 
 
-    // TODO: calculate the result based on the least self care practiced
-
     fun calculateResult() {
 
         viewModelScope.launch {
@@ -164,6 +157,7 @@ class PersonalizationViewModel @Inject constructor(
             preferencesRepository.changePersonalizationResultValue(
                 category
             )
+            personalizationUseCases.savePersonalizationResult(category)
         }
 
     }

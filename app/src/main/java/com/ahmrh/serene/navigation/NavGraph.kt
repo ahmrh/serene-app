@@ -4,10 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ahmrh.serene.ui.screen.auth.landing.LandingScreen
+import com.ahmrh.serene.ui.screen.auth.setup_profile.SetUpProfileScreen
 import com.ahmrh.serene.ui.screen.auth.login.LoginScreen
+import com.ahmrh.serene.ui.screen.auth.forgot_password.ForgotPasswordScreen
+import com.ahmrh.serene.ui.screen.auth.register.RegisterScreen
 import com.ahmrh.serene.ui.screen.main.activity.ActivityCategoryScreen
 import com.ahmrh.serene.ui.screen.main.activity.detail.ActivityDetailScreen
 import com.ahmrh.serene.ui.screen.main.activity.list.ActivityListScreen
@@ -23,60 +27,73 @@ import com.ahmrh.serene.ui.screen.main.result.ResultScreen
 fun SereneNavGraph(
     navController: NavHostController = rememberNavController(),
 ){
-    NavHost(navController = navController, startDestination = Destination.Home.route) {
-        composable(Destination.Home.route){
-            HomeScreen(navController)
+    NavHost(navController = navController, startDestination = Destination.Auth.route) {
+        navigation(startDestination = Destination.Auth.Landing.route, route = Destination.Auth.route){
+
+            composable(Destination.Auth.Landing.route){
+                LandingScreen(navController)
+            }
+
+            composable(Destination.Auth.SetUpProfile.route){
+                SetUpProfileScreen(navController)
+            }
+
+            composable(Destination.Auth.Login.route){
+                LoginScreen(navController)
+            }
+
+            composable(Destination.Auth.ForgotPassword.route){
+                ForgotPasswordScreen(navController)
+            }
+
+            composable(Destination.Auth.Register.route){
+                RegisterScreen(navController)
+            }
+
         }
 
-        composable(Destination.ActivityCategory.route){
-            ActivityCategoryScreen(navController)
-        }
-        composable(Destination.ActivityList.route,  arguments = listOf(navArgument("categoryId") { defaultValue = "1" })){
+        navigation(startDestination = Destination.Serene.Home.route, route = Destination.Serene.route){
+            composable(Destination.Serene.Home.route){
+                HomeScreen(navController)
+            }
 
-            ActivityListScreen(navController, it.arguments?.getString("categoryId")?.toInt() ?: 1)
-        }
+            composable(Destination.Serene.ActivityCategory.route){
+                ActivityCategoryScreen(navController)
+            }
+            composable(Destination.Serene.ActivityList.route,  arguments = listOf(navArgument("categoryId") { defaultValue = "1" })){
 
-        composable(Destination.ActivityDetail.route, arguments =  listOf(navArgument("activityId") { defaultValue = "null" })){
-            ActivityDetailScreen(navController, it.arguments?.getString("activityId") ?: "null")
-        }
+                ActivityListScreen(navController, it.arguments?.getString("categoryId")?.toInt() ?: 1)
+            }
 
-        composable(Destination.Practice.route,  arguments =  listOf(navArgument("activityId") { defaultValue = "null" })){
+            composable(Destination.Serene.ActivityDetail.route, arguments =  listOf(navArgument("activityId") { defaultValue = "null" })){
+                ActivityDetailScreen(navController, it.arguments?.getString("activityId") ?: "null")
+            }
 
-            PracticeScreen(navController, it.arguments?.getString("activityId") ?: "null")
-        }
+            composable(Destination.Serene.Practice.route,  arguments =  listOf(navArgument("activityId") { defaultValue = "null" })){
 
-        composable(Destination.Personalization.route){
-            PersonalizationScreen(navController)
-        }
+                PracticeScreen(navController, it.arguments?.getString("activityId") ?: "null")
+            }
 
-        composable(Destination.Profile.route){
-            ProfileScreen(navController)
-        }
+            composable(Destination.Serene.Personalization.route){
+                PersonalizationScreen(navController)
+            }
 
-        composable(Destination.Result.route, arguments = listOf(navArgument("category"){ defaultValue = "1" })){
+            composable(Destination.Serene.Profile.route){
+                ProfileScreen(navController)
+            }
 
-            ResultScreen(navController, it.arguments?.getString("categoryId")?.toInt() ?: 1)
-        }
+            composable(Destination.Serene.Result.route, arguments = listOf(navArgument("category"){ defaultValue = "1" })){
 
-        composable(Destination.Introduction.route){
-            IntroductionScreen(navController)
-        }
+                ResultScreen(navController, it.arguments?.getString("categoryId")?.toInt() ?: 1)
+            }
 
-        composable(Destination.Landing.route){
-            LandingScreen(navController)
-        }
-
-        composable(Destination.Login.route){
-            LoginScreen(navController)
+            composable(Destination.Serene.Introduction.route){
+                IntroductionScreen(navController)
+            }
         }
 
-        composable(Destination.Recovery.route){
-            LoginScreen(navController)
-        }
 
-        composable(Destination.Register.route){
-            LoginScreen(navController)
-        }
+
     }
 
 }
