@@ -37,6 +37,10 @@ class UserRepository @Inject constructor(
             .addOnCompleteListener { onResult(it.exception) }
     }
 
+    fun createAccount(email: String, password: String, onResult: (Throwable?) -> Unit) {
+        auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { onResult(it.exception) }
+    }
+
 //    fun createAnonymousAccount(): Flow<ResourceState<AuthResult>> = callbackFlow {
 //
 //        auth.signInAnonymously()

@@ -31,6 +31,7 @@ fun SereneTextField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(label) },
+        supportingText = {}
         
     )
 }

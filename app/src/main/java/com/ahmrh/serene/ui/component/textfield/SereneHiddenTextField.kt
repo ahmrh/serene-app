@@ -1,18 +1,20 @@
 package com.ahmrh.serene.ui.component.textfield
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 
@@ -24,11 +26,17 @@ fun SereneHiddenTextField(
     visible: Boolean,
     onValueChange: (String) -> Unit,
     onVisibilityChange: () -> Unit,
-    onClick: () -> Unit = {}
+    isError: Boolean,
+    errorText: String,
 ) {
 
+
+    var isFocused by rememberSaveable { mutableStateOf(false) }
     OutlinedTextField(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth()
+            .onFocusChanged {focusState ->
+                isFocused = focusState.isFocused
+            },
         visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
         value = value,
         onValueChange = onValueChange,
@@ -44,6 +52,10 @@ fun SereneHiddenTextField(
                 )
 
             }
+        },
+        isError = isFocused && isError,
+        supportingText = {
+            if(isError && isFocused) Text(errorText)
         }
     )
 }

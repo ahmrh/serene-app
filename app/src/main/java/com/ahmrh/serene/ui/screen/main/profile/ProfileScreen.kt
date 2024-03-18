@@ -109,7 +109,13 @@ fun ProfileScreen(
                     )
                 },
                 actions = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = {
+                        navController.navigate(Destination.Serene.Setting.route){
+                            popUpTo(Destination.Auth.route){
+                                inclusive = true
+                            }
+                        }
+                    }) {
                         Icon(
                             painterResource(id = R.drawable.serene_icon_setting),
                             contentDescription = null
@@ -175,22 +181,6 @@ fun ProfileScreen(
 //                    }
 //                }
 
-
-                val selfCareUIState = viewModel.selfCareStartedUiState.collectAsState()
-
-
-                Text("Self care started value : ${selfCareUIState.value}")
-
-
-
-                Button(onClick = {
-                    if(selfCareUIState.value)
-                        viewModel.clearSelfCareActivityValue()
-                    else
-                        viewModel.changeSelfCareActivityIdValue("random id goes brr")
-                }) {
-                    Text("Toggle Self Care Started Value")
-                }
 
 
                 Row(

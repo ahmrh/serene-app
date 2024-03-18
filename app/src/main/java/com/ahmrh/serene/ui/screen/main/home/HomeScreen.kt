@@ -13,7 +13,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,6 +39,7 @@ fun HomeScreen(
     navController: NavHostController = rememberNavController(),
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
+    val currentUser = viewModel.currentUser.collectAsState().value
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -171,7 +171,7 @@ fun HomeScreen(
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Text(
-                        "Mr. Hyobanshi",
+                        currentUser?.uid ?: "No UID",
                         style = MaterialTheme.typography.titleMedium
                     )
                 }
@@ -215,7 +215,6 @@ fun HomeScreen(
                 confirmText = "Yep",
                 dismissText = "See my previous result",
                 icon = Icons.Default.Info
-
             )
         }
     }

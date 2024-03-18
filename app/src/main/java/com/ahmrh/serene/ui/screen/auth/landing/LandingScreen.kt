@@ -45,11 +45,10 @@ fun LandingScreen(
     Scaffold {
         Surface(modifier = Modifier.padding(it)) {
             if (isLoggedIn) {
-                LaunchedEffect(key1 = isLoggedIn) {
-
+                LaunchedEffect(key1 = null) {
                     navController.navigate(Destination.Serene.route) {
                         popUpTo(
-                            Destination.Serene.route
+                            Destination.Auth.route
                         ) {
                             inclusive =
                                 true
@@ -57,8 +56,6 @@ fun LandingScreen(
                     }
                 }
             } else {
-
-
                 Column(
                     modifier = Modifier
                         .padding(horizontal = 24.dp)
@@ -67,13 +64,11 @@ fun LandingScreen(
                     verticalArrangement = Arrangement.SpaceBetween,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
+
                     ) {
-
-
                         Spacer(
                             modifier = Modifier.height(80.dp)
                         )

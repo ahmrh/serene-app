@@ -37,7 +37,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
+import com.ahmrh.serene.navigation.Destination
 import com.ahmrh.serene.ui.component.textfield.SereneButtonTextField
 import com.ahmrh.serene.ui.component.textfield.SereneHiddenTextField
 import com.ahmrh.serene.ui.component.textfield.SereneTextField
@@ -45,13 +49,18 @@ import com.ahmrh.serene.ui.theme.SereneTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingScreen() {
+fun SettingScreen(
+    navController: NavHostController,
+    viewModel: SettingViewModel = hiltViewModel()
+) {
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {}, navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = {
+                        navController.popBackStack()
+                    }) {
 
                         Icon(
                             painter = painterResource(
@@ -138,7 +147,17 @@ fun SettingScreen() {
                 )
 
                 Button(
-                    onClick = {},
+                    onClick = {
+                        viewModel.signOut()
+                        navController.navigate(Destination.Auth.route){
+                            popUpTo(
+                                Destination.Serene.route
+                            ) {
+                                inclusive =
+                                    true
+                            }
+                        }
+                    },
                     Modifier.fillMaxWidth()
                 ) {
                     Text("Sign Out")
@@ -239,7 +258,7 @@ fun SettingScreen() {
 @Composable
 fun SettingScreenPreview() {
     SereneTheme {
-        SettingScreen()
+        SettingScreen(navController = rememberNavController())
     }
 
 }

@@ -36,21 +36,25 @@ fun SereneDialog(
             onDismiss()
         },
         confirmButton = {
-            TextButton(
-                onClick = {
-                    onConfirm()
+            confirmText?.let{
+                TextButton(
+                    onClick = {
+                        onConfirm()
+                    }
+                ) {
+                    Text(confirmText )
                 }
-            ) {
-                Text(confirmText ?: "Confirm")
             }
         },
         dismissButton = {
-            TextButton(
-                onClick = {
-                    onDismiss()
+            dismissText?.let {
+                TextButton(
+                    onClick = {
+                        onDismiss()
+                    }
+                ) {
+                    Text(dismissText)
                 }
-            ) {
-                Text(dismissText ?: "Dismiss")
             }
         }
     )

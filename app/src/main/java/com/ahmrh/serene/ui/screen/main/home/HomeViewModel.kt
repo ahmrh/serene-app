@@ -6,6 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.ahmrh.serene.common.utils.Category
 import com.ahmrh.serene.data.repository.PreferencesRepository
 import com.ahmrh.serene.data.repository.UserRepository
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,6 +38,11 @@ class HomeViewModel @Inject constructor(
 
     val personalizationResultState: StateFlow<Category?>
         get() = _personalizationResultState
+
+    private var _currentUser: MutableStateFlow<FirebaseUser?> = MutableStateFlow(Firebase.auth.currentUser)
+
+    val currentUser: StateFlow<FirebaseUser?>
+        get() = _currentUser
 
 
     private fun getPersonalizationResult(){

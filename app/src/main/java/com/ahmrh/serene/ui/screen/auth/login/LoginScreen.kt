@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -18,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,39 +31,68 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
+import com.ahmrh.serene.common.state.AuthUiState
 import com.ahmrh.serene.navigation.Destination
+import com.ahmrh.serene.ui.component.dialog.SereneDialog
+import com.ahmrh.serene.ui.component.textfield.SereneEmailTextField
 import com.ahmrh.serene.ui.component.textfield.SereneHiddenTextField
+import com.ahmrh.serene.ui.component.textfield.SerenePasswordTextField
 import com.ahmrh.serene.ui.component.textfield.SereneTextField
+import com.ahmrh.serene.ui.screen.main.activity.practice.LoadingContent
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
     navController: NavHostController = rememberNavController(),
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
 
-    // TODO: Login firebase
-    
-    Scaffold(topBar = {
-        TopAppBar(
-            title = {},
-            navigationIcon = {
-                IconButton(onClick = {}) {
+    var uiState = viewModel.uiState.value
+    var openErrorDialog by remember{ mutableStateOf(false) }
 
-                    Icon(
-                        painter = painterResource(
-                            id = R.drawable.serene_icon_arrow_back
-                        ),
-                        contentDescription = null,
-                    )
 
-                }
-            },
+    var emailValue by remember {
+        mutableStateOf(
+            ""
         )
-    }) {
+    }
+    var passwordValue by remember {
+        mutableStateOf(
+            ""
+        )
+    }
+    var passwordVisible by remember {
+        mutableStateOf(
+            false
+        )
+    }
+
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { },
+                navigationIcon = {
+                    IconButton(onClick = {}) {
+
+                        Icon(
+                            painter = painterResource(
+                                id = R.drawable.serene_icon_arrow_back
+                            ),
+                            contentDescription = null,
+                        )
+
+                    }
+                },
+            )
+        }
+    )
+    {
         Column(
             Modifier
                 .padding(it)
@@ -70,7 +102,6 @@ fun LoginScreen(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-
                 Text(
                     "Login",
                     style = MaterialTheme.typography.titleLarge
@@ -87,38 +118,22 @@ fun LoginScreen(
                         vertical = 16.dp
                     ),
                     verticalArrangement = Arrangement.spacedBy(
-                        16.dp
+                        8.dp
                     )
                 ) {
 
-                    var emailValue by remember {
-                        mutableStateOf(
-                            ""
-                        )
-                    }
-                    SereneTextField(
+                    SereneEmailTextField(
                         value = emailValue,
                         label = "Email",
                         onValueChange = {
                             emailValue = it
                         })
 
-                    var passwordValue by remember {
-                        mutableStateOf(
-                            ""
-                        )
-                    }
-                    var passwordVisible by remember {
-                        mutableStateOf(
-                            false
-                        )
-                    }
-
                     Column(
                         horizontalAlignment = Alignment.End,
-                        ) {
+                    ) {
 
-                        SereneHiddenTextField(
+                        SerenePasswordTextField(
                             label = "Password",
                             value = passwordValue,
                             visible = passwordVisible,
@@ -129,37 +144,84 @@ fun LoginScreen(
                                     !passwordVisible
                             })
 
-                        TextButton(onClick = {
-
-                            navController.navigate(Destination.Auth.ForgotPassword.route)
-                        }) {
+                        TextButton(
+                            onClick = {
+                                navController.navigate(Destination.Auth.ForgotPassword.route)
+                            }
+                        ) {
                             Text("Forgot password?", fontWeight = FontWeight.Bold)
                         }
                     }
 
-                    TextButton(onClick = {
-                        navController.navigate(Destination.Auth.Register.route){
-                            popUpTo(Destination.Auth.SetUpProfile.route) {
-                                saveState = true
+                    TextButton(
+                        onClick = {
+                            navController.navigate(Destination.Auth.Register.route){
+                                popUpTo(Destination.Auth.SetUpProfile.route) {
+                                    saveState = true
+                                }
                             }
                         }
-                    }) {
+                    ) {
                         Text("Don't have an account?", fontWeight = FontWeight.Bold)
                     }
                 }
-
             }
+
             Button(
-                onClick = {},
+                onClick = { viewModel.onLogin(emailValue, passwordValue) },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(text = "Login")
+            }
 
+        }
+    }
+
+    when(uiState){
+        is AuthUiState.Idle -> {}
+        is AuthUiState.Loading -> {
+            LoadingContent()
+        }
+        is AuthUiState.Success -> {
+            LaunchedEffect(key1 = uiState) {
+                navController.navigate(Destination.Serene.route) {
+                    popUpTo(
+                        Destination.Auth.route
+                    ) {
+                        inclusive =
+                            true
+                    }
+                }
             }
 
         }
 
+        is AuthUiState.Error -> {
+            LaunchedEffect(key1 = null) {
+                openErrorDialog = true
+            }
+
+            when{
+                openErrorDialog -> {
+
+                    SereneDialog(
+                        onDismiss = {
+                            openErrorDialog = false
+                        },
+                        onConfirm = {
+                            openErrorDialog = false
+
+                        },
+                        dialogTitle = "Oops",
+                        dialogText = "Error: ${uiState.errorMessage}",
+                        icon = Icons.Default.Info
+                    )
+                }
+            }
+
+        }
     }
+
 
 }
 

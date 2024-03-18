@@ -21,6 +21,7 @@ import com.ahmrh.serene.ui.screen.main.activity.practice.PracticeScreen
 import com.ahmrh.serene.ui.screen.main.personalization.PersonalizationScreen
 import com.ahmrh.serene.ui.screen.main.profile.ProfileScreen
 import com.ahmrh.serene.ui.screen.main.result.ResultScreen
+import com.ahmrh.serene.ui.screen.main.setting.SettingScreen
 
 
 @Composable
@@ -89,6 +90,10 @@ fun SereneNavGraph(
 
             composable(Destination.Serene.Introduction.route){
                 IntroductionScreen(navController)
+            }
+
+            composable(Destination.Serene.Setting.route){
+                SettingScreen(navController)
             }
         }
 

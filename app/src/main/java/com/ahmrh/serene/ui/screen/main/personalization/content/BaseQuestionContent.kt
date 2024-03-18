@@ -75,20 +75,18 @@ fun BaseQuestionContent(
 
                     Box(
                         modifier = Modifier.padding(
-                            vertical = 16.dp
+                            top = 16.dp
                         )
                     ) {
 
                         Text(
-                            "What self-care category you never or rarely done in the past few days? or you just want to try practicing that self care category?",
+                            text = "What self-care category you never or rarely done in the past few days? \n\nNb: Please choose at least 2 below categories",
                             style = MaterialTheme.typography.bodyLarge,
                             textAlign = TextAlign.Justify
                         )
                     }
 
-
                     Divider()
-
 
                     Column(
                         verticalArrangement = Arrangement.spacedBy(
@@ -126,7 +124,10 @@ fun BaseQuestionContent(
 
                 }
 
+                val leastPracticedCategoryCount = viewModel?.leastPracticedCategory?.size ?: 0
+
                 Button(
+                    enabled = leastPracticedCategoryCount > 1,
                     onClick = onNext,
                     modifier = Modifier
                         .fillMaxWidth()
