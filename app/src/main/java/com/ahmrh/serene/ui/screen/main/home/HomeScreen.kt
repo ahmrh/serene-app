@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.MaterialTheme
@@ -26,7 +27,9 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.common.utils.Category
+import com.ahmrh.serene.domain.model.selfcare.SelfCareRecommendation
 import com.ahmrh.serene.navigation.Destination
 import com.ahmrh.serene.ui.component.card.ChallengeCard
 import com.ahmrh.serene.ui.component.card.RecommendationCard
@@ -51,6 +54,9 @@ fun HomeScreen(
 
     val personalizationResultState =
         viewModel.personalizationResultState.collectAsState()
+
+    val recommendationUiState =
+        viewModel.recommendationSelfCare.collectAsState()
 
     val personalizationResultDialog = remember { mutableStateOf(false) }
 
@@ -115,7 +121,14 @@ fun HomeScreen(
 
     }
 
+    val navigateToActivityDetail: (id: String) -> Unit = {
+        navController.navigate(
+            Destination.Serene.ActivityDetail.createRoute(it)
+        )
+    }
+
     val activity = LocalContext.current as? Activity
+
     BackHandler {
 
         activity?.finish()
@@ -134,7 +147,7 @@ fun HomeScreen(
 
                     if (selfCareStarted) navigateToPractice()
                     else {
-                        if(personalizationResultState.value != null) {
+                        if (personalizationResultState.value != null) {
                             personalizationResultDialog.value = true
                         } else {
                             navigateToPersonalization()
@@ -177,23 +190,17 @@ fun HomeScreen(
                 }
 
 
-                RecommendationSection(navigateToDetail = { activityId ->
-
-                    navController?.navigate(
-                        Destination.Serene.ActivityDetail.createRoute(activityId)
-                    ) {
-                        popUpTo(
-                            navController.graph.findStartDestination().id
-                        ) {
-                            saveState = true
-                        }
-                    }
-                })
+                RecommendationSection(
+                    navigateToDetail = navigateToActivityDetail,
+                    recommendationUiState = recommendationUiState.value
+                )
 
                 ChallengesSection()
 
 
-                Text("Personalization Result State : ${personalizationResultState.value}")
+                Text(
+                    "Personalization Result State : ${personalizationResultState.value}"
+                )
             }
 
         }
@@ -223,23 +230,40 @@ fun HomeScreen(
 
 @Composable
 fun RecommendationSection(
-    navigateToDetail: (id: String) -> Unit = {}
+    navigateToDetail: (id: String) -> Unit = {},
+    recommendationUiState: UiState<List<SelfCareRecommendation>?>
 ) {
 
-    Column {
-        Text("For you", style = MaterialTheme.typography.titleMedium)
-    }
 
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        items(5) {
-            RecommendationCard(
-                onClick = {
-                    navigateToDetail("activity id")
+    if(recommendationUiState is UiState.Success){
+        Column {
+            Text("For you", style = MaterialTheme.typography.titleMedium)
+        }
+        val recommendations = recommendationUiState.data!!
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(recommendations){
 
-                }
-            )
+                RecommendationCard(
+                    onClick = {
+                      navigateToDetail(it.selfCareId!!)
+                    },
+                    recommendation = it
+                )
+            }
+        }
+    } else {
+        when(recommendationUiState){
+            is UiState.Loading -> {
+            }
+            is UiState.Error -> {
+                Text("error: ${recommendationUiState.errorMessage}")
+            }
+
+            else -> {
+                Text("unidentified")
+            }
         }
     }
 }

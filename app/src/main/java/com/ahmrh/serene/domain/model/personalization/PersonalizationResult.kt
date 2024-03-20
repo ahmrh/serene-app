@@ -1,15 +1,11 @@
-package com.ahmrh.serene.domain.model
+package com.ahmrh.serene.domain.model.personalization
 
-import com.google.gson.annotations.SerializedName
 import java.util.Date
 
 data class PersonalizationResult (
 
     val userId: String,
-
     val category: String,
-
-
     val date: Date
 
 

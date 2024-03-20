@@ -54,7 +54,6 @@ fun RegisterScreen(
     navController: NavHostController,
     viewModel: RegisterViewModel = hiltViewModel()
 ) {
-    // TODO: Register firebase
 
     val uiState = viewModel.uiState.value
 
@@ -197,7 +196,7 @@ fun RegisterScreen(
             }
             Button(
                 onClick = {
-                  viewModel.onRegister(emailValue, passwordValue)
+                  viewModel.onRegister(nameValue, emailValue, passwordValue)
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {

@@ -52,7 +52,7 @@ import coil.request.ImageRequest
 import com.ahmrh.serene.R
 import com.ahmrh.serene.common.utils.CategoryUtils
 import com.ahmrh.serene.common.state.UiState
-import com.ahmrh.serene.domain.model.SelfCareActivity
+import com.ahmrh.serene.domain.model.selfcare.SelfCareActivity
 import com.ahmrh.serene.navigation.Destination
 import com.ahmrh.serene.ui.component.CircularLoading
 import com.ahmrh.serene.ui.component.dialog.SereneDialog
@@ -91,7 +91,11 @@ fun ActivityDetailScreen(
                     viewModel.changeStartedActivityIdValue(activity.id)
                     navController.navigate(
                         Destination.Serene.Practice.createRoute(activity.id)
-                    )
+                    ){
+                        popUpTo(Destination.Serene.Home.route) {
+                            saveState = true
+                        }
+                    }
                 },
                 activity = activity,
                 practiceEnabled = if(startedActivityId == activityId) true else practiceEnabled

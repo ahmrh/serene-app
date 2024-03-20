@@ -5,7 +5,7 @@ import com.ahmrh.serene.common.utils.Category
 import com.ahmrh.serene.common.utils.Language
 import com.ahmrh.serene.common.state.ResourceState
 import com.ahmrh.serene.data.source.remote.response.ActivityResponse
-import com.ahmrh.serene.domain.model.SelfCareActivity
+import com.ahmrh.serene.domain.model.selfcare.SelfCareActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.FirebaseStorage
@@ -239,6 +239,7 @@ class SelfCareRepository @Inject constructor(
                 close()
             }
         }
+
 
 
     companion object {

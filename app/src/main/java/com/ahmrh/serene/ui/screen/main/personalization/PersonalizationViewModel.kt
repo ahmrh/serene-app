@@ -8,8 +8,8 @@ import com.ahmrh.serene.common.utils.CategoryUtils
 import com.ahmrh.serene.common.state.ResourceState
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.data.repository.PreferencesRepository
-import com.ahmrh.serene.domain.model.PersonalizationPoint
-import com.ahmrh.serene.domain.model.PersonalizationQuestion
+import com.ahmrh.serene.domain.model.personalization.PersonalizationPoint
+import com.ahmrh.serene.domain.model.personalization.PersonalizationQuestion
 import com.ahmrh.serene.domain.usecase.selfcare.personalization.PersonalizationUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

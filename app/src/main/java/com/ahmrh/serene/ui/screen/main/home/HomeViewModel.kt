@@ -3,9 +3,12 @@ package com.ahmrh.serene.ui.screen.main.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ahmrh.serene.common.state.ResourceState
+import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.common.utils.Category
 import com.ahmrh.serene.data.repository.PreferencesRepository
-import com.ahmrh.serene.data.repository.UserRepository
+import com.ahmrh.serene.domain.model.selfcare.SelfCareRecommendation
+import com.ahmrh.serene.domain.usecase.selfcare.activity.ActivityUseCases
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
@@ -18,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
-    private val userRepository: UserRepository
+    private val activityUseCases: ActivityUseCases
 ): ViewModel() {
 
     private var _selfCareStartedUiState: MutableStateFlow<Boolean> =
@@ -45,6 +48,38 @@ class HomeViewModel @Inject constructor(
         get() = _currentUser
 
 
+    private var _recommendationSelfCare: MutableStateFlow<UiState<List<SelfCareRecommendation>?>> =
+        MutableStateFlow(UiState.Loading)
+    val recommendationSelfCare: StateFlow<UiState<List<SelfCareRecommendation>?>>
+        get() = _recommendationSelfCare
+
+
+    init {
+        getPersonalizationResult()
+        getStartedActivityId()
+        getRecommendation()
+
+        Log.d(TAG, "Init : ${personalizationResultState.value} and ${selfCareStartedUiState.value}")
+    }
+
+    private fun getRecommendation() =
+        viewModelScope.launch{
+            personalizationResultState.value?.let { category ->
+                activityUseCases.getRecommendation(category).collect{
+                    when(it) {
+                        is ResourceState.Success -> {
+                            _recommendationSelfCare.value = UiState.Success(it.data as List<SelfCareRecommendation>)
+                        }
+                        is ResourceState.Failed -> {
+                            _recommendationSelfCare.value = UiState.Error("Error: ${it.exception}")
+                        }
+                    }
+                }
+            }
+
+        }
+
+
     private fun getPersonalizationResult(){
         viewModelScope.launch {
 
@@ -67,26 +102,6 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-
-    init {
-        getPersonalizationResult()
-        getStartedActivityId()
-
-        Log.d(TAG, "Init : ${personalizationResultState.value} and ${selfCareStartedUiState.value}")
-    }
-
-    fun addSelfCareStartedValue() {
-        viewModelScope.launch {
-            preferencesRepository.changeStartedActivityIdValue("random id goes brr")
-        }
-    }
-
-    fun changeSelfCareStartedValue(boolean: Boolean){
-        viewModelScope.launch {
-            preferencesRepository.changeSelfCareStartedValue(boolean);
-            preferencesRepository.changeStartedActivityIdValue("random id goes brr")
-        }
-    }
 
     companion object{
         const val TAG = "HomeViewModel"

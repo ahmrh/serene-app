@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ahmrh.serene.R
 import com.ahmrh.serene.common.utils.CategoryUtils
-import com.ahmrh.serene.domain.model.SelfCareActivity
+import com.ahmrh.serene.domain.model.selfcare.SelfCareActivity
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 @Composable

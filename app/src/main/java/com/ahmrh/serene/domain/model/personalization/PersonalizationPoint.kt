@@ -1,6 +1,4 @@
-package com.ahmrh.serene.domain.model
-
-import com.google.gson.annotations.SerializedName
+package com.ahmrh.serene.domain.model.personalization
 
 data class PersonalizationPoint(
 	var emotional: Int = 0,

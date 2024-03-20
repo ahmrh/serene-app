@@ -30,7 +30,6 @@ fun SereneEmailTextField(
 ){
     val errorMessage = "Email input is not valid"
     var isError by rememberSaveable { mutableStateOf(false) }
-
     var isFocused by rememberSaveable { mutableStateOf(false) }
 
     OutlinedTextField(

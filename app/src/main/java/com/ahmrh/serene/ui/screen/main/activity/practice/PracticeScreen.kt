@@ -45,7 +45,7 @@ import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
 import com.ahmrh.serene.common.utils.CategoryUtils
 import com.ahmrh.serene.common.state.UiState
-import com.ahmrh.serene.domain.model.SelfCareActivity
+import com.ahmrh.serene.domain.model.selfcare.SelfCareActivity
 import com.ahmrh.serene.navigation.Destination
 import com.ahmrh.serene.ui.component.dialog.SereneDialog
 import com.ahmrh.serene.ui.theme.SereneTheme
@@ -69,7 +69,7 @@ fun PracticeScreen(
             PracticeContent(
                 activity = activity,
                 onPracticeDone = {
-                    viewModel.clearSelfCareActivityValue()
+                    viewModel.onPracticeDone()
                     navController.navigate(Destination.Serene.Home.route)
                 }
             )
@@ -83,12 +83,12 @@ fun PracticeScreen(
             LoadingContent()
         }
     }
-
 }
 
 @Composable
 fun LoadingContent() {
     Surface {
+
         Box(
             Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -154,7 +154,7 @@ fun PracticeContent(
                         IconButton(onClick = {}) {
                             Icon(
                                 painterResource(
-                                    id = R.drawable.serene_icon_arrow_back
+                                    id = R.drawable.serene_icon_close
                                 ),
                                 contentDescription = null
                             )
@@ -192,8 +192,6 @@ fun PracticeContent(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
-
                     Column(
 
                         horizontalAlignment = Alignment.CenterHorizontally

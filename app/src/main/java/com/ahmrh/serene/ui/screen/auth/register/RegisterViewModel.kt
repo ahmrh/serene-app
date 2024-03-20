@@ -15,8 +15,8 @@ class RegisterViewModel @Inject constructor(
 
     val uiState: MutableState<AuthUiState> = mutableStateOf(AuthUiState.Idle)
 
-    fun onRegister(email: String, password: String){
-        userRepository.createAccount(email, password){
+    fun onRegister(username: String, email: String, password: String){
+        userRepository.createAccount(username, email, password){
             if(it == null) uiState.value = AuthUiState.Success
             else uiState.value = AuthUiState.Error(it.message ?: "Unexpected Error")
         }

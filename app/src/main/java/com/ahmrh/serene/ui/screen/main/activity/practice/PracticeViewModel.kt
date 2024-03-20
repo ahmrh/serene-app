@@ -1,12 +1,15 @@
 package com.ahmrh.serene.ui.screen.main.activity.practice
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmrh.serene.common.state.ResourceState
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.data.repository.PreferencesRepository
-import com.ahmrh.serene.domain.model.SelfCareActivity
+import com.ahmrh.serene.domain.model.selfcare.SelfCareActivity
 import com.ahmrh.serene.domain.usecase.selfcare.activity.ActivityUseCases
 import com.ahmrh.serene.ui.screen.main.activity.list.ActivityListViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +24,8 @@ class PracticeViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val activityUseCases: ActivityUseCases
 ): ViewModel(){
+
+    private var _activity: MutableState<SelfCareActivity?> = mutableStateOf(null)
 
     private var _activityDetailUiState: MutableStateFlow<UiState<SelfCareActivity>> =
         MutableStateFlow(UiState.Loading)
@@ -53,6 +58,7 @@ class PracticeViewModel @Inject constructor(
                 when(it){
                     is ResourceState.Success -> {
                         _activityDetailUiState.value = UiState.Success(it.data as SelfCareActivity)
+                        _activity.value = it.data
                         Log.d(ActivityListViewModel.TAG, "Getting activity detail: ${_activityDetailUiState.value}")
                     }
                     is ResourceState.Failed -> {
@@ -63,9 +69,11 @@ class PracticeViewModel @Inject constructor(
             }
         }
 
-    fun clearSelfCareActivityValue(){
+    fun onPracticeDone(){
         viewModelScope.launch {
             preferencesRepository.clearStartedActivityIdValue()
+            activityUseCases.practiceSelfCare(_activity.value!!){ }
+
         }
     }
 

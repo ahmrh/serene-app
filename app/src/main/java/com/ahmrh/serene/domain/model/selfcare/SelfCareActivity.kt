@@ -1,4 +1,4 @@
-package com.ahmrh.serene.domain.model
+package com.ahmrh.serene.domain.model.selfcare
 
 import android.net.Uri
 

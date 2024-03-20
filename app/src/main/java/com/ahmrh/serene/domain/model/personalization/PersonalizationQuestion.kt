@@ -1,4 +1,4 @@
-package com.ahmrh.serene.domain.model
+package com.ahmrh.serene.domain.model.personalization
 
 import com.ahmrh.serene.data.source.remote.response.QuestionString
 import com.google.gson.annotations.SerializedName

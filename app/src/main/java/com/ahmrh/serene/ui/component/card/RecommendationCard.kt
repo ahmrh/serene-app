@@ -19,18 +19,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ahmrh.serene.common.utils.CategoryUtils
-import com.ahmrh.serene.domain.model.SelfCareActivity
+import com.ahmrh.serene.domain.model.selfcare.SelfCareRecommendation
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 @Composable
 fun RecommendationCard(
     modifier: Modifier = Modifier,
-    selfCare: SelfCareActivity? = null,
+    recommendation: SelfCareRecommendation,
     onClick: () -> Unit = {}
 ) {
 //    val category = CategoryUtils.getCategory(selfCare.category)
 
-    val category = CategoryUtils.getCategory(1)
+    val category = CategoryUtils.getCategory(recommendation.category!!)
     ElevatedCard(
         modifier = modifier
             .size(150.dp)
@@ -63,14 +63,14 @@ fun RecommendationCard(
 
                 )
             Text(
-                "Exercise",
+                "${recommendation.title}",
                 style = MaterialTheme.typography.titleMedium,
             )
 
-            Text(
-                "Make a time to do some exercise today",
-                style = MaterialTheme.typography.bodySmall,
-            )
+//            Text(
+//                "${recommendation.description}",
+//                style = MaterialTheme.typography.bodySmall,
+//            )
 
         }
     }
@@ -81,6 +81,6 @@ fun RecommendationCard(
 @Composable
 fun RecommendationCardPreview() {
     SereneTheme {
-        RecommendationCard()
+//        RecommendationCard()
     }
 }

@@ -36,7 +36,10 @@ object AppModule {
     fun provideGamificationRepository(
         @ApplicationContext context: Context
     ): GamificationRepository {
-        return GamificationRepository()
+        return GamificationRepository(
+            storage = Firebase.storage,
+            firestore = Firebase.firestore
+        )
     }
 
     @Provides
@@ -68,7 +71,8 @@ object AppModule {
         @ApplicationContext context: Context
     ): UserRepository {
         return UserRepository(
-            auth = Firebase.auth
+            auth = Firebase.auth,
+            firestore = Firebase.firestore
         )
     }
 

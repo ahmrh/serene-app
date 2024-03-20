@@ -4,10 +4,12 @@ import android.util.Log
 import com.ahmrh.serene.common.utils.Category
 import com.ahmrh.serene.common.utils.Language
 import com.ahmrh.serene.common.state.ResourceState
+import com.ahmrh.serene.data.source.remote.response.ActivityResponse
 import com.ahmrh.serene.data.source.remote.response.QuestionResponse
-import com.ahmrh.serene.domain.model.PersonalizationQuestion
-import com.ahmrh.serene.domain.model.PersonalizationResult
-import com.ahmrh.serene.domain.model.toMap
+import com.ahmrh.serene.domain.model.personalization.PersonalizationQuestion
+import com.ahmrh.serene.domain.model.personalization.PersonalizationResult
+import com.ahmrh.serene.domain.model.selfcare.SelfCareRecommendation
+import com.ahmrh.serene.domain.model.personalization.toMap
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -18,7 +20,6 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -93,54 +94,61 @@ class PersonalizationRepository @Inject constructor(
             }
         }
 
-    fun fetchQuestions(): Flow<ResourceState<List<PersonalizationQuestion>>> =
-        callbackFlow {
+    fun fetchRecommendation(
+        category: Category
+    ): Flow<ResourceState<List<SelfCareRecommendation>>> = callbackFlow{
 
-            val collectionReference =
-                firestore.collection("activities")
+        val collectionReference =
+            firestore.collection("activities")
 
+        collectionReference
+            .whereEqualTo("category", category.stringValue)
+            .get()
+            .addOnSuccessListener { document ->
+                async {
+                    val recommendations: List<SelfCareRecommendation> =
+                        document.map { data ->
+                            val activityResponse = data.toObject<ActivityResponse>()
 
-            collectionReference
-                .get()
-                .addOnSuccessListener { document ->
-                    async {
-                        val questions: List<PersonalizationQuestion> =
-                            document.map { data ->
-                                val activityResponse =
-                                    data.toObject<QuestionResponse>()
-
-                                PersonalizationQuestion(
-                                    questionString = if(language == Language.ID.code){
-                                        "${activityResponse.questionString?.id}"
-                                    } else {
-                                        "${activityResponse.questionString?.en}"
-                                    },
-                                    category = activityResponse.category
-                                )
-                            }
-
-                        trySend(
-                            ResourceState.Success(
-                                questions
+                            SelfCareRecommendation(
+                                selfCareId = data.id,
+                                category =  activityResponse.category,
+                                title = if(language == Language.ID.code){
+                                    "${activityResponse.name?.id}"
+                                } else {
+                                    "${activityResponse.name?.en}"
+                                },
+                                description =if(language == Language.ID.code){
+                                    "${activityResponse.description?.id}"
+                                } else {
+                                    "${activityResponse.description?.en}"
+                                },
                             )
-                        )
-                    }
 
+                        }
 
-                }
-                .addOnFailureListener { exception ->
                     trySend(
-                        ResourceState.Failed(
-                            exception
+                        ResourceState.Success(
+                            recommendations
                         )
                     )
-                    Log.d(SelfCareRepository.TAG, "Error occurred: $exception")
                 }
 
-            awaitClose {
-                close()
+
             }
+            .addOnFailureListener { exception ->
+                trySend(
+                    ResourceState.Failed(
+                        exception
+                    )
+                )
+                Log.d(SelfCareRepository.TAG, "Error occurred: $exception")
+            }
+
+        awaitClose {
+            close()
         }
+    }
 
     fun savePersonalizationResult(
         category: Category
@@ -163,5 +171,7 @@ class PersonalizationRepository @Inject constructor(
 
 
     }
+
+
 
 }

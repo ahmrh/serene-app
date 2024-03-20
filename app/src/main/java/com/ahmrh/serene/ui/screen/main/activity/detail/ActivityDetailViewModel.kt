@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.ahmrh.serene.common.state.ResourceState
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.data.repository.PreferencesRepository
-import com.ahmrh.serene.domain.model.SelfCareActivity
+import com.ahmrh.serene.domain.model.selfcare.SelfCareActivity
 import com.ahmrh.serene.domain.usecase.selfcare.activity.ActivityUseCases
 import com.ahmrh.serene.ui.screen.main.activity.list.ActivityListViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
