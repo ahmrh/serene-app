@@ -38,7 +38,7 @@ object AppModule {
     ): GamificationRepository {
         return GamificationRepository(
             storage = Firebase.storage,
-            firestore = Firebase.firestore
+            firestore = Firebase.firestore,
         )
     }
 
@@ -72,6 +72,7 @@ object AppModule {
     ): UserRepository {
         return UserRepository(
             auth = Firebase.auth,
+            storage = Firebase.storage,
             firestore = Firebase.firestore
         )
     }

@@ -8,6 +8,7 @@ import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.common.utils.Category
 import com.ahmrh.serene.data.repository.PreferencesRepository
 import com.ahmrh.serene.domain.model.selfcare.SelfCareRecommendation
+import com.ahmrh.serene.domain.usecase.profile.UserProfileUseCases
 import com.ahmrh.serene.domain.usecase.selfcare.activity.ActivityUseCases
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseUser
@@ -21,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
-    private val activityUseCases: ActivityUseCases
+    private val activityUseCases: ActivityUseCases,
+    private val profileUseCases: UserProfileUseCases
 ): ViewModel() {
 
     private var _selfCareStartedUiState: MutableStateFlow<Boolean> =
@@ -47,6 +49,12 @@ class HomeViewModel @Inject constructor(
     val currentUser: StateFlow<FirebaseUser?>
         get() = _currentUser
 
+    private var _usernameState: MutableStateFlow<String> =
+        MutableStateFlow("null")
+
+    val usernameState: StateFlow<String> = _usernameState
+
+
 
     private var _recommendationSelfCare: MutableStateFlow<UiState<List<SelfCareRecommendation>?>> =
         MutableStateFlow(UiState.Loading)
@@ -58,6 +66,8 @@ class HomeViewModel @Inject constructor(
         getPersonalizationResult()
         getStartedActivityId()
         getRecommendation()
+
+        getUsername()
 
         Log.d(TAG, "Init : ${personalizationResultState.value} and ${selfCareStartedUiState.value}")
     }
@@ -79,6 +89,18 @@ class HomeViewModel @Inject constructor(
 
         }
 
+    private fun getUsername() =
+        viewModelScope.launch {
+            profileUseCases.getUsername(
+                onSuccess = {
+                    _usernameState.value = it
+                },
+                onFailure = {
+                    Log.e(TAG, "error anjir $it")
+                }
+            )
+
+        }
 
     private fun getPersonalizationResult(){
         viewModelScope.launch {

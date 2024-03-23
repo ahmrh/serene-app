@@ -1,6 +1,5 @@
 package com.ahmrh.serene.data.repository
 
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -106,7 +105,6 @@ class PreferencesRepository @Inject constructor(
     // PERSONALIZATION RESULT
     suspend fun changePersonalizationResultValue(category: Category) {
         val categoryString = category.stringValue
-        Log.d(TAG, "Changing personalization result value $categoryString")
         dataStore.edit { preferences ->
             preferences[PERSONALIZATION_RESULT_KEY] = categoryString
         }

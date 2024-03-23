@@ -43,6 +43,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val currentUser = viewModel.currentUser.collectAsState().value
+    val username = viewModel.usernameState.collectAsState().value
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
@@ -184,7 +185,7 @@ fun HomeScreen(
                         style = MaterialTheme.typography.bodyLarge
                     )
                     Text(
-                        currentUser?.uid ?: "No UID",
+                        username,
                         style = MaterialTheme.typography.titleMedium
                     )
                 }

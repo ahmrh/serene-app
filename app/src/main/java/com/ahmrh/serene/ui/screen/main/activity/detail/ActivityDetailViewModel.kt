@@ -49,7 +49,6 @@ class ActivityDetailViewModel @Inject constructor(
                 _enabledPracticeButtonUiState.value = it == null
 
                 _startedActivityIdState.value = it
-
             }
         }
     }

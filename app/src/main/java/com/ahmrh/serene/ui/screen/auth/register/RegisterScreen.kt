@@ -233,20 +233,25 @@ fun RegisterScreen(
             LaunchedEffect(key1 = null) {
                 openErrorDialog = true
             }
-            SereneDialog(
-                onDismiss = {
-                    openErrorDialog = false
-                },
-                onConfirm = {
-                    openErrorDialog = false
+            when{
+                openErrorDialog -> {
 
-                },
-                dismissText = "Dismiss",
-                dialogTitle = "Oops",
-                dialogText = "Error: ${uiState.errorMessage}",
-                icon = Icons.Default.Info
-            )
+                    SereneDialog(
+                        onDismiss = {
+                            openErrorDialog = false
+                        },
+                        onConfirm = {
+                            openErrorDialog = false
 
+                        },
+                        dismissText = "Dismiss",
+                        dialogTitle = "Oops",
+                        dialogText = "Error: ${uiState.errorMessage}",
+                        icon = Icons.Default.Info
+                    )
+
+                }
+            }
         }
     }
 }

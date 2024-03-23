@@ -1,5 +1,6 @@
 package com.ahmrh.serene.data.repository
 
+import android.util.Log
 import com.ahmrh.serene.common.utils.Language
 import com.ahmrh.serene.data.source.remote.response.AchievementResponse
 import com.ahmrh.serene.domain.model.gamification.Achievement
@@ -16,14 +17,14 @@ import javax.inject.Singleton
 @Singleton
 class GamificationRepository @Inject constructor(
     private val storage: FirebaseStorage,
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
 ) {
 
     private var language: String = Locale.getDefault().language
 
     suspend fun fetchAchievements(
         onSuccess: (List<Achievement>) -> Unit,
-        onFailed: (Throwable?) -> Unit
+        onFailure: (Throwable?) -> Unit
     ) {
         val collectionReference = firestore.collection("achievements")
 
@@ -34,10 +35,12 @@ class GamificationRepository @Inject constructor(
                 documents.map{data ->
                     val achievementResponse = data.toObject<AchievementResponse>()
 
-                    val imageRef = storage.reference.child("achievement/${achievementResponse.image}.png")
+                    val imageRef = storage.reference.child("achievements/${achievementResponse.image}.png")
                     val imageUrl = imageRef.downloadUrl.await() // Use await after launching coroutine
 
                     Achievement(
+
+                        id = data.id,
                         imageUri = imageUrl,
                         name = achievementResponse.name ,
                         progress = achievementResponse.progress ,
@@ -50,24 +53,57 @@ class GamificationRepository @Inject constructor(
             }
             onSuccess(achievements)
         } catch(e: Exception){
-            onFailed(e)
+            onFailure(e)
         }
     }
 
-    suspend fun fetchAchievement(
-        achievementId: String,
-        onSuccess: (Achievement) -> Unit,
-        onFailed: (Throwable?) -> Unit
-    ) {
+    fun fetchAchievementsByCategoryWithoutImage(
+        categoryString: String,
+        onSuccess: (List<Achievement>) -> Unit,
+        onFailure: (Throwable?) -> Unit
+    ){
 
         val collectionReference = firestore.collection("achievements")
 
+        collectionReference
+            .whereEqualTo("category", categoryString)
+            .get()
+            .addOnSuccessListener {documents ->
+
+                val achievements = documents.map{data ->
+                    val achievementResponse = data.toObject<AchievementResponse>()
+
+                    Achievement(
+                        imagePath = achievementResponse.image,
+                        name = achievementResponse.name ,
+                        progress = achievementResponse.progress ,
+                        description =
+                        if (language == Language.ID.code) achievementResponse.description?.id
+                        else achievementResponse.description?.en ,
+                        category = achievementResponse.category
+                    )
+                }
+                onSuccess(achievements)
+            }
+            .addOnFailureListener(onFailure)
+    }
+
+    suspend fun fetchAchievementById(
+        achievementId: String,
+        onSuccess: (Achievement) -> Unit,
+        onFailure: (Throwable?) -> Unit
+    ) {
+        Log.d(TAG, "AchievementId: ${achievementId}")
+
         try{
             val achievement = withContext(Dispatchers.IO) {
-                val document = collectionReference.document(achievementId).get().await()
+                val document =  firestore.collection("achievements").document(achievementId).get().await()
 
                 val achievementResponse = document.toObject<AchievementResponse>()!!
-                val imageRef = storage.reference.child("achievement/${achievementResponse.image}.png")
+
+                Log.d(TAG, "AchievementResponse Image: ${achievementResponse.image}")
+
+                val imageRef = storage.reference.child("achievements/${achievementResponse.image}.png")
 
                 val imageUrl = imageRef.downloadUrl.await() // Use await after launching coroutine
 
@@ -80,50 +116,34 @@ class GamificationRepository @Inject constructor(
                     else achievementResponse.description?.en ,
                     category = achievementResponse.category
                 )
+
             }
 
             onSuccess(achievement)
         } catch(e: Exception){
-            onFailed(e)
+            Log.e(TAG, "Error: ${e}")
+            onFailure(e)
         }
     }
 
-    suspend fun fetchUserAchievement(
-        userId: String,
-        onSuccess: (List<Achievement>) -> Unit,
-        onFailed: (Throwable?) -> Unit
-    ){
+    suspend fun getAchievementIdByProgressCondition(
+        progress: Int,
+        categoryString: String,
+    ): String{
+        val collectionReference = firestore.collection("achievements")
+        val query = collectionReference
+            .whereEqualTo("category", categoryString)
+            .whereEqualTo("progress", progress)
+            .get()
+            .await()
 
-        val collectionReference = firestore.collection("users")
+        val achievementId = query.first().id
 
-        try{
-            val achievements = withContext(Dispatchers.IO) {
-                val documents = collectionReference.document(userId).collection("achievements").get().await()
+        Log.d(TAG, "Achievement Id: $achievementId")
+        return achievementId
+    }
 
-                val achievements = documents.map{ data ->
-                    val achievementResponse = data.toObject<AchievementResponse>()
-
-                    val imageRef = storage.reference.child("achievement/")
-
-                }
-                val imageRef = storage.reference.child("achievement/${achievementResponse.image}.png")
-
-                val imageUrl = imageRef.downloadUrl.await() // Use await after launching coroutine
-
-                Achievement(
-                    imageUri = imageUrl,
-                    name = achievementResponse.name ,
-                    progress = achievementResponse.progress ,
-                    description =
-                    if (language == Language.ID.code) achievementResponse.description?.id
-                    else achievementResponse.description?.en ,
-                    category = achievementResponse.category
-                )
-            }
-
-            onSuccess(achievement)
-        } catch(e: Exception){
-            onFailed(e)
-        }
+    companion object{
+        const val TAG = "GamificationRepository"
     }
 }

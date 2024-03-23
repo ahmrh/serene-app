@@ -1,5 +1,6 @@
 package com.ahmrh.serene.data.source.remote.response
 
+import com.ahmrh.serene.domain.model.personalization.PersonalizationPoint
 import com.google.gson.annotations.SerializedName
 
 data class AchievementResponse(
@@ -19,3 +20,16 @@ data class AchievementResponse(
 	@field:SerializedName("category")
 	val category: String? = null
 )
+
+fun AchievementResponse.toMap(): Map<String, Any> {
+	val map = mutableMapOf<String, Any>()
+	map["image"] = "$image"
+	map["name"] = "$name"
+	map["progress"] = progress!!
+	map["description"] = hashMapOf(
+		"en" to description?.en,
+		"id" to description?.id
+	)
+	map["category"] = "$category"
+	return map.toMap()
+}

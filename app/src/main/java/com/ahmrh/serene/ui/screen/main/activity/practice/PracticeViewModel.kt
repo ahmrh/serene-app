@@ -2,7 +2,6 @@ package com.ahmrh.serene.ui.screen.main.activity.practice
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -39,6 +38,13 @@ class PracticeViewModel @Inject constructor(
     val enabledPracticeButtonUiState: StateFlow<Boolean>
         get() = _enabledPracticeButtonUiState
 
+    // Result
+    private var _unlockedAchievementState: MutableStateFlow<String?> =
+        MutableStateFlow(null)
+
+    val unlockedAchievementState: StateFlow<String?>
+        get() = _unlockedAchievementState
+
 
     init {
         initPracticeButton()
@@ -72,9 +78,25 @@ class PracticeViewModel @Inject constructor(
     fun onPracticeDone(){
         viewModelScope.launch {
             preferencesRepository.clearStartedActivityIdValue()
-            activityUseCases.practiceSelfCare(_activity.value!!){ }
+            activityUseCases.practiceSelfCare(_activity.value!!,
+                onAchievementUnlocked = {
+                    Log.d(TAG, "Achievement Id: $it")
+                    if(it == null){
+                        _unlockedAchievementState.value = "null"
+                    } else {
+                        _unlockedAchievementState.value = it
+                    }
+                },
+                onResult = {
+                    Log.e(TAG, "Error: $it")
+                }
+            )
 
         }
+    }
+
+    companion object{
+        const val TAG = "PracticeViewModel"
     }
 
 }

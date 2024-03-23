@@ -2,6 +2,7 @@ package com.ahmrh.serene.navigation
 
 sealed class Destination(val route: String) {
 
+
     // Authentication
     data object Auth: Destination("auth") {
         data object Login: Destination("login")
@@ -34,10 +35,10 @@ sealed class Destination(val route: String) {
 
         data object Profile: Destination("profile")
         data object Setting: Destination("setting")
-        data object Achievement: Destination("achievement"){
-            fun createRoute(id: Int) = "achievement/$id"
+        data object AchievementList: Destination("achievement_list")
+        data object AchievementDetail: Destination("achievement_detail?id={achievementId}"){
+            fun createRoute(achievementId: String) = "achievement_detail?id=$achievementId"
         }
-
 
         data object History: Destination("history"){
             fun createRoute(id: Int) = "history/$id"

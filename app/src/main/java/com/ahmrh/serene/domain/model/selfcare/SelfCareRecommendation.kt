@@ -1,7 +1,5 @@
 package com.ahmrh.serene.domain.model.selfcare
 
-import com.ahmrh.serene.common.utils.Category
-
 data class SelfCareRecommendation(
     val selfCareId: String? = null,
     val category: String? = null,

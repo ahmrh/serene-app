@@ -5,6 +5,7 @@ import com.ahmrh.serene.data.source.remote.response.Description
 import com.google.gson.annotations.SerializedName
 
 data class Achievement(
+    val id: String? = null,
 
     val imageUri: Uri? = null,
 

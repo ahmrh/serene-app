@@ -166,15 +166,15 @@ fun QuestionContent(
                     )
 
                 }
-                val categoryId = viewModel.resultCategoryState.collectAsState().value
+                val resultCategoryId = viewModel.resultCategoryState.collectAsState().value
 
 
                 when{
-                    categoryId != null -> {
-                        LaunchedEffect(key1 = categoryId) {
-                            Log.d("PersonalizationQuestion", "category id = ${categoryId}")
+                    resultCategoryId != null -> {
+                        LaunchedEffect(key1 = resultCategoryId) {
+                            Log.d("PersonalizationQuestion", "category id = ${resultCategoryId}")
 
-                            navigateToResult(categoryId)
+                            navigateToResult(resultCategoryId)
                         }
 
                     }

@@ -12,6 +12,8 @@ import com.ahmrh.serene.ui.screen.auth.setup_profile.SetUpProfileScreen
 import com.ahmrh.serene.ui.screen.auth.login.LoginScreen
 import com.ahmrh.serene.ui.screen.auth.forgot_password.ForgotPasswordScreen
 import com.ahmrh.serene.ui.screen.auth.register.RegisterScreen
+import com.ahmrh.serene.ui.screen.main.achievement.detail.AchievementDetailScreen
+import com.ahmrh.serene.ui.screen.main.achievement.list.AchievementListScreen
 import com.ahmrh.serene.ui.screen.main.activity.ActivityCategoryScreen
 import com.ahmrh.serene.ui.screen.main.activity.detail.ActivityDetailScreen
 import com.ahmrh.serene.ui.screen.main.activity.list.ActivityListScreen
@@ -95,7 +97,16 @@ fun SereneNavGraph(
             composable(Destination.Serene.Setting.route){
                 SettingScreen(navController)
             }
+
+            composable(Destination.Serene.AchievementList.route){
+                AchievementListScreen(navController)
+            }
+
+            composable(Destination.Serene.AchievementDetail.route, arguments =  listOf(navArgument("achievementId") { defaultValue = "null" })){
+                AchievementDetailScreen(navController, it.arguments?.getString("achievementId") ?: "null")
+            }
         }
+
 
 
 
