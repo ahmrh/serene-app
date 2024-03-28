@@ -112,7 +112,7 @@ fun AchievementDetailScreen(
                             .build(),
                         contentDescription = "Supporting Image",
                         modifier =
-                        Modifier.size(250.dp),
+                        Modifier.size(200.dp),
                         contentScale = ContentScale.Crop,
                     ) {
                         val state = painter.state
@@ -144,7 +144,7 @@ fun AchievementDetailScreen(
                             Text("Dec 19, 2023", style = MaterialTheme.typography.titleSmall)
                         })
 
-                    Spacer(modifier = Modifier.height(32.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
                     Text("${achievement.description}",
                         style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.Center)

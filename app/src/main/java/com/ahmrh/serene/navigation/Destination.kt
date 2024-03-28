@@ -49,6 +49,9 @@ sealed class Destination(val route: String) {
             fun createRoute(index: Int) = "Introduction/$index"
         }
 
+        data object Event: Destination("event?event_json={eventJson}"){
+            fun createRoute(eventJson: String) = "event?event_json=$eventJson"
+        }
     }
 
 }

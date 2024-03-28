@@ -199,9 +199,9 @@ fun HomeScreen(
                 ChallengesSection()
 
 
-                Text(
-                    "Personalization Result State : ${personalizationResultState.value}"
-                )
+//                Text(
+//                    "Personalization Result State : ${personalizationResultState.value}"
+//                )
             }
 
         }

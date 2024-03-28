@@ -1,67 +1,70 @@
 package com.ahmrh.serene.common.utils
 
+import android.util.Log
 import java.util.Calendar
 import java.util.Date
+import kotlin.math.abs
 
 object DateUtils {
-
+    const val TAG = "DateUtils"
     fun getDayStreak(dates: List<Date>): Int {
-        val today = Date() // Get today's date
-
-        // Sort dates in ascending order
-        val sortedDates = dates.sortedBy { it }
-
-        if (sortedDates.isEmpty()) {
+        if (dates.isEmpty()) {
             return 0
         }
+
+        val sortedDates = dates.sortedBy { it.time }
 
         var currentStreak = 1
         var previousDate = sortedDates[0]
 
         for (date in sortedDates.subList(1, sortedDates.size)) {
-            val daysBetween = getDaysBetween(previousDate, date)
-            if (daysBetween > 1) {
-                currentStreak = 0
-            } else {
+            val daysDifference = daysBetween(previousDate, date)
+            if (daysDifference == 1L) {
                 currentStreak++
+            } else {
+                break
             }
             previousDate = date
         }
 
-        val expectedDate = addDaysToDate(previousDate, currentStreak - 1)
-        if (isSameDay(expectedDate, today)) {
-            return currentStreak
+        // Check for broken streak even with previous entries
+        return if (currentStreak == 0 && sortedDates.size > 1) {
+            0  // No streak or broken streak
         } else {
-            return 0
+            currentStreak
         }
     }
 
-    // Helper functions for Date manipulation
-    private fun getDaysBetween(date1: Date, date2: Date): Int {
-        // Calculate days between dates using a Calendar instance
-        val calendar = Calendar.getInstance()
-        calendar.time = date1
-        val days1 = calendar.get(Calendar.DAY_OF_YEAR)
-        calendar.time = date2
-        val days2 = calendar.get(Calendar.DAY_OF_YEAR)
-        return days2 - days1
+    // Function to calculate the difference in days between two dates
+    private fun daysBetween(date1: Date, date2: Date): Long {
+        val diffInMs = abs(date1.time - date2.time)
+        return diffInMs / (1000 * 60 * 60 * 24)
     }
 
-    private fun addDaysToDate(date: Date, days: Int): Date {
-        // Add days to a Date using a Calendar instance
-        val calendar = Calendar.getInstance()
-        calendar.time = date
-        calendar.add(Calendar.DAY_OF_YEAR, days)
-        return calendar.time
-    }
+    fun isSameDay(date1: Date, date2: Date): Boolean {
 
-    private fun isSameDay(date1: Date, date2: Date): Boolean {
-        // Check if two dates represent the same calendar day
-        val calendar1 = Calendar.getInstance()
-        calendar1.time = date1
-        val calendar2 = Calendar.getInstance()
-        calendar2.time = date2
+        val calendar1 = Calendar.getInstance().apply { time = date1 }
+        val calendar2 = Calendar.getInstance().apply { time = date2 }
+
         return calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR) &&
                 calendar1.get(Calendar.DAY_OF_YEAR) == calendar2.get(Calendar.DAY_OF_YEAR)
+    }
+    fun getElapsedTime(date: Date): String {
+        val now = Calendar.getInstance().timeInMillis
+        val diff = now - date.time
+
+        val seconds = diff / 1000
+        val minutes = seconds / 60
+        val hours = minutes / 60
+        val days = hours / 24
+        val months = days / 30
+
+        return when {
+            months > 0 -> "$months months ago"
+            days > 0 -> "$days days ago"
+            hours > 0 -> "$hours hours ago"
+            minutes > 0 -> "$minutes minutes ago"
+            else -> "just now"
+        }
     }
 }

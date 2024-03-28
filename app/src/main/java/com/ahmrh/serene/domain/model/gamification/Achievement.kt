@@ -2,6 +2,7 @@ package com.ahmrh.serene.domain.model.gamification
 
 import android.net.Uri
 import com.ahmrh.serene.data.source.remote.response.Description
+import com.ahmrh.serene.domain.model.personalization.PersonalizationPoint
 import com.google.gson.annotations.SerializedName
 
 data class Achievement(
@@ -19,3 +20,4 @@ data class Achievement(
 
     val category: String? = null
 )
+

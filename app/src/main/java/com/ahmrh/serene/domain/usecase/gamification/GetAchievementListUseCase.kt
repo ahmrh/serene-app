@@ -12,5 +12,5 @@ class GetAchievementListUseCase @Inject constructor(
     suspend operator fun invoke(
         onSuccess: (List<Achievement>) -> Unit,
         onFailure: (Throwable?) -> Unit
-    ) = gamificationRepository.fetchAchievements(onSuccess, onFailure)
+    ) = userRepository.fetchUserAchievements(onSuccess, onFailure)
 }

@@ -10,6 +10,8 @@ import com.ahmrh.serene.data.source.remote.response.SelfCareHistoryResponse
 import com.ahmrh.serene.data.source.remote.response.UserResponse
 import com.ahmrh.serene.data.source.remote.response.toMap
 import com.ahmrh.serene.domain.model.gamification.Achievement
+import com.ahmrh.serene.domain.model.gamification.DailyStreak
+import com.ahmrh.serene.domain.model.selfcare.SelfCareActivity
 import com.ahmrh.serene.domain.model.user.Profile
 import com.ahmrh.serene.domain.model.user.SelfCareHistory
 import com.ahmrh.serene.domain.model.user.toMap
@@ -17,6 +19,7 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
+import com.google.firebase.firestore.toObjects
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
@@ -34,7 +37,6 @@ class UserRepository @Inject constructor(
     private val firestore: FirebaseFirestore
 ) {
 
-
     private var language: String = Locale.getDefault().language
 
     fun createAnonymousAccount(onResult: (Throwable?) -> Unit) {
@@ -43,7 +45,6 @@ class UserRepository @Inject constructor(
             .addOnCompleteListener {
                 onResult(it.exception)
             }
-
     }
 
     fun authenticate(
@@ -116,15 +117,20 @@ class UserRepository @Inject constructor(
     }
 
     fun addSelfCareHistory(
-        selfCareId: String, selfCareCategory: String,
+        selfCareActivity: SelfCareActivity,
         onResult: (Throwable?) -> Unit
     ) {
         val userId = auth.currentUser!!.uid
         val date = Calendar.getInstance().time;
 
+        val selfCareId = selfCareActivity.id
+        val selfCareCategory = selfCareActivity.category!!
+        val selfCareName = selfCareActivity.name!!
+
         val selfCareHistory = SelfCareHistory(
             selfCareId,
             selfCareCategory,
+            selfCareName,
             date
         )
 
@@ -144,6 +150,44 @@ class UserRepository @Inject constructor(
                 )
             }
             .addOnCompleteListener { onResult(it.exception) }
+    }
+
+    suspend fun fetchSelfCareHistory(): List<SelfCareHistory>?{
+
+        val userId = auth.currentUser!!.uid
+
+        val collectionReference = firestore.collection("users")
+            .document(userId)
+            .collection("history")
+
+
+        try {
+
+            val historyList = withContext(Dispatchers.IO){
+
+                val documents = collectionReference
+                    .get()
+                    .await()
+
+                documents.map{ data ->
+                    val historyResponse = data.toObject<SelfCareHistoryResponse>()
+
+                    SelfCareHistory(
+                        selfCareId = historyResponse.selfCareId!!,
+                        selfCareCategory =  historyResponse.selfCareCategory!!,
+                        selfCareName = historyResponse.selfCareName!!,
+                        date = Date(historyResponse.date!!)
+                    )
+                }
+            }
+
+            return historyList
+
+        } catch(e: Exception){
+            Log.e(TAG, "Error fetching self care history: $e")
+        }
+
+        return null
     }
 
     fun fetchSelfCareHistory(
@@ -166,7 +210,8 @@ class UserRepository @Inject constructor(
                         SelfCareHistory(
                             selfCareHistoryResponse.selfCareId!!,
                             selfCareHistoryResponse.selfCareCategory!!,
-                            Date(selfCareHistoryResponse.date!!)
+                            selfCareHistoryResponse.selfCareName!!,
+                            Date(selfCareHistoryResponse.date!!),
                         )
                     }
                 onSuccess(history)
@@ -174,6 +219,33 @@ class UserRepository @Inject constructor(
             }
             .addOnFailureListener(onFailure)
     }
+
+
+//    suspend fun getDailyStreak(
+//    ): Int{
+//
+//        val userId = auth.currentUser!!.uid
+//
+//        val dailyStreak = withContext(Dispatchers.IO){
+//
+//            val documents = firestore.collection("users")
+//                .document(userId)
+//                .collection("history")
+//                .get()
+//                .await()
+//
+//            val historyResponse = documents.map{data ->
+//                data.toObject<SelfCareHistoryResponse>()
+//            }
+//
+//
+//            DateUtils.getDayStreak(historyResponse.map { Date(it.date!!) })
+//        }
+//
+//        return dailyStreak;
+//
+//    }
+//
 
     suspend fun getTotalPracticedSelfCareByCategory(
         categoryString: String
@@ -210,7 +282,8 @@ class UserRepository @Inject constructor(
         firestore.collection("users")
             .document(userId)
             .collection("achievements")
-            .add(achievement)
+            .document(achievementId)
+            .set(achievement)
             .addOnCompleteListener {
                 onResult(it.exception)
             }
@@ -252,11 +325,12 @@ class UserRepository @Inject constructor(
                 val achievements = documents.map{ data ->
                     val achievementResponse = data.toObject<AchievementResponse>()
 
-                    val imageRef = storage.reference.child("achievement/${achievementResponse.image}.png")
+                    val imageRef = storage.reference.child("achievements/${achievementResponse.image}.png")
 
                     val imageUrl = imageRef.downloadUrl.await()
 
                     Achievement(
+                        id = data.id,
                         imageUri = imageUrl,
                         name = achievementResponse.name ,
                         progress = achievementResponse.progress ,
@@ -275,6 +349,7 @@ class UserRepository @Inject constructor(
             onFailure(e)
         }
     }
+
 
     suspend fun fetchProfileData(
         onSuccess: (Profile) -> Unit,
@@ -297,6 +372,7 @@ class UserRepository @Inject constructor(
                     val imageUrl = imageRef.downloadUrl.await()
 
                     Achievement(
+                        id = data.id,
                         imageUri = imageUrl,
                         name = achievementResponse.name ,
                         progress = achievementResponse.progress ,
@@ -319,9 +395,12 @@ class UserRepository @Inject constructor(
                     SelfCareHistory(
                         selfCareHistoryResponse.selfCareId!!,
                         selfCareHistoryResponse.selfCareCategory!!,
+                        selfCareHistoryResponse.selfCareName!!,
                         Date(selfCareHistoryResponse.date!!)
                     )
                 }
+
+                val sortedHistoryList = historyList.sortedByDescending { it.date }
 
                 val userDocuments = firestore.collection("users")
                     .document(userId).get().await()
@@ -350,20 +429,20 @@ class UserRepository @Inject constructor(
                     username = user.username ?: "Unnamed Entity",
                     joined = Date(),
                     imgUri = Uri.parse("https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png"),
-                    dayStreak = dayStreak,
+                    dayStreak = dayStreak ?: 0,
                     topSelfCare = topSelfCare ,
                     totalAchievement = totalAchievement,
                     totalSelfCare = totalSelfCare,
                     achievementList = achievementList,
-                    historyList = historyList
+                    historyList = sortedHistoryList
                 )
             }
 
 
             onSuccess(profileData)
         } catch(e: Exception){
-            throw(e)
             onFailure(e)
+            throw(e)
         }
     }
     companion object {

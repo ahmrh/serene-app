@@ -5,6 +5,8 @@ plugins {
     id("com.google.dagger.hilt.android")
 
     id("com.google.gms.google-services")
+
+    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android {
@@ -113,6 +115,10 @@ dependencies {
 //    implementation("com.github.skydoves:landscapist-placeholder")
 //    implementation("com.github.skydoves:landscapist-coil")
 //    implementation("com.github.skydoves:landscapist-animation")
+
+    // Serialize
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
 
     // Compose runtime
     implementation("androidx.compose.runtime:runtime:1.6.0")

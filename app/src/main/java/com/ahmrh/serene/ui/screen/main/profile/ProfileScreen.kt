@@ -60,9 +60,11 @@ import coil.request.ImageRequest
 import com.ahmrh.serene.R
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.common.utils.Category
+import com.ahmrh.serene.common.utils.CategoryUtils
 import com.ahmrh.serene.domain.model.gamification.Achievement
 import com.ahmrh.serene.domain.model.user.SelfCareHistory
 import com.ahmrh.serene.navigation.Destination
+import com.ahmrh.serene.ui.component.HistoryItem
 import com.ahmrh.serene.ui.component.card.StatCard
 import com.ahmrh.serene.ui.component.navbar.SereneNavBar
 import com.ahmrh.serene.ui.screen.main.activity.practice.LoadingContent
@@ -132,6 +134,12 @@ fun ProfileScreen(
     val navigateToAchievementList = {
         navController.navigate(Destination.Serene.AchievementList.route)
     }
+
+    val navigateToAchievement = { id : String ->
+        navController.navigate(Destination.Serene.AchievementDetail.createRoute(id))
+    }
+
+    val horizontalPaddingValues = 24.dp
     
     when(profileDataUiState){
         is UiState.Loading -> {
@@ -193,14 +201,14 @@ fun ProfileScreen(
 
                     Column(
                         modifier = Modifier
-                            .padding(horizontal = 24.dp)
                     ) {
 
 
                         Row(
                             Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 8.dp),
+                                .padding(vertical = 8.dp)
+                                .padding(horizontal = horizontalPaddingValues),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(
                                 16.dp
@@ -237,7 +245,7 @@ fun ProfileScreen(
                                 )
                             ) {
                                 Text(
-                                    "John Doe",
+                                    "${profileData.username}",
                                     style = MaterialTheme.typography.titleLarge
                                 )
                                 Text(
@@ -257,7 +265,8 @@ fun ProfileScreen(
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
-                            TabRow(selectedTabIndex = state) {
+                            TabRow(selectedTabIndex = state, modifier = Modifier
+                                .padding(horizontal = horizontalPaddingValues)) {
                                 titles.forEachIndexed { index, title ->
                                     Tab(
                                         selected = state == index,
@@ -291,7 +300,9 @@ fun ProfileScreen(
                                             totalAchievement = profileData.totalAchievement,
                                             topSelfCare = profileData.topSelfCare,
                                             totalSelfCare = profileData.totalSelfCare,
-                                            navigateToAchievementList = navigateToAchievementList
+                                            navigateToAchievementList = navigateToAchievementList,
+                                            navigateToAchievement = navigateToAchievement,
+                                            modifier = Modifier.padding(horizontal = horizontalPaddingValues)
                                         )
                                     }
 
@@ -325,14 +336,16 @@ fun StatisticTab(
     totalAchievement: Int,
     topSelfCare: String?,
     totalSelfCare: Int,
-    navigateToAchievementList: () -> Unit
+    navigateToAchievementList: () -> Unit,
+    navigateToAchievement: (String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
 
     Column(
         verticalArrangement = Arrangement.spacedBy(
             8.dp
         ),
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth().padding(top = 8.dp)
 
     ) {
         Row(
@@ -359,10 +372,12 @@ fun StatisticTab(
             ),
         ) {
 
+            val topSelfCareCategory = CategoryUtils.getCategory(topSelfCare ?: "Emotional")
+
             StatCard(
                 Modifier.weight(1f),
-                R.drawable.serene_selfcare_icon_environmental,
-                value = "$topSelfCare",
+                topSelfCareCategory.iconResource,
+                value = topSelfCare ?: "None",
                 label = "Top Self-care",
             )
             StatCard(
@@ -373,8 +388,13 @@ fun StatisticTab(
             )
         }
     }
+//    Spacer(modifier = Modifier.height(16.dp))
 
-    Column {
+    Column (
+        modifier = modifier
+
+    ){
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -385,22 +405,40 @@ fun StatisticTab(
                 style = MaterialTheme.typography.titleMedium
             )
 
-            TextButton(
-                onClick = {
-                    navigateToAchievementList()
+            if(achievementList.size > 3){
+
+                TextButton(
+                    onClick = {
+                        navigateToAchievementList()
+                    }
+                ) {
+                    Text("View all")
                 }
-            ) {
-                Text("View all")
             }
 
+
         }
+        if(achievementList.isNotEmpty()){
 
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(0.dp)
-        ) {
-            items(achievementList){
 
-                AchievementItem(achievement = it)
+
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(0.dp)
+            ) {
+                items(achievementList){
+
+                    AchievementItem(achievement = it, onClick = {
+                        navigateToAchievement(it.id!!)
+                    })
+                }
+            }
+        } else {
+            Box(
+                modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+
+                Text("Practice Activity to Unlock Achievement")
             }
         }
     }
@@ -451,10 +489,11 @@ fun HistoryTab(
 ){
 //    Text("This feature is still in development")
 
-    LazyColumn {
+    LazyColumn (
+        modifier = Modifier.padding(horizontal = 8.dp)
+    ){
         items(historyList){
-            Text(it.selfCareId)
-            Spacer(modifier = Modifier.height(8.dp))
+            HistoryItem(selfCareHistory = it)
         }
     }
 }

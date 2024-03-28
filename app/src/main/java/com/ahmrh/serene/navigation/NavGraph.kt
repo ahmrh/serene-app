@@ -20,6 +20,7 @@ import com.ahmrh.serene.ui.screen.main.activity.list.ActivityListScreen
 import com.ahmrh.serene.ui.screen.main.home.HomeScreen
 import com.ahmrh.serene.ui.screen.main.introduction.IntroductionScreen
 import com.ahmrh.serene.ui.screen.main.activity.practice.PracticeScreen
+import com.ahmrh.serene.ui.screen.main.event.EventScreen
 import com.ahmrh.serene.ui.screen.main.personalization.PersonalizationScreen
 import com.ahmrh.serene.ui.screen.main.profile.ProfileScreen
 import com.ahmrh.serene.ui.screen.main.result.ResultScreen
@@ -104,6 +105,11 @@ fun SereneNavGraph(
 
             composable(Destination.Serene.AchievementDetail.route, arguments =  listOf(navArgument("achievementId") { defaultValue = "null" })){
                 AchievementDetailScreen(navController, it.arguments?.getString("achievementId") ?: "null")
+            }
+
+            composable(Destination.Serene.Event.route, arguments = listOf(navArgument("eventJson") { defaultValue = "null"})){
+                EventScreen(navController)
+
             }
         }
 

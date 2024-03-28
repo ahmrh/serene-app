@@ -6,18 +6,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ElevatedFilterChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,7 +23,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -36,7 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -47,20 +43,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import coil.compose.AsyncImagePainter
-import coil.compose.SubcomposeAsyncImage
-import coil.compose.SubcomposeAsyncImageContent
-import coil.request.ImageRequest
 import com.ahmrh.serene.R
+import com.ahmrh.serene.common.enums.Event
 import com.ahmrh.serene.common.utils.CategoryUtils
 import com.ahmrh.serene.common.state.UiState
-import com.ahmrh.serene.domain.model.gamification.Achievement
 import com.ahmrh.serene.domain.model.selfcare.SelfCareActivity
 import com.ahmrh.serene.navigation.Destination
 import com.ahmrh.serene.ui.component.dialog.SereneDialog
+import com.ahmrh.serene.ui.screen.main.event.EventViewModel
 import com.ahmrh.serene.ui.theme.SereneTheme
+import com.google.gson.Gson
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,13 +63,10 @@ fun PracticeScreen(
 
     navController: NavHostController = rememberNavController(),
     activityId: String? = null,
-    viewModel: PracticeViewModel = hiltViewModel()
+    viewModel: PracticeViewModel = hiltViewModel(),
 ) {
 
-    viewModel.getActivityDetail(activityId ?: "null")
-    val activityState = viewModel.activityDetailUiState.collectAsState()
-
-    val unlockedAchievementId = viewModel.unlockedAchievementState.collectAsState().value
+    viewModel.getActivityDetail(activityId!!)
 
     val navigateToAchievement:(String) -> Unit = { achievementId ->
         navController.navigate(Destination.Serene.AchievementDetail.createRoute(achievementId))
@@ -90,20 +82,25 @@ fun PracticeScreen(
         }
     }
 
-    when{
-        unlockedAchievementId != null -> {
-            LaunchedEffect(key1 = unlockedAchievementId) {
-                Log.d("PracticeScreen", "achievement id = $unlockedAchievementId")
+    val navigateToEvent = {
 
-                if(unlockedAchievementId == "null"){
-                    navigateToHome()
-                } else {
-                    navigateToAchievement(unlockedAchievementId)
-                }
-            }
-
+        navController.navigate(Destination.Serene.Event.route){
+            popUpTo(Destination.Serene.Home.route)
         }
     }
+
+
+    viewModel.eventStateLiveData.observe(LocalLifecycleOwner.current){
+        when{
+            it -> { navigateToEvent() }
+        }
+    }
+
+
+    val activityState =
+        viewModel.activityDetailUiState.collectAsState()
+
+
 
     when (activityState.value) {
         is UiState.Success -> {
@@ -331,128 +328,10 @@ fun PracticeContent(
 }
 
 
-@Composable
-fun DailyStreakEvent(
-    navController: NavHostController
-){
-
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun AchievementEvent(
-//    navController: NavHostController,
-//    achievementId: String,
-    achievement: Achievement? = null,
-){
-
-    Box(modifier = Modifier.fillMaxSize()) {
-
-        TopAppBar(
-            title = {}, navigationIcon = {
-                IconButton(onClick = {}) {
-
-                    Icon(
-                        painter = painterResource(
-                            id = R.drawable.serene_icon_close
-                        ),
-                        contentDescription = null,
-                    )
-
-                }
-            },
-            actions = {
-
-                IconButton(onClick = {}) {
-
-                    Icon(
-                        painter = painterResource(
-                            id = R.drawable.serene_icon_share
-                        ),
-                        contentDescription = null,
-                    )
-
-                }
-            })
-
-
-        Column(
-            Modifier
-                .padding(horizontal = 36.dp, vertical = 56.dp)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ){
-        Image(
-            painterResource(id = R.drawable.serene_placeholder_achievement),
-            contentDescription = null,
-            Modifier.size(250.dp)
-        )
-
-
-            SubcomposeAsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(achievement?.imageUri)
-                    .build(),
-                contentDescription = "Supporting Image",
-                contentScale = ContentScale.Crop
-            ) {
-                val state = painter.state
-                if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {
-                    Box(
-                        Modifier
-                            .fillMaxWidth()
-                            .background(
-                                MaterialTheme.colorScheme.surfaceColorAtElevation(
-                                    8.dp
-                                )
-                            )
-                    )
-                } else {
-                    SubcomposeAsyncImageContent()
-                }
-            }
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            Text("${achievement?.name}", style = MaterialTheme.typography.titleLarge)
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            ElevatedFilterChip(
-                selected = false,
-                onClick = {  },
-                label = {
-                    Text("Dec 19, 2023", style = MaterialTheme.typography.titleSmall)
-                })
-
-            Spacer(modifier = Modifier.height(32.dp))
-            Text("${achievement?.description}",
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center)
-        }
-
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 fun PracticePreview() {
     SereneTheme {
         PracticeScreen()
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DailyStreakPreview(){
-    SereneTheme{
-        DailyStreakEvent(navController = rememberNavController())
-    }
-}
-@Preview(showBackground = true)
-@Composable
-fun AchievementPreview(){
-    SereneTheme{
-        AchievementEvent()
     }
 }

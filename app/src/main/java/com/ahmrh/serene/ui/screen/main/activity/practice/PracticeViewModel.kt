@@ -2,12 +2,18 @@ package com.ahmrh.serene.ui.screen.main.activity.practice
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ahmrh.serene.common.enums.Event
 import com.ahmrh.serene.common.state.ResourceState
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.data.repository.PreferencesRepository
+import com.ahmrh.serene.domain.EventHandler
+import com.ahmrh.serene.domain.model.gamification.DailyStreak
 import com.ahmrh.serene.domain.model.selfcare.SelfCareActivity
 import com.ahmrh.serene.domain.usecase.selfcare.activity.ActivityUseCases
 import com.ahmrh.serene.ui.screen.main.activity.list.ActivityListViewModel
@@ -21,7 +27,8 @@ import javax.inject.Inject
 class PracticeViewModel @Inject constructor(
 
     private val preferencesRepository: PreferencesRepository,
-    private val activityUseCases: ActivityUseCases
+    private val activityUseCases: ActivityUseCases,
+    private val eventHandler: EventHandler
 ): ViewModel(){
 
     private var _activity: MutableState<SelfCareActivity?> = mutableStateOf(null)
@@ -32,31 +39,10 @@ class PracticeViewModel @Inject constructor(
     val activityDetailUiState: StateFlow<UiState<SelfCareActivity>>
         get() = _activityDetailUiState
 
-    private var _enabledPracticeButtonUiState: MutableStateFlow<Boolean> =
-        MutableStateFlow(true)
+    private val _eventStateLiveData: MutableLiveData<Boolean> = MutableLiveData(false)
 
-    val enabledPracticeButtonUiState: StateFlow<Boolean>
-        get() = _enabledPracticeButtonUiState
+    val eventStateLiveData: LiveData<Boolean> = _eventStateLiveData
 
-    // Result
-    private var _unlockedAchievementState: MutableStateFlow<String?> =
-        MutableStateFlow(null)
-
-    val unlockedAchievementState: StateFlow<String?>
-        get() = _unlockedAchievementState
-
-
-    init {
-        initPracticeButton()
-    }
-
-    private fun initPracticeButton(){
-        viewModelScope.launch{
-            preferencesRepository.getStartedActivityIdValue().collect{
-                _enabledPracticeButtonUiState.value = it == null
-            }
-        }
-    }
 
     fun getActivityDetail(id : String) =
         viewModelScope.launch {
@@ -76,23 +62,41 @@ class PracticeViewModel @Inject constructor(
         }
 
     fun onPracticeDone(){
+        clearStartedActivity()
+        practiceSelfCare()
+    }
+
+    private fun clearStartedActivity(){
         viewModelScope.launch {
             preferencesRepository.clearStartedActivityIdValue()
+        }
+    }
+
+    private fun practiceSelfCare(){
+        viewModelScope.launch {
             activityUseCases.practiceSelfCare(_activity.value!!,
-                onAchievementUnlocked = {
-                    Log.d(TAG, "Achievement Id: $it")
-                    if(it == null){
-                        _unlockedAchievementState.value = "null"
-                    } else {
-                        _unlockedAchievementState.value = it
+                onAchievementUnlockedEvent = {
+                    if(it != null){
+                        val event = Event.AchievementEvent(it)
+                        eventHandler.addEvent(event)
                     }
                 },
+                onDailyStreakEvent = {
+
+                    if(it != null){
+                        val event = Event.DailyStreakEvent(it)
+                        eventHandler.addEvent(event)
+                    }
+                },
+
                 onResult = {
                     Log.e(TAG, "Error: $it")
                 }
             )
 
+            _eventStateLiveData.value = true
         }
+
     }
 
     companion object{

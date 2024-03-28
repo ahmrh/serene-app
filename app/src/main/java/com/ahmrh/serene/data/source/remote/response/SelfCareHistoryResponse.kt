@@ -11,6 +11,9 @@ data class SelfCareHistoryResponse(
 	val selfCareId: String? = null,
 
 	@field:SerializedName("selfCareCategory")
-	val selfCareCategory: String? = null
+	val selfCareCategory: String? = null,
+
+	@field:SerializedName("selfCareName")
+	val selfCareName: String? = null
 
 )
