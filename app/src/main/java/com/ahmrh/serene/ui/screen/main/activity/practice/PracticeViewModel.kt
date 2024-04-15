@@ -2,7 +2,6 @@ package com.ahmrh.serene.ui.screen.main.activity.practice
 
 import android.util.Log
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,8 +11,7 @@ import com.ahmrh.serene.common.enums.Event
 import com.ahmrh.serene.common.state.ResourceState
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.data.repository.PreferencesRepository
-import com.ahmrh.serene.domain.EventHandler
-import com.ahmrh.serene.domain.model.gamification.DailyStreak
+import com.ahmrh.serene.domain.handler.EventHandler
 import com.ahmrh.serene.domain.model.selfcare.SelfCareActivity
 import com.ahmrh.serene.domain.usecase.selfcare.activity.ActivityUseCases
 import com.ahmrh.serene.ui.screen.main.activity.list.ActivityListViewModel

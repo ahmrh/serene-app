@@ -37,7 +37,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.common.utils.CategoryUtils
-import com.ahmrh.serene.navigation.Destination
+import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.theme.SereneTheme
 import kotlinx.coroutines.delay
 

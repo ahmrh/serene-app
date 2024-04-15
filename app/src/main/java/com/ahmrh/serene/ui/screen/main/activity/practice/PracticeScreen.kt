@@ -6,9 +6,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -36,6 +38,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
@@ -51,7 +54,7 @@ import com.ahmrh.serene.common.enums.Event
 import com.ahmrh.serene.common.utils.CategoryUtils
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.domain.model.selfcare.SelfCareActivity
-import com.ahmrh.serene.navigation.Destination
+import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.component.dialog.SereneDialog
 import com.ahmrh.serene.ui.screen.main.event.EventViewModel
 import com.ahmrh.serene.ui.theme.SereneTheme
@@ -236,10 +239,16 @@ fun PracticeContent(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+
                         Column(
 
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
+                            Text(
+                                "You are currently practicing,",
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
                             Text(
                                 "${activity.name}",
                                 style = MaterialTheme.typography.titleLarge

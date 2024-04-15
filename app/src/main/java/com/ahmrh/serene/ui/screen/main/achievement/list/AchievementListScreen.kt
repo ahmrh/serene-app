@@ -44,7 +44,7 @@ import coil.request.ImageRequest
 import com.ahmrh.serene.R
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.domain.model.gamification.Achievement
-import com.ahmrh.serene.navigation.Destination
+import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.component.AchievementItem
 import com.ahmrh.serene.ui.screen.main.activity.practice.LoadingContent
 import com.ahmrh.serene.ui.theme.SereneTheme

@@ -30,7 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.common.utils.Category
 import com.ahmrh.serene.domain.model.selfcare.SelfCareRecommendation
-import com.ahmrh.serene.navigation.Destination
+import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.component.card.ChallengeCard
 import com.ahmrh.serene.ui.component.card.RecommendationCard
 import com.ahmrh.serene.ui.component.dialog.SereneDialog
@@ -195,6 +195,7 @@ fun HomeScreen(
                     navigateToDetail = navigateToActivityDetail,
                     recommendationUiState = recommendationUiState.value
                 )
+
 
                 ChallengesSection()
 

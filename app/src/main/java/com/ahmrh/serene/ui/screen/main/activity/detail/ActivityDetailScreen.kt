@@ -53,7 +53,7 @@ import com.ahmrh.serene.R
 import com.ahmrh.serene.common.utils.CategoryUtils
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.domain.model.selfcare.SelfCareActivity
-import com.ahmrh.serene.navigation.Destination
+import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.component.CircularLoading
 import com.ahmrh.serene.ui.component.dialog.SereneDialog
 import com.ahmrh.serene.ui.theme.SereneTheme

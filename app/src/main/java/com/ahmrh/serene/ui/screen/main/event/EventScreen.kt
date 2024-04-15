@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedFilterChip
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -46,7 +47,7 @@ import com.ahmrh.serene.R
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.domain.model.gamification.Achievement
 import com.ahmrh.serene.domain.model.gamification.DailyStreak
-import com.ahmrh.serene.navigation.Destination
+import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.component.DailyStreakFlame
 import com.ahmrh.serene.ui.component.DailyStreakFlameVariant
 import com.ahmrh.serene.ui.screen.main.activity.practice.LoadingContent
@@ -292,7 +293,8 @@ fun AchievementEvent(
                     ) {
                         Column(
                             Modifier
-                                .weight(weight = 1f, fill = false),
+                                .weight(weight = 1f, fill = false)
+                                .padding(horizontal = 24.dp),
 
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
@@ -305,7 +307,8 @@ fun AchievementEvent(
                                     .data(achievement?.imageUri)
                                     .build(),
                                 contentDescription = "Supporting Image",
-                                contentScale = ContentScale.Crop
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.size(250.dp)
                             ) {
                                 val state = painter.state
                                 if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {

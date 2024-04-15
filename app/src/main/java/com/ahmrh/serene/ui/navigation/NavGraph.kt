@@ -1,4 +1,4 @@
-package com.ahmrh.serene.navigation
+package com.ahmrh.serene.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
@@ -64,16 +64,19 @@ fun SereneNavGraph(
             composable(Destination.Serene.ActivityCategory.route){
                 ActivityCategoryScreen(navController)
             }
-            composable(Destination.Serene.ActivityList.route,  arguments = listOf(navArgument("categoryId") { defaultValue = "1" })){
+            composable(
+                Destination.Serene.ActivityList.route,  arguments = listOf(navArgument("categoryId") { defaultValue = "1" })){
 
                 ActivityListScreen(navController, it.arguments?.getString("categoryId")?.toInt() ?: 1)
             }
 
-            composable(Destination.Serene.ActivityDetail.route, arguments =  listOf(navArgument("activityId") { defaultValue = "null" })){
+            composable(
+                Destination.Serene.ActivityDetail.route, arguments =  listOf(navArgument("activityId") { defaultValue = "null" })){
                 ActivityDetailScreen(navController, it.arguments?.getString("activityId") ?: "null")
             }
 
-            composable(Destination.Serene.Practice.route,  arguments =  listOf(navArgument("activityId") { defaultValue = "null" })){
+            composable(
+                Destination.Serene.Practice.route,  arguments =  listOf(navArgument("activityId") { defaultValue = "null" })){
 
                 PracticeScreen(navController, it.arguments?.getString("activityId") ?: "null")
             }
@@ -86,7 +89,8 @@ fun SereneNavGraph(
                 ProfileScreen(navController)
             }
 
-            composable(Destination.Serene.Result.route, arguments = listOf(navArgument("category"){ defaultValue = "1" })){
+            composable(
+                Destination.Serene.Result.route, arguments = listOf(navArgument("category"){ defaultValue = "1" })){
 
                 ResultScreen(navController, it.arguments?.getString("categoryId")?.toInt() ?: 1)
             }
@@ -107,7 +111,8 @@ fun SereneNavGraph(
                 AchievementDetailScreen(navController, it.arguments?.getString("achievementId") ?: "null")
             }
 
-            composable(Destination.Serene.Event.route, arguments = listOf(navArgument("eventJson") { defaultValue = "null"})){
+            composable(
+                Destination.Serene.Event.route, arguments = listOf(navArgument("eventJson") { defaultValue = "null"})){
                 EventScreen(navController)
 
             }

@@ -19,7 +19,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.common.utils.Category
 import com.ahmrh.serene.common.state.UiState
-import com.ahmrh.serene.navigation.Destination
+import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.component.dialog.SereneDialog
 import com.ahmrh.serene.ui.screen.main.activity.practice.LoadingContent
 import com.ahmrh.serene.ui.screen.main.personalization.content.BaseQuestionContent

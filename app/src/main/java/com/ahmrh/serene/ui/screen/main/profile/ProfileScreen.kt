@@ -63,7 +63,7 @@ import com.ahmrh.serene.common.utils.Category
 import com.ahmrh.serene.common.utils.CategoryUtils
 import com.ahmrh.serene.domain.model.gamification.Achievement
 import com.ahmrh.serene.domain.model.user.SelfCareHistory
-import com.ahmrh.serene.navigation.Destination
+import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.component.HistoryItem
 import com.ahmrh.serene.ui.component.card.StatCard
 import com.ahmrh.serene.ui.component.navbar.SereneNavBar

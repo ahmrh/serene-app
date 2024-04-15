@@ -12,7 +12,7 @@ import com.ahmrh.serene.data.repository.PersonalizationRepository
 import com.ahmrh.serene.data.repository.PreferencesRepository
 import com.ahmrh.serene.data.repository.SelfCareRepository
 import com.ahmrh.serene.data.repository.UserRepository
-import com.ahmrh.serene.domain.EventHandler
+import com.ahmrh.serene.domain.handler.EventHandler
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore

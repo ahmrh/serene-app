@@ -22,6 +22,7 @@ class GamificationRepository @Inject constructor(
 
     private var language: String = Locale.getDefault().language
 
+
     suspend fun fetchAchievements(
         onSuccess: (List<Achievement>) -> Unit,
         onFailure: (Throwable?) -> Unit
@@ -141,6 +142,13 @@ class GamificationRepository @Inject constructor(
 
         Log.d(TAG, "Achievement Id: $achievementId")
         return achievementId
+    }
+
+    suspend fun fetchTodayChallenges(
+        progress: Int
+    ): String{
+
+        return ""
     }
 
     companion object{

@@ -36,7 +36,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
 import com.ahmrh.serene.common.state.AuthUiState
-import com.ahmrh.serene.navigation.Destination
+import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.component.dialog.SereneDialog
 import com.ahmrh.serene.ui.component.textfield.SereneConfirmPasswordTextField
 import com.ahmrh.serene.ui.component.textfield.SereneEmailTextField

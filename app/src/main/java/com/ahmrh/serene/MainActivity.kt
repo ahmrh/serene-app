@@ -7,7 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.ahmrh.serene.navigation.SereneNavGraph
+import com.ahmrh.serene.ui.navigation.SereneNavGraph
 import com.ahmrh.serene.ui.theme.SereneTheme
 import dagger.hilt.android.AndroidEntryPoint
 

@@ -1,4 +1,4 @@
-package com.ahmrh.serene.navigation
+package com.ahmrh.serene.ui.navigation
 
 sealed class Destination(val route: String) {
 

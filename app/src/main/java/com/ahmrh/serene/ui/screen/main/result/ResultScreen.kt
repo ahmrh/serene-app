@@ -28,7 +28,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.ahmrh.serene.R
 import com.ahmrh.serene.common.utils.CategoryUtils
-import com.ahmrh.serene.navigation.Destination
+import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.theme.SereneTheme
 
 @Composable

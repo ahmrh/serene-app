@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.ahmrh.serene.R
-import com.ahmrh.serene.navigation.Destination
+import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.theme.SereneTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
