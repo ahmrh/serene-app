@@ -43,7 +43,6 @@ import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
 import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.component.textfield.SereneButtonTextField
-import com.ahmrh.serene.ui.component.textfield.SereneHiddenTextField
 import com.ahmrh.serene.ui.component.textfield.SereneTextField
 import com.ahmrh.serene.ui.theme.SereneTheme
 
@@ -57,7 +56,10 @@ fun SettingScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {}, navigationIcon = {
+                title = {
+
+                },
+                navigationIcon = {
                     IconButton(onClick = {
                         navController.popBackStack()
                     }) {
@@ -73,7 +75,8 @@ fun SettingScreen(
                 },
                 actions = {
                     TextButton(
-                        onClick = {}) {
+                        onClick = {}
+                    ) {
                         Text(
                             "Save",
                             style = MaterialTheme.typography.titleMedium
@@ -184,7 +187,7 @@ fun SettingScreen(
 
                 var notificationChecked by rememberSaveable {
                     mutableStateOf(
-                        false
+                        viewModel.notificationState.value
                     )
                 }
 
@@ -204,7 +207,10 @@ fun SettingScreen(
                     trailingContent = {
                         Switch(
                             checked = notificationChecked,
-                            onCheckedChange = { notificationChecked = !notificationChecked}
+                            onCheckedChange = {
+                                notificationChecked = !notificationChecked
+                                viewModel.changeNotificationValue(notificationChecked)
+                            }
                         )
                     }
 
@@ -213,9 +219,9 @@ fun SettingScreen(
 
 
 
-                var darkMode by rememberSaveable {
+                var darkModeChecked by rememberSaveable {
                     mutableStateOf(
-                        false
+                        viewModel.darkModeState.value
                     )
                 }
 
@@ -234,8 +240,11 @@ fun SettingScreen(
                     },
                     trailingContent = {
                         Switch(
-                            checked = darkMode,
-                            onCheckedChange = { darkMode = !darkMode}
+                            checked = darkModeChecked,
+                            onCheckedChange = {
+                                darkModeChecked = !darkModeChecked
+                                viewModel.changeDarkModeValue(darkModeChecked)
+                            }
                         )
                     }
 

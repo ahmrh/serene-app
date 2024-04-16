@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmrh.serene.common.enums.Event
+import com.ahmrh.serene.common.enums.Sentiment
 import com.ahmrh.serene.common.state.ResourceState
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.data.repository.PreferencesRepository
@@ -30,6 +31,8 @@ class PracticeViewModel @Inject constructor(
 ): ViewModel(){
 
     private var _activity: MutableState<SelfCareActivity?> = mutableStateOf(null)
+
+
 
     private var _activityDetailUiState: MutableStateFlow<UiState<SelfCareActivity>> =
         MutableStateFlow(UiState.Loading)
@@ -59,9 +62,9 @@ class PracticeViewModel @Inject constructor(
             }
         }
 
-    fun onPracticeDone(){
+    fun savePracticeHistory(sentiment: Sentiment){
         clearStartedActivity()
-        practiceSelfCare()
+        practiceSelfCare(sentiment)
     }
 
     private fun clearStartedActivity(){
@@ -70,9 +73,9 @@ class PracticeViewModel @Inject constructor(
         }
     }
 
-    private fun practiceSelfCare(){
+    private fun practiceSelfCare(sentiment: Sentiment){
         viewModelScope.launch {
-            activityUseCases.practiceSelfCare(_activity.value!!,
+            activityUseCases.practiceSelfCare(_activity.value!!, sentiment,
                 onAchievementUnlockedEvent = {
                     if(it != null){
                         val event = Event.AchievementEvent(it)
@@ -102,3 +105,4 @@ class PracticeViewModel @Inject constructor(
     }
 
 }
+

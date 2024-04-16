@@ -1,6 +1,5 @@
 package com.ahmrh.serene.common.utils
 
-import android.util.Log
 import java.util.Calendar
 import java.util.Date
 import kotlin.math.abs
@@ -46,9 +45,14 @@ object DateUtils {
         val calendar1 = Calendar.getInstance().apply { time = date1 }
         val calendar2 = Calendar.getInstance().apply { time = date2 }
 
-        return calendar1.get(Calendar.YEAR) == calendar2.get(Calendar.YEAR) &&
-                calendar1.get(Calendar.DAY_OF_YEAR) == calendar2.get(Calendar.DAY_OF_YEAR)
+        return calendar1.get(Calendar.YEAR) == calendar2.get(
+            Calendar.YEAR
+        ) &&
+                calendar1.get(Calendar.DAY_OF_YEAR) == calendar2.get(
+            Calendar.DAY_OF_YEAR
+        )
     }
+
     fun getElapsedTime(date: Date): String {
         val now = Calendar.getInstance().timeInMillis
         val diff = now - date.time

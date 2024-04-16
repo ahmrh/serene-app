@@ -10,6 +10,9 @@ data class SelfCareHistoryResponse(
 	@field:SerializedName("selfCareId")
 	val selfCareId: String? = null,
 
+	@field:SerializedName("feedbackSentiment")
+	val feedbackSentiment: String? = null,
+
 	@field:SerializedName("selfCareCategory")
 	val selfCareCategory: String? = null,
 

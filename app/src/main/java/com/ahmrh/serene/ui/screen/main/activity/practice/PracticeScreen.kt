@@ -1,11 +1,11 @@
 package com.ahmrh.serene.ui.screen.main.activity.practice
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,10 +26,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,7 +39,6 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
@@ -46,21 +46,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
-import com.ahmrh.serene.common.enums.Event
-import com.ahmrh.serene.common.utils.CategoryUtils
+import com.ahmrh.serene.common.enums.Sentiment
 import com.ahmrh.serene.common.state.UiState
+import com.ahmrh.serene.common.utils.CategoryUtils
 import com.ahmrh.serene.domain.model.selfcare.SelfCareActivity
-import com.ahmrh.serene.ui.navigation.Destination
+import com.ahmrh.serene.ui.component.button.SentimentButton
 import com.ahmrh.serene.ui.component.dialog.SereneDialog
-import com.ahmrh.serene.ui.screen.main.event.EventViewModel
+import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.theme.SereneTheme
-import com.google.gson.Gson
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PracticeScreen(
 
@@ -69,13 +66,12 @@ fun PracticeScreen(
     viewModel: PracticeViewModel = hiltViewModel(),
 ) {
 
+    var openFeedback by remember { mutableStateOf(false) }
+
     viewModel.getActivityDetail(activityId!!)
 
-    val navigateToAchievement:(String) -> Unit = { achievementId ->
-        navController.navigate(Destination.Serene.AchievementDetail.createRoute(achievementId))
-    }
     val navigateToHome: () -> Unit = {
-        navController.navigate(Destination.Serene.Home.route){
+        navController.navigate(Destination.Serene.Home.route) {
             popUpTo(
                 Destination.Serene.route
             ) {
@@ -86,46 +82,56 @@ fun PracticeScreen(
     }
 
     val navigateToEvent = {
-
-        navController.navigate(Destination.Serene.Event.route){
+        navController.navigate(Destination.Serene.Event.route) {
             popUpTo(Destination.Serene.Home.route)
         }
     }
 
-
-    viewModel.eventStateLiveData.observe(LocalLifecycleOwner.current){
-        when{
-            it -> { navigateToEvent() }
+    viewModel.eventStateLiveData.observe(LocalLifecycleOwner.current) {
+        when {
+            it -> {
+                navigateToEvent()
+            }
         }
     }
 
-
-    val activityState =
-        viewModel.activityDetailUiState.collectAsState()
-
-
-
-    when (activityState.value) {
-        is UiState.Success -> {
-            val activity =
-                (activityState.value as UiState.Success<SelfCareActivity>).data
-            PracticeContent(
-                activity = activity,
-                onPracticeDone = {
-                    viewModel.onPracticeDone()
-                },
-                navigateToHome = navigateToHome
+    when {
+        openFeedback -> {
+            FeedbackContent(
+                onPracticeDone = viewModel::savePracticeHistory
             )
+
         }
 
-        is UiState.Error -> {
-            ErrorContent()
-        }
+        else -> {
 
-        is UiState.Loading -> {
-            LoadingContent()
+            val activityState =
+                viewModel.activityDetailUiState.collectAsState()
+
+            when (activityState.value) {
+                is UiState.Success -> {
+                    val activity =
+                        (activityState.value as UiState.Success<SelfCareActivity>).data
+                    PracticeContent(
+                        activity = activity,
+                        onPracticeDone = {
+                            openFeedback = true
+                        },
+                        navigateToHome = navigateToHome,
+                    )
+                }
+
+                is UiState.Error -> {
+                    ErrorContent()
+                }
+
+                is UiState.Loading -> {
+                    LoadingContent()
+                }
+            }
         }
     }
+
 }
 
 @Composable
@@ -145,6 +151,101 @@ fun LoadingContent() {
 @Composable
 fun ErrorContent() {
 
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FeedbackContent(
+    onPracticeDone: (
+        Sentiment
+    ) -> Unit = {}
+) {
+    var selectedSentiment by remember {
+        mutableStateOf(
+            Sentiment.NEUTRAL
+        )
+    }
+
+
+    Scaffold(
+        topBar = {
+            TopAppBar(title = {})
+
+        }
+    ) {
+        Surface(
+            modifier = Modifier
+                .padding(it)
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(top = 48.dp, bottom = 20.dp)
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Column(
+                    Modifier
+                        .weight(weight = 1f, fill = false),
+
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                ) {
+                    Text(
+                        text = "You've Practiced an Activity",
+                        style = MaterialTheme.typography.titleLarge,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Text(
+                        text = "How would you rate this Self-care Activity?"
+                    )
+
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+
+                        val sentiments = listOf(
+                            Sentiment.VERY_DISSATISFIED,
+                            Sentiment.DISSATISFIED,
+                            Sentiment.NEUTRAL,
+                            Sentiment.SATISFIED,
+                            Sentiment.VERY_SATISFIED,
+                        )
+
+                        sentiments.forEach { sentiment ->
+                            SentimentButton(
+                                modifier = Modifier.size(56.dp),
+                                onClick = {
+                                    selectedSentiment = sentiment
+                                },
+                                iconResource = sentiment.iconResource,
+                                text = sentiment.stringValue,
+                                selected = selectedSentiment == sentiment,
+                            )
+                        }
+
+                    }
+
+
+                }
+
+                Button(
+                    onClick = {
+                        onPracticeDone(selectedSentiment)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp)
+                ) {
+                    Text("Continue")
+
+
+                }
+            }
+        }
+
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -186,7 +287,7 @@ fun PracticeContent(
         }
     }
 
-    Box{
+    Box {
 
         Scaffold(
             topBar = {
@@ -273,9 +374,13 @@ fun PracticeContent(
 
 
                         Column(
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(
+                                8.dp
+                            ),
                             modifier = Modifier
-                                .padding(horizontal = 16.dp, vertical = 16.dp)
+                                .padding(
+                                    horizontal = 16.dp, vertical = 16.dp
+                                )
                         ) {
                             Text(
                                 "General How to:",
@@ -306,7 +411,7 @@ fun PracticeContent(
 
 
                     Column(
-                        modifier = Modifier.padding(16.dp,),
+                        modifier = Modifier.padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
 
@@ -324,8 +429,6 @@ fun PracticeContent(
                             modifier = Modifier.fillMaxWidth()
                         ) {
                             Text("Done")
-
-
                         }
                     }
 

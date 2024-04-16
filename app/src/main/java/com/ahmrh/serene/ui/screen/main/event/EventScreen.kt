@@ -73,6 +73,7 @@ fun EventScreen(
             }
         }
 
+
         LaunchedEffect(key1 = null) {
 
             if(!viewModel.achievementEventOpen.value && !viewModel.dailyStreakEventOpen.value){

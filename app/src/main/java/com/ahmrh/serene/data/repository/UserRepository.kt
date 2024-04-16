@@ -2,6 +2,7 @@ package com.ahmrh.serene.data.repository
 
 import android.net.Uri
 import android.util.Log
+import com.ahmrh.serene.common.enums.Sentiment
 import com.ahmrh.serene.common.utils.ArrayUtils
 import com.ahmrh.serene.common.utils.DateUtils
 import com.ahmrh.serene.common.utils.Language
@@ -118,18 +119,21 @@ class UserRepository @Inject constructor(
 
     fun addSelfCareHistory(
         selfCareActivity: SelfCareActivity,
+        sentiment: Sentiment,
         onResult: (Throwable?) -> Unit
     ) {
         val userId = auth.currentUser!!.uid
         val date = Calendar.getInstance().time;
 
         val selfCareId = selfCareActivity.id
+        val feedbackSentiment = sentiment.stringValue
         val selfCareCategory = selfCareActivity.category!!
         val selfCareName = selfCareActivity.name!!
 
         val selfCareHistory = SelfCareHistory(
             selfCareId,
             selfCareCategory,
+            feedbackSentiment,
             selfCareName,
             date
         )
@@ -176,7 +180,8 @@ class UserRepository @Inject constructor(
                         selfCareId = historyResponse.selfCareId!!,
                         selfCareCategory =  historyResponse.selfCareCategory!!,
                         selfCareName = historyResponse.selfCareName!!,
-                        date = Date(historyResponse.date!!)
+                        date = Date(historyResponse.date!!),
+                        feedbackSentiment = historyResponse.feedbackSentiment!!
                     )
                 }
             }
@@ -210,6 +215,7 @@ class UserRepository @Inject constructor(
                         SelfCareHistory(
                             selfCareHistoryResponse.selfCareId!!,
                             selfCareHistoryResponse.selfCareCategory!!,
+                            selfCareHistoryResponse.feedbackSentiment!!,
                             selfCareHistoryResponse.selfCareName!!,
                             Date(selfCareHistoryResponse.date!!),
                         )
@@ -395,8 +401,9 @@ class UserRepository @Inject constructor(
                     SelfCareHistory(
                         selfCareHistoryResponse.selfCareId!!,
                         selfCareHistoryResponse.selfCareCategory!!,
+                        selfCareHistoryResponse.feedbackSentiment!!,
                         selfCareHistoryResponse.selfCareName!!,
-                        Date(selfCareHistoryResponse.date!!)
+                        Date(selfCareHistoryResponse.date!!),
                     )
                 }
 

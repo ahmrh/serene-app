@@ -1,10 +1,7 @@
 package com.ahmrh.serene.ui.component
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -20,8 +17,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ahmrh.serene.common.enums.Sentiment
 import com.ahmrh.serene.common.utils.CategoryUtils
-import com.ahmrh.serene.common.utils.DateUtils
 import com.ahmrh.serene.domain.model.user.SelfCareHistory
 import com.ahmrh.serene.ui.theme.SereneTheme
 
@@ -29,20 +26,34 @@ import com.ahmrh.serene.ui.theme.SereneTheme
 fun HistoryItem(
     selfCareHistory: SelfCareHistory? = null
 ) {
-    val category = CategoryUtils.getCategory(selfCareHistory?.selfCareCategory!!)
+    val category =
+        CategoryUtils.getCategory(selfCareHistory?.selfCareCategory!!)
 
     ListItem(
         headlineContent = {
-            Text("${category.stringValue} Self-care", style = MaterialTheme.typography.bodySmall)
+            Text(
+                "${category.stringValue} Self-care",
+                style = MaterialTheme.typography.bodySmall
+            )
         },
         supportingContent = {
-            Text(selfCareHistory.selfCareName, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            Text(
+                selfCareHistory.selfCareName,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
         },
         leadingContent = {
             Box(
                 modifier =
-                Modifier.clip(RoundedCornerShape(8.dp))
-                    .background(MaterialTheme.colorScheme.surfaceColorAtElevation(8.dp)).size(48.dp),
+                Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(
+                        MaterialTheme.colorScheme.surfaceColorAtElevation(
+                            8.dp
+                        )
+                    )
+                    .size(48.dp),
                 contentAlignment = Alignment.Center
             ) {
 
@@ -54,7 +65,19 @@ fun HistoryItem(
             }
         },
         trailingContent = {
-            Text(DateUtils.getElapsedTime(selfCareHistory.date))
+            val sentiment =
+                Sentiment.fromName(selfCareHistory.feedbackSentiment)
+//            Text(DateUtils.getElapsedTime(selfCareHistory.date))
+            Box(
+                contentAlignment = Alignment.Center
+            ) {
+
+                Icon(
+                    painterResource(id = sentiment.iconResource),
+                    contentDescription = null,
+                    modifier = Modifier.size(36.dp)
+                )
+            }
         }
     )
 }
@@ -63,7 +86,7 @@ fun HistoryItem(
 @Preview
 @Composable
 fun HistoryItemPreview() {
-    SereneTheme{
-         HistoryItem()
+    SereneTheme {
+        HistoryItem()
     }
 }
