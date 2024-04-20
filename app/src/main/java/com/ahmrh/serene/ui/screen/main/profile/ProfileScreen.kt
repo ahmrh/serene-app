@@ -61,6 +61,7 @@ import com.ahmrh.serene.R
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.common.utils.Category
 import com.ahmrh.serene.common.utils.CategoryUtils
+import com.ahmrh.serene.common.utils.DateUtils
 import com.ahmrh.serene.domain.model.gamification.Achievement
 import com.ahmrh.serene.domain.model.user.SelfCareHistory
 import com.ahmrh.serene.ui.navigation.Destination
@@ -249,7 +250,7 @@ fun ProfileScreen(
                                     style = MaterialTheme.typography.titleLarge
                                 )
                                 Text(
-                                    "Joined August 2023",
+                                    DateUtils.formatJoinedDate(profileData.joined),
                                     style = MaterialTheme.typography.labelLarge
                                 )
                             }

@@ -1,11 +1,19 @@
 package com.ahmrh.serene.common.utils
 
+import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
+import java.util.Locale
 import kotlin.math.abs
 
 object DateUtils {
     const val TAG = "DateUtils"
+
+    fun formatJoinedDate(date: Date): String {
+        val monthYearDateFormat = SimpleDateFormat("MMMM yyyy", Locale.US)
+        return "Joined " + monthYearDateFormat.format(date)
+    }
+
     fun getDayStreak(dates: List<Date>): Int {
         if (dates.isEmpty()) {
             return 0

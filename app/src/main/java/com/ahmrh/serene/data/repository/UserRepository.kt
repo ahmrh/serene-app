@@ -441,11 +441,15 @@ class UserRepository @Inject constructor(
 
                 val totalSelfCare = historyList.size
                 val totalAchievement = achievementList.size
+                val signupDate = auth.currentUser?.metadata?.let {
+                    Date(
+                        it.creationTimestamp)
+                }
 
 
                 Profile(
                     username = user?.username ?: "Unnamed Entity",
-                    joined = Date(),
+                    joined = signupDate ?: Date(1220227200),
                     imgUri = Uri.parse("https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png"),
                     dayStreak = dayStreak ?: 0,
                     topSelfCare = topSelfCare ,
