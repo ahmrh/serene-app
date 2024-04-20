@@ -97,6 +97,7 @@ class HomeViewModel @Inject constructor(
                 },
                 onFailure = {
                     Log.e(TAG, "error anjir $it")
+                    _usernameState.value = "Error"
                 }
             )
 

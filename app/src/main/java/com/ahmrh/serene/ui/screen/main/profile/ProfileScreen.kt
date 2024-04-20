@@ -395,32 +395,31 @@ fun StatisticTab(
 
     ){
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                "Achievement",
-                style = MaterialTheme.typography.titleMedium
-            )
-
-            if(achievementList.size > 3){
-
-                TextButton(
-                    onClick = {
-                        navigateToAchievementList()
-                    }
-                ) {
-                    Text("View all")
-                }
-            }
-
-
-        }
         if(achievementList.isNotEmpty()){
 
 
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    "Achievement",
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                if(achievementList.size > 3){
+
+                    TextButton(
+                        onClick = {
+                            navigateToAchievementList()
+                        }
+                    ) {
+                        Text("View all")
+                    }
+                }
+
+            }
 
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(0.dp)
@@ -432,15 +431,16 @@ fun StatisticTab(
                     })
                 }
             }
-        } else {
-            Box(
-                modifier = Modifier.padding(16.dp).fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-
-                Text("Practice Activity to Unlock Achievement")
-            }
         }
+//        else {
+//            Box(
+//                modifier = Modifier.padding(16.dp).fillMaxWidth(),
+//                contentAlignment = Alignment.Center
+//            ) {
+//
+//                Text("Practice Activity to Unlock Achievement")
+//            }
+//        }
     }
 }
 

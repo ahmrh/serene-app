@@ -23,23 +23,22 @@ fun makeReminderNotification(
 ) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
+        // the NotificationChannel class is new and no t in the support library
         val importance = NotificationManager.IMPORTANCE_HIGH
         val channel = NotificationChannel(
             CHANNEL_ID,
             VERBOSE_NOTIFICATION_CHANNEL_NAME,
+
             importance
+
         )
         channel.description = VERBOSE_NOTIFICATION_CHANNEL_DESCRIPTION
 
         val notificationManager =
-            context.getSystemService(
-                Context.NOTIFICATION_SERVICE) as NotificationManager?
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
 
         notificationManager?.createNotificationChannel(channel)
     }
-
-
 
     val pendingIntent: PendingIntent = createPendingIntent(context)
 

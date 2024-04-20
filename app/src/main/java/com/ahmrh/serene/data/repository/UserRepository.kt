@@ -55,6 +55,17 @@ class UserRepository @Inject constructor(
             .addOnCompleteListener { onResult(it.exception) }
     }
 
+    fun recoverPassword(
+        email: String,
+        onResult: (Throwable?) -> Unit
+    ){
+        auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener{ task ->
+                onResult(task.exception)
+            }
+
+    }
+
     fun linkAccount(
         username: String, email: String, password: String,
         onResult: (Throwable?) -> Unit
@@ -309,9 +320,9 @@ class UserRepository @Inject constructor(
             .get()
 
             .addOnSuccessListener { document ->
-                val data = document.toObject<UserResponse>()!!
+                val data = document.toObject<UserResponse>()
 
-                onSuccess(data.username.toString())
+                onSuccess(data?.username.toString())
             }
             .addOnFailureListener(onFailure)
 
@@ -401,7 +412,7 @@ class UserRepository @Inject constructor(
                     SelfCareHistory(
                         selfCareHistoryResponse.selfCareId!!,
                         selfCareHistoryResponse.selfCareCategory!!,
-                        selfCareHistoryResponse.feedbackSentiment!!,
+                        selfCareHistoryResponse.feedbackSentiment ?: "Very Satisfied",
                         selfCareHistoryResponse.selfCareName!!,
                         Date(selfCareHistoryResponse.date!!),
                     )
@@ -412,7 +423,7 @@ class UserRepository @Inject constructor(
                 val userDocuments = firestore.collection("users")
                     .document(userId).get().await()
 
-                val user = userDocuments.toObject<UserResponse>()!!
+                val user = userDocuments.toObject<UserResponse>()
 
 
                 val dayStreak = DateUtils.getDayStreak(
@@ -433,7 +444,7 @@ class UserRepository @Inject constructor(
 
 
                 Profile(
-                    username = user.username ?: "Unnamed Entity",
+                    username = user?.username ?: "Unnamed Entity",
                     joined = Date(),
                     imgUri = Uri.parse("https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png"),
                     dayStreak = dayStreak ?: 0,

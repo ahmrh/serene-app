@@ -1,6 +1,7 @@
 package com.ahmrh.serene.ui.screen.auth.login
 
 import android.content.res.Configuration
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -93,12 +95,16 @@ fun LoginScreen(
         }
     )
     {
+        val focusManager = LocalFocusManager.current
         Column(
             Modifier
                 .padding(it)
                 .padding(horizontal = 24.dp)
                 .padding(bottom = 64.dp)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .clickable {
+                   focusManager.clearFocus(true)
+                },
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
@@ -210,10 +216,9 @@ fun LoginScreen(
                         },
                         onConfirm = {
                             openErrorDialog = false
-
                         },
                         dialogTitle = "Oops",
-                        dialogText = "Error: ${uiState.errorMessage}",
+                        dialogText = "${uiState.errorMessage}",
                         icon = Icons.Default.Info
                     )
                 }

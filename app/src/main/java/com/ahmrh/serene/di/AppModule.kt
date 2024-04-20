@@ -14,7 +14,9 @@ import com.ahmrh.serene.data.repository.PreferencesRepository
 import com.ahmrh.serene.data.repository.SelfCareRepository
 import com.ahmrh.serene.data.repository.UserRepository
 import com.ahmrh.serene.data.repository.WorkManagerRepository
+import com.ahmrh.serene.domain.handler.ChallengeHandler
 import com.ahmrh.serene.domain.handler.EventHandler
+import com.ahmrh.serene.domain.handler.NotificationHandler
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
@@ -24,6 +26,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Inject
 import javax.inject.Singleton
 
 //private val Context.dataStore by preferencesDataStore("preferences")
@@ -32,10 +35,22 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-
     @Provides
     @Singleton
     fun provideEventHandler(): EventHandler = EventHandler()
+
+    @Provides
+    @Singleton
+    fun provideNotificationHandler(): NotificationHandler = NotificationHandler()
+
+    @Provides
+    @Singleton
+    fun provideChallengeHandler(
+        preferencesRepository: PreferencesRepository
+    ): ChallengeHandler {
+        return ChallengeHandler(preferencesRepository)
+    }
+
 
     @Provides
     @Singleton

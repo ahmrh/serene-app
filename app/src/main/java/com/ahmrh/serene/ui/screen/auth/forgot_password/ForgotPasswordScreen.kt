@@ -1,6 +1,7 @@
 package com.ahmrh.serene.ui.screen.auth.forgot_password
 
 import android.content.res.Configuration
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -23,12 +26,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
+import com.ahmrh.serene.ui.component.dialog.SereneDialog
+import com.ahmrh.serene.ui.component.textfield.SereneEmailTextField
 import com.ahmrh.serene.ui.component.textfield.SereneTextField
 import com.ahmrh.serene.ui.theme.SereneTheme
 
@@ -37,7 +44,17 @@ import com.ahmrh.serene.ui.theme.SereneTheme
 @Composable
 fun ForgotPasswordScreen(
     navController: NavHostController = rememberNavController(),
+    viewModel: ForgotPasswordViewModel = hiltViewModel()
 ) {
+    var openConfirmationDialog by remember { mutableStateOf(false) }
+
+    var emailValue by remember {
+        mutableStateOf(
+            ""
+        )
+    }
+
+    val focusManager = LocalFocusManager.current
 
     Scaffold(topBar = {
         TopAppBar(
@@ -61,7 +78,10 @@ fun ForgotPasswordScreen(
                 .padding(it)
                 .padding(horizontal = 24.dp)
                 .padding(bottom = 64.dp)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .clickable{
+                      focusManager.clearFocus(true)
+                },
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
@@ -86,27 +106,26 @@ fun ForgotPasswordScreen(
                     )
                 ) {
 
-                    var emailValue by remember {
-                        mutableStateOf(
-                            ""
-                        )
-                    }
-                    SereneTextField(
+                    SereneEmailTextField(
                         value = emailValue,
                         label = "Email",
                         onValueChange = {
                             emailValue = it
                         })
 
-
                 }
 
             }
             Button(
-                onClick = {},
+                onClick = {
+                    viewModel.recoverPassword(emailValue)
+                    openConfirmationDialog = true
+
+
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Continue")
+                Text(text = "Submit")
 
             }
 
@@ -114,6 +133,27 @@ fun ForgotPasswordScreen(
 
     }
 
+
+
+    when{
+        openConfirmationDialog -> {
+
+            SereneDialog(
+                onDismiss = {
+                    openConfirmationDialog = false
+                    navController.popBackStack()
+                },
+                onConfirm = {
+                    openConfirmationDialog = false
+                    navController.popBackStack()
+
+                },
+                dialogTitle = "Check your email",
+                dialogText = "We've sent recovery password to $emailValue. Please follow further instruction there.",
+                icon = Icons.Default.Info
+            )
+        }
+    }
 }
 
 @Preview(

@@ -1,6 +1,7 @@
 package com.ahmrh.serene.ui.screen.auth.register
 
 import android.content.res.Configuration
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,13 +38,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
 import com.ahmrh.serene.common.state.AuthUiState
-import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.component.dialog.SereneDialog
 import com.ahmrh.serene.ui.component.textfield.SereneConfirmPasswordTextField
 import com.ahmrh.serene.ui.component.textfield.SereneEmailTextField
-import com.ahmrh.serene.ui.component.textfield.SereneHiddenTextField
 import com.ahmrh.serene.ui.component.textfield.SerenePasswordTextField
 import com.ahmrh.serene.ui.component.textfield.SereneTextField
+import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.screen.main.activity.practice.LoadingContent
 import com.ahmrh.serene.ui.theme.SereneTheme
 
@@ -91,34 +92,41 @@ fun RegisterScreen(
     }
 
 
-    Scaffold(topBar = {
-        TopAppBar(
-            title = {},
-            navigationIcon = {
-                IconButton(onClick = {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {},
+                navigationIcon = {
+                    IconButton(onClick = {
 
-                    navController.popBackStack()
-                }) {
+                        navController.popBackStack()
+                    }) {
 
-                    Icon(
-                        painter = painterResource(
-                            id = R.drawable.serene_icon_arrow_back
-                        ),
-                        contentDescription = null,
-                    )
+                        Icon(
+                            painter = painterResource(
+                                id = R.drawable.serene_icon_arrow_back
+                            ),
+                            contentDescription = null,
+                        )
 
-                }
-            },
+                    }
+                },
+            )
+        },
+
         )
-    }
-    )
     {
+        val focusManager = LocalFocusManager.current
+
         Column(
             Modifier
                 .padding(it)
                 .padding(horizontal = 24.dp)
                 .padding(bottom = 64.dp)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .clickable {
+                           focusManager.clearFocus(true )
+                },
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
@@ -179,24 +187,31 @@ fun RegisterScreen(
                             confirmPasswordVisible =
                                 !confirmPasswordVisible
                         }, password = passwordValue
-                        )
+                    )
 
 
                     TextButton(onClick = {
-                        navController.navigate(Destination.Auth.Login.route){
+                        navController.navigate(
+                            Destination.Auth.Login.route
+                        ) {
                             popUpTo(Destination.Auth.SetUpProfile.route) {
                                 saveState = true
                             }
                         }
                     }) {
-                        Text("Already have an account?", fontWeight = FontWeight.Bold)
+                        Text(
+                            "Already have an account?",
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
 
             }
             Button(
                 onClick = {
-                  viewModel.onRegister(nameValue, emailValue, passwordValue)
+                    viewModel.onRegister(
+                        nameValue, emailValue, passwordValue
+                    )
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -208,15 +223,17 @@ fun RegisterScreen(
 
     }
 
-    var openErrorDialog by remember{ mutableStateOf(false) }
+    var openErrorDialog by remember { mutableStateOf(false) }
 
-    when(uiState){
+    when (uiState) {
         is AuthUiState.Idle -> {
 
         }
+
         is AuthUiState.Loading -> {
             LoadingContent()
         }
+
         is AuthUiState.Success -> {
             LaunchedEffect(key1 = uiState) {
                 navController.navigate(Destination.Serene.route) {
@@ -229,11 +246,12 @@ fun RegisterScreen(
                 }
             }
         }
+
         is AuthUiState.Error -> {
             LaunchedEffect(key1 = null) {
                 openErrorDialog = true
             }
-            when{
+            when {
                 openErrorDialog -> {
 
                     SereneDialog(
@@ -246,7 +264,7 @@ fun RegisterScreen(
                         },
                         dismissText = "Dismiss",
                         dialogTitle = "Oops",
-                        dialogText = "Error: ${uiState.errorMessage}",
+                        dialogText = "${uiState.errorMessage}",
                         icon = Icons.Default.Info
                     )
 
@@ -267,6 +285,6 @@ fun RegisterScreen(
 @Composable
 fun RegisterScreenPreview() {
     SereneTheme {
-        RegisterScreen( rememberNavController() )
+        RegisterScreen(rememberNavController())
     }
 }
