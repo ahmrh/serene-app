@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
@@ -52,6 +53,18 @@ fun SettingScreen(
     navController: NavHostController,
     viewModel: SettingViewModel = hiltViewModel()
 ) {
+
+    val navigateToProfile = {
+        navController?.navigate(
+            Destination.Serene.Profile.route
+        ) {
+            popUpTo(
+                navController.graph.findStartDestination().id
+            ) {
+                saveState = true
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -75,7 +88,11 @@ fun SettingScreen(
                 },
                 actions = {
                     TextButton(
-                        onClick = {}
+                        onClick = {
+                            viewModel.saveChange()
+                            navigateToProfile()
+
+                        }
                     ) {
                         Text(
                             "Save",

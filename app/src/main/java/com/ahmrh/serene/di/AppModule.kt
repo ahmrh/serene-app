@@ -7,11 +7,13 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStoreFile
+import androidx.work.WorkManager
 import com.ahmrh.serene.data.repository.GamificationRepository
 import com.ahmrh.serene.data.repository.PersonalizationRepository
 import com.ahmrh.serene.data.repository.PreferencesRepository
 import com.ahmrh.serene.data.repository.SelfCareRepository
 import com.ahmrh.serene.data.repository.UserRepository
+import com.ahmrh.serene.data.repository.WorkManagerRepository
 import com.ahmrh.serene.domain.handler.EventHandler
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -88,6 +90,16 @@ object AppModule {
     ): PreferencesRepository {
         return PreferencesRepository(dataStore)
     }
+
+    @Provides
+    @Singleton
+    fun provideWorkManagerRepository(
+        @ApplicationContext context: Context
+    ): WorkManagerRepository {
+        return WorkManagerRepository(WorkManager.getInstance(context))
+    }
+
+
 
     @Provides
     @Singleton
