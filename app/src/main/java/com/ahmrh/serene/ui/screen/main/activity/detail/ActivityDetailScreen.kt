@@ -244,6 +244,7 @@ fun ActivityDetailContent(
                 modifier = Modifier
                     .padding(horizontal = 24.dp)
                     .padding(bottom = 20.dp)
+                    .verticalScroll(rememberScrollState())
                     .fillMaxHeight(),
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
@@ -379,7 +380,9 @@ fun ActivityDetailContent(
                             otherSelfCareStartedAlertDialog.value = true
                         }
                     },
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
                     colors = if (!practiceEnabled) ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.onSurface.copy(
                             0.12f
