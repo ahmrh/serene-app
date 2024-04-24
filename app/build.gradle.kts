@@ -156,4 +156,8 @@ dependencies {
     // Work Manager
     implementation("androidx.work:work-runtime-ktx:2.9.0")
 
+    // Accompanist
+    implementation("com.google.accompanist:accompanist-permissions:0.31.1-alpha")
+
+
 }

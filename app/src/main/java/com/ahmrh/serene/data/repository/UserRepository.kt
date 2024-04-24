@@ -5,13 +5,12 @@ import android.util.Log
 import com.ahmrh.serene.common.enums.Sentiment
 import com.ahmrh.serene.common.utils.ArrayUtils
 import com.ahmrh.serene.common.utils.DateUtils
-import com.ahmrh.serene.common.utils.Language
+import com.ahmrh.serene.common.enums.Language
 import com.ahmrh.serene.data.source.remote.response.AchievementResponse
 import com.ahmrh.serene.data.source.remote.response.SelfCareHistoryResponse
 import com.ahmrh.serene.data.source.remote.response.UserResponse
 import com.ahmrh.serene.data.source.remote.response.toMap
 import com.ahmrh.serene.domain.model.gamification.Achievement
-import com.ahmrh.serene.domain.model.gamification.DailyStreak
 import com.ahmrh.serene.domain.model.selfcare.SelfCareActivity
 import com.ahmrh.serene.domain.model.user.Profile
 import com.ahmrh.serene.domain.model.user.SelfCareHistory
@@ -20,12 +19,10 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
-import com.google.firebase.firestore.toObjects
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import java.time.LocalDate
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale

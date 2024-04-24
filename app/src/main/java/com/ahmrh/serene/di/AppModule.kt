@@ -13,7 +13,6 @@ import com.ahmrh.serene.data.repository.PersonalizationRepository
 import com.ahmrh.serene.data.repository.PreferencesRepository
 import com.ahmrh.serene.data.repository.SelfCareRepository
 import com.ahmrh.serene.data.repository.UserRepository
-import com.ahmrh.serene.data.repository.WorkManagerRepository
 import com.ahmrh.serene.domain.handler.ChallengeHandler
 import com.ahmrh.serene.domain.handler.EventHandler
 import com.ahmrh.serene.domain.handler.NotificationHandler
@@ -26,7 +25,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Inject
 import javax.inject.Singleton
 
 //private val Context.dataStore by preferencesDataStore("preferences")
@@ -39,9 +37,12 @@ object AppModule {
     @Singleton
     fun provideEventHandler(): EventHandler = EventHandler()
 
-    @Provides
-    @Singleton
-    fun provideNotificationHandler(): NotificationHandler = NotificationHandler()
+//    @Provides
+//    @Singleton
+//    fun provideNotificationHandler(
+//        @ApplicationContext context: Context,
+//        notificationHandler: com.ahmrh.serene.domain.handler.NotificationHandler
+//    ): NotificationHandler = NotificationHandler(context, notificationHandler)
 
     @Provides
     @Singleton
@@ -110,8 +111,8 @@ object AppModule {
     @Singleton
     fun provideWorkManagerRepository(
         @ApplicationContext context: Context
-    ): WorkManagerRepository {
-        return WorkManagerRepository(WorkManager.getInstance(context))
+    ): NotificationHandler {
+        return NotificationHandler(WorkManager.getInstance(context))
     }
 
 

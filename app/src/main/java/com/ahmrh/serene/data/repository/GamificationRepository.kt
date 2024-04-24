@@ -1,7 +1,7 @@
 package com.ahmrh.serene.data.repository
 
 import android.util.Log
-import com.ahmrh.serene.common.utils.Language
+import com.ahmrh.serene.common.enums.Language
 import com.ahmrh.serene.data.source.remote.response.AchievementResponse
 import com.ahmrh.serene.domain.model.gamification.Achievement
 import com.google.firebase.firestore.FirebaseFirestore

@@ -234,6 +234,12 @@ fun SettingScreen(
                             onCheckedChange = {
                                 notificationChecked = !notificationChecked
                                 viewModel.changeNotificationValue(notificationChecked)
+
+                                if(notificationChecked){
+                                    viewModel.scheduleNotificationReminder()
+                                } else {
+                                    viewModel.cancelAllNotificationReminder()
+                                }
                             }
                         )
                     }

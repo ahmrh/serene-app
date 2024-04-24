@@ -6,19 +6,19 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ahmrh.serene.common.enums.Notification
 import com.ahmrh.serene.data.repository.PreferencesRepository
-import com.ahmrh.serene.data.repository.WorkManagerRepository
+import com.ahmrh.serene.domain.handler.NotificationHandler
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
-    private val workManagerRepository: WorkManagerRepository
+    private val notificationHandler: NotificationHandler
 ): ViewModel(){
 
     fun signOut() = Firebase.auth.signOut()
@@ -76,11 +76,19 @@ class SettingViewModel @Inject constructor(
         _notificationState.value = boolean
     }
 
-    fun scheduleNotification(){
+    fun scheduleNotificationReminder(){
+        viewModelScope.launch {
+            notificationHandler.scheduleNotificationReminder(Notification.TYPE_1)
+            notificationHandler.scheduleNotificationReminder(Notification.TYPE_2)
+            notificationHandler.scheduleNotificationReminder(Notification.TYPE_3)
+            notificationHandler.scheduleNotificationReminder(Notification.TYPE_4)
+            notificationHandler.scheduleNotificationReminder(Notification.TYPE_5)
+        }
 
-        workManagerRepository.scheduleReminder(
-            3L, TimeUnit.SECONDS
-        )
+    }
+
+    fun cancelAllNotificationReminder(){
+        notificationHandler.cancelAllNotification()
     }
 
     fun saveChange(){

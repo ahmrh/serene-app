@@ -238,8 +238,6 @@ fun ActivityDetailContent(
             modifier = Modifier.padding(it),
         ) {
 
-
-
             Column(
                 modifier = Modifier
                     .padding(horizontal = 24.dp)
