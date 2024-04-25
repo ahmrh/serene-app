@@ -1,10 +1,12 @@
 package com.ahmrh.serene.domain.usecase.selfcare.activity
 
 import android.util.Log
+import com.ahmrh.serene.common.enums.Notification
 import com.ahmrh.serene.common.enums.Sentiment
 import com.ahmrh.serene.common.utils.DateUtils
 import com.ahmrh.serene.data.repository.GamificationRepository
 import com.ahmrh.serene.data.repository.UserRepository
+import com.ahmrh.serene.domain.handler.NotificationHandler
 import com.ahmrh.serene.domain.model.gamification.DailyStreak
 import com.ahmrh.serene.domain.model.selfcare.SelfCareActivity
 import java.util.Calendar
@@ -12,7 +14,8 @@ import javax.inject.Inject
 
 class PracticeSelfCareUseCase @Inject constructor(
     private val userRepository: UserRepository,
-    private val gamificationRepository: GamificationRepository
+    private val gamificationRepository: GamificationRepository,
+    private val notificationHandler: NotificationHandler
 ) {
     suspend operator fun invoke(
         selfCareActivity: SelfCareActivity,
@@ -27,7 +30,14 @@ class PracticeSelfCareUseCase @Inject constructor(
             getUnlockedAchievement(selfCareActivity)
         )
         onDailyStreakEvent(getDailyStreak())
+        scheduleReminderNotification()
 
+    }
+
+    private fun scheduleReminderNotification(){
+        notificationHandler.cancelAllNotification()
+
+        notificationHandler.scheduleSelfCareReminderNotification()
     }
 
     private fun addSelfCareHistory(selfCareActivity: SelfCareActivity, sentiment: Sentiment) {
@@ -64,7 +74,6 @@ class PracticeSelfCareUseCase @Inject constructor(
         return achievementId
     }
 
-    // TODO: somehow i overcomplicate this, i could just use preference datastore to save last accessed and check if its different than this day (ill change it when there's a bug)
     private suspend fun getDailyStreak(): DailyStreak? {
         val selfCareHistoryList = userRepository.fetchSelfCareHistory()!!
 

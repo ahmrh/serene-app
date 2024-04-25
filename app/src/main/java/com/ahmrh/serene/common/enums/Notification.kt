@@ -6,39 +6,33 @@ enum class Notification(
     val id: Int,
     val title: String,
     val message: String,
-    val time: Long,
-    val timeUnit: TimeUnit,
+    val day: Long,
 ) {
     TYPE_1(
         1,
         "Self-care Reminder",
-        "It's time for your daily Self-care practice. Make sure to check out the app.",
-        5L,
-        TimeUnit.SECONDS
-
+        "It's time for your daily Self-care practice. Make sure to check out the app today.",
+        1L,
     ),
     TYPE_2(
         2,
         "Self-care Reminder",
-        "It seems you don't practice Self-care yesterday. Make sure to check out the app.",
-        10L,
-        TimeUnit.SECONDS
+        "It seems you don't practice Self-care yesterday. Make sure to check out the app this day.",
+        2L,
     ),
 
     TYPE_3(
         3,
         "Hey,",
         "It's been a while, don't forget to practice Self-care whenever you have free time.",
-        15L,
-        TimeUnit.SECONDS
+        7L,
     ),
 
     TYPE_4(
         4,
         "Hey,",
         "I know you have been through a lot. You can check out this app again if you have time.",
-        20L,
-        TimeUnit.SECONDS
+        10L,
     ),
 
 
@@ -46,22 +40,23 @@ enum class Notification(
         5,
         "Well,",
         "These reminders don't seem to be working. We'll stop sending them for now.",
-        25L,
-        TimeUnit.SECONDS
+        14L,
     ),
 
     DEFAULT(
         0,
         "Default Notification",
         "Default Notification Message",
-        1L,
-        TimeUnit.SECONDS
+        -1L,
 
     );
 
     companion object {
         fun fromId(id: Int): Notification =
             Notification.entries.single { it.id == id }
+
+        fun fromDays(dayDifference: Long): Notification =
+            Notification.entries.single{ it.day == dayDifference }
 
         fun getId(): Int =
             Notification.entries.single().id

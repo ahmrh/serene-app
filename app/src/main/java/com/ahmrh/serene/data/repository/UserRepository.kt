@@ -2,10 +2,10 @@ package com.ahmrh.serene.data.repository
 
 import android.net.Uri
 import android.util.Log
+import com.ahmrh.serene.common.enums.Language
 import com.ahmrh.serene.common.enums.Sentiment
 import com.ahmrh.serene.common.utils.ArrayUtils
 import com.ahmrh.serene.common.utils.DateUtils
-import com.ahmrh.serene.common.enums.Language
 import com.ahmrh.serene.data.source.remote.response.AchievementResponse
 import com.ahmrh.serene.data.source.remote.response.SelfCareHistoryResponse
 import com.ahmrh.serene.data.source.remote.response.UserResponse
@@ -55,9 +55,9 @@ class UserRepository @Inject constructor(
     fun recoverPassword(
         email: String,
         onResult: (Throwable?) -> Unit
-    ){
+    ) {
         auth.sendPasswordResetEmail(email)
-            .addOnCompleteListener{ task ->
+            .addOnCompleteListener { task ->
                 onResult(task.exception)
             }
 
@@ -96,7 +96,7 @@ class UserRepository @Inject constructor(
         username: String, email: String, password: String,
         onResult: (Throwable?) -> Unit
     ) {
-        val userId = auth.currentUser!!.uid
+        val userId = auth.currentUser?.uid ?: return
 
         val user = hashMapOf(
             "username" to username,
@@ -130,7 +130,7 @@ class UserRepository @Inject constructor(
         sentiment: Sentiment,
         onResult: (Throwable?) -> Unit
     ) {
-        val userId = auth.currentUser!!.uid
+        val userId = auth.currentUser?.uid ?: return
         val date = Calendar.getInstance().time;
 
         val selfCareId = selfCareActivity.id
@@ -164,9 +164,10 @@ class UserRepository @Inject constructor(
             .addOnCompleteListener { onResult(it.exception) }
     }
 
-    suspend fun fetchSelfCareHistory(): List<SelfCareHistory>?{
 
-        val userId = auth.currentUser!!.uid
+    suspend fun fetchSelfCareHistory(): List<SelfCareHistory>? {
+
+        val userId = auth.currentUser?.uid ?: return listOf()
 
         val collectionReference = firestore.collection("users")
             .document(userId)
@@ -175,18 +176,19 @@ class UserRepository @Inject constructor(
 
         try {
 
-            val historyList = withContext(Dispatchers.IO){
+            val historyList = withContext(Dispatchers.IO) {
 
                 val documents = collectionReference
                     .get()
                     .await()
 
-                documents.map{ data ->
-                    val historyResponse = data.toObject<SelfCareHistoryResponse>()
+                documents.map { data ->
+                    val historyResponse =
+                        data.toObject<SelfCareHistoryResponse>()
 
                     SelfCareHistory(
                         selfCareId = historyResponse.selfCareId!!,
-                        selfCareCategory =  historyResponse.selfCareCategory!!,
+                        selfCareCategory = historyResponse.selfCareCategory!!,
                         selfCareName = historyResponse.selfCareName!!,
                         date = Date(historyResponse.date!!),
                         feedbackSentiment = historyResponse.feedbackSentiment!!
@@ -196,7 +198,7 @@ class UserRepository @Inject constructor(
 
             return historyList
 
-        } catch(e: Exception){
+        } catch (e: Exception) {
             Log.e(TAG, "Error fetching self care history: $e")
         }
 
@@ -207,7 +209,7 @@ class UserRepository @Inject constructor(
         onSuccess: (List<SelfCareHistory>) -> Unit,
         onFailure: (Throwable?) -> Unit
     ) {
-        val userId = auth.currentUser!!.uid
+        val userId = auth.currentUser!!.uid ?: return
 
         val collectionReference = firestore.collection("users")
             .document(userId)
@@ -261,11 +263,35 @@ class UserRepository @Inject constructor(
 //    }
 //
 
+    // TODO: test this out
+    suspend fun getLatestPracticeDate(): Date? {
+        try{
+
+            val selfCareHistory = fetchSelfCareHistory() ?: return null
+
+            val sortedHistory = selfCareHistory.sortedBy { it.date }
+
+            val latestHistory = sortedHistory.first()
+
+            return latestHistory.date
+        } catch (e: Exception){
+            return null
+        }
+    }
+
+    fun getAccountCreatedDate(): Date? {
+        return auth.currentUser?.metadata?.let {
+            Date(
+                it.creationTimestamp
+            )
+        }
+    }
+
     suspend fun getTotalPracticedSelfCareByCategory(
         categoryString: String
     ): Int {
 
-        val userId = auth.currentUser!!.uid
+        val userId = auth.currentUser?.uid ?: return 0
 
         val collectionReference = firestore.collection("users")
 
@@ -284,14 +310,14 @@ class UserRepository @Inject constructor(
         onResult: (Throwable?) -> Unit
     ) {
         val achievementResponse = firestore.collection("achievements")
-                .document(achievementId)
-                .get()
-                .await()
-                .toObject<AchievementResponse>()!!
+            .document(achievementId)
+            .get()
+            .await()
+            .toObject<AchievementResponse>()!!
 
         val achievement = achievementResponse.toMap()
 
-        val userId = auth.currentUser!!.uid
+        val userId = auth.currentUser?.uid ?: return
 
         firestore.collection("users")
             .document(userId)
@@ -307,9 +333,9 @@ class UserRepository @Inject constructor(
     fun fetchUsername(
         onSuccess: (String) -> Unit,
         onFailure: (Throwable?) -> Unit
-    ){
+    ) {
 
-        val userId = auth.currentUser!!.uid
+        val userId = auth.currentUser?.uid ?: return
         val collectionReference = firestore.collection("users")
 
         collectionReference
@@ -328,29 +354,33 @@ class UserRepository @Inject constructor(
     suspend fun fetchUserAchievements(
         onSuccess: (List<Achievement>) -> Unit,
         onFailure: (Throwable?) -> Unit
-    ){
-        val userId = auth.currentUser!!.uid
+    ) {
+        val userId = auth.currentUser?.uid ?: return
         val collectionReference = firestore.collection("users")
 
-        try{
+        try {
             val achievements = withContext(Dispatchers.IO) {
-                val documents = collectionReference.document(userId).collection("achievements").get().await()
+                val documents = collectionReference.document(userId)
+                    .collection("achievements").get().await()
 
-                val achievements = documents.map{ data ->
-                    val achievementResponse = data.toObject<AchievementResponse>()
+                val achievements = documents.map { data ->
+                    val achievementResponse =
+                        data.toObject<AchievementResponse>()
 
-                    val imageRef = storage.reference.child("achievements/${achievementResponse.image}.png")
+                    val imageRef = storage.reference.child(
+                        "achievements/${achievementResponse.image}.png"
+                    )
 
                     val imageUrl = imageRef.downloadUrl.await()
 
                     Achievement(
                         id = data.id,
                         imageUri = imageUrl,
-                        name = achievementResponse.name ,
-                        progress = achievementResponse.progress ,
+                        name = achievementResponse.name,
+                        progress = achievementResponse.progress,
                         description =
                         if (language == Language.ID.code) achievementResponse.description?.id
-                        else achievementResponse.description?.en ,
+                        else achievementResponse.description?.en,
                         category = achievementResponse.category
                     )
                 }
@@ -359,7 +389,7 @@ class UserRepository @Inject constructor(
             }
 
             onSuccess(achievements)
-        } catch(e: Exception){
+        } catch (e: Exception) {
             onFailure(e)
         }
     }
@@ -368,31 +398,34 @@ class UserRepository @Inject constructor(
     suspend fun fetchProfileData(
         onSuccess: (Profile) -> Unit,
         onFailure: (Throwable?) -> Unit
-    ){
-        val userId = auth.currentUser!!.uid
+    ) {
+        val userId = auth.currentUser?.uid ?: return
 
-        try{
-            val profileData = withContext(Dispatchers.IO){
+        try {
+            val profileData = withContext(Dispatchers.IO) {
 
                 val achievementDocuments = firestore.collection("users")
                     .document(userId)
                     .collection("achievements").get().await()
 
-                val achievementList = achievementDocuments.map{ data ->
-                    val achievementResponse = data.toObject<AchievementResponse>()
+                val achievementList = achievementDocuments.map { data ->
+                    val achievementResponse =
+                        data.toObject<AchievementResponse>()
 
-                    val imageRef = storage.reference.child("achievements/${achievementResponse.image}.png")
+                    val imageRef = storage.reference.child(
+                        "achievements/${achievementResponse.image}.png"
+                    )
 
                     val imageUrl = imageRef.downloadUrl.await()
 
                     Achievement(
                         id = data.id,
                         imageUri = imageUrl,
-                        name = achievementResponse.name ,
-                        progress = achievementResponse.progress ,
+                        name = achievementResponse.name,
+                        progress = achievementResponse.progress,
                         description =
                         if (language == Language.ID.code) achievementResponse.description?.id
-                        else achievementResponse.description?.en ,
+                        else achievementResponse.description?.en,
                         category = achievementResponse.category
                     )
                 }
@@ -401,7 +434,7 @@ class UserRepository @Inject constructor(
                     .document(userId)
                     .collection("history").get().await()
 
-                val historyList = historyDocuments.map{ data ->
+                val historyList = historyDocuments.map { data ->
 
                     val selfCareHistoryResponse =
                         data.toObject<SelfCareHistoryResponse>()
@@ -409,13 +442,15 @@ class UserRepository @Inject constructor(
                     SelfCareHistory(
                         selfCareHistoryResponse.selfCareId!!,
                         selfCareHistoryResponse.selfCareCategory!!,
-                        selfCareHistoryResponse.feedbackSentiment ?: "Very Satisfied",
+                        selfCareHistoryResponse.feedbackSentiment
+                            ?: "Very Satisfied",
                         selfCareHistoryResponse.selfCareName!!,
                         Date(selfCareHistoryResponse.date!!),
                     )
                 }
 
-                val sortedHistoryList = historyList.sortedByDescending { it.date }
+                val sortedHistoryList =
+                    historyList.sortedByDescending { it.date }
 
                 val userDocuments = firestore.collection("users")
                     .document(userId).get().await()
@@ -424,14 +459,14 @@ class UserRepository @Inject constructor(
 
 
                 val dayStreak = DateUtils.getDayStreak(
-                    historyList.map{
+                    historyList.map {
                         it.date
                     }
                 )
 
 
                 val topSelfCare = ArrayUtils.getMaxOccurringString(
-                    historyList.map{
+                    historyList.map {
                         it.selfCareCategory
                     }
                 )
@@ -440,16 +475,19 @@ class UserRepository @Inject constructor(
                 val totalAchievement = achievementList.size
                 val signupDate = auth.currentUser?.metadata?.let {
                     Date(
-                        it.creationTimestamp)
+                        it.creationTimestamp
+                    )
                 }
 
 
                 Profile(
                     username = user?.username ?: "Unnamed Entity",
                     joined = signupDate ?: Date(1220227200),
-                    imgUri = Uri.parse("https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png"),
+                    imgUri = Uri.parse(
+                        "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png"
+                    ),
                     dayStreak = dayStreak ?: 0,
-                    topSelfCare = topSelfCare ,
+                    topSelfCare = topSelfCare,
                     totalAchievement = totalAchievement,
                     totalSelfCare = totalSelfCare,
                     achievementList = achievementList,
@@ -459,11 +497,12 @@ class UserRepository @Inject constructor(
 
 
             onSuccess(profileData)
-        } catch(e: Exception){
+        } catch (e: Exception) {
             onFailure(e)
-            throw(e)
+            throw (e)
         }
     }
+
     companion object {
         const val TAG = "UserRepository"
     }

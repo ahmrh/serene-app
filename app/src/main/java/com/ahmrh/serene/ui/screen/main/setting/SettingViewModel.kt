@@ -77,23 +77,18 @@ class SettingViewModel @Inject constructor(
     }
 
     fun scheduleNotificationReminder(){
-        viewModelScope.launch {
-            notificationHandler.scheduleNotificationReminder(Notification.TYPE_1)
-            notificationHandler.scheduleNotificationReminder(Notification.TYPE_2)
-            notificationHandler.scheduleNotificationReminder(Notification.TYPE_3)
-            notificationHandler.scheduleNotificationReminder(Notification.TYPE_4)
-            notificationHandler.scheduleNotificationReminder(Notification.TYPE_5)
-        }
-
+        notificationHandler.scheduleSelfCareReminderNotification()
     }
 
     fun cancelAllNotificationReminder(){
         notificationHandler.cancelAllNotification()
     }
 
+
     fun saveChange(){
 
     }
+
 
     companion object {
         const val TAG = "SettingViewModel"

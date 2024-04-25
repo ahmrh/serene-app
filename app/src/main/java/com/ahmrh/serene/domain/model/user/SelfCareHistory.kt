@@ -8,8 +8,6 @@ data class SelfCareHistory(
     val feedbackSentiment: String,
     val selfCareName: String,
     val date: Date,
-    // TODO: implement feedback
-//    val feedback : Feedback
 
 )
 fun SelfCareHistory.toMap(): Map<String, Any> {

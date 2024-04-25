@@ -153,7 +153,7 @@ class PersonalizationRepository @Inject constructor(
     fun savePersonalizationResult(
         category: Category
     ){
-        val userId = Firebase.auth.currentUser!!.uid
+        val userId = Firebase.auth.currentUser?.uid ?: return
         val date = Calendar.getInstance().time;
 
 

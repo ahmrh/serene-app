@@ -242,7 +242,6 @@ fun ActivityDetailContent(
                 modifier = Modifier
                     .padding(horizontal = 24.dp)
                     .padding(bottom = 20.dp)
-                    .verticalScroll(rememberScrollState())
                     .fillMaxHeight(),
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {

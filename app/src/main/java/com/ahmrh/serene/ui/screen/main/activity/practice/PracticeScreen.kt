@@ -2,6 +2,7 @@ package com.ahmrh.serene.ui.screen.main.activity.practice
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -333,7 +334,8 @@ fun PracticeContent(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .padding(bottom = 20.dp)
-                        .fillMaxHeight(),
+                        .fillMaxHeight()
+                        .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.SpaceBetween,
                 ) {
 

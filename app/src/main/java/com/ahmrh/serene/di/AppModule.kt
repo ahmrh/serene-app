@@ -37,13 +37,6 @@ object AppModule {
     @Singleton
     fun provideEventHandler(): EventHandler = EventHandler()
 
-//    @Provides
-//    @Singleton
-//    fun provideNotificationHandler(
-//        @ApplicationContext context: Context,
-//        notificationHandler: com.ahmrh.serene.domain.handler.NotificationHandler
-//    ): NotificationHandler = NotificationHandler(context, notificationHandler)
-
     @Provides
     @Singleton
     fun provideChallengeHandler(
@@ -109,7 +102,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideWorkManagerRepository(
+    fun provideNotificationHandler(
         @ApplicationContext context: Context
     ): NotificationHandler {
         return NotificationHandler(WorkManager.getInstance(context))

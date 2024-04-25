@@ -43,7 +43,7 @@ object DateUtils {
     }
 
     // Function to calculate the difference in days between two dates
-    private fun daysBetween(date1: Date, date2: Date): Long {
+    fun daysBetween(date1: Date, date2: Date): Long {
         val diffInMs = abs(date1.time - date2.time)
         return diffInMs / (1000 * 60 * 60 * 24)
     }
