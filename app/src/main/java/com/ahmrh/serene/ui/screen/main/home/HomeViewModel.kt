@@ -49,10 +49,10 @@ class HomeViewModel @Inject constructor(
     val currentUser: StateFlow<FirebaseUser?>
         get() = _currentUser
 
-    private var _usernameState: MutableStateFlow<String> =
+    private var _usernameState: MutableStateFlow<String?> =
         MutableStateFlow("null")
 
-    val usernameState: StateFlow<String> = _usernameState
+    val usernameState: StateFlow<String?> = _usernameState
 
 
 

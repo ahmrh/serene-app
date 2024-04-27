@@ -172,12 +172,13 @@ fun SettingScreen(
                 )
             }
 
-            TextButton(onClick = {}) {
-                Text(
-                    "Change Avatar",
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
+//            TextButton(onClick = {}) {
+//                Text(
+//                    "Change Avatar",
+//                    style = MaterialTheme.typography.titleMedium
+//                )
+//            }
+            Spacer(modifier = Modifier.height(16.dp))
 
             Column(
                 verticalArrangement = Arrangement.spacedBy(
@@ -199,6 +200,8 @@ fun SettingScreen(
                     label = "Password", value = passwordValue,
                     visible = false, onClick = { Log.d("debug", "bwaaa")}
                 )
+
+
 
                 Button(
                     onClick = {

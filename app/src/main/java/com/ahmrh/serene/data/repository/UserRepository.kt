@@ -331,7 +331,7 @@ class UserRepository @Inject constructor(
     }
 
     fun fetchUsername(
-        onSuccess: (String) -> Unit,
+        onSuccess: (String?) -> Unit,
         onFailure: (Throwable?) -> Unit
     ) {
 
@@ -345,7 +345,7 @@ class UserRepository @Inject constructor(
             .addOnSuccessListener { document ->
                 val data = document.toObject<UserResponse>()
 
-                onSuccess(data?.username.toString())
+                onSuccess(data?.username)
             }
             .addOnFailureListener(onFailure)
 
@@ -395,13 +395,18 @@ class UserRepository @Inject constructor(
     }
 
 
+
     suspend fun fetchProfileData(
         onSuccess: (Profile) -> Unit,
         onFailure: (Throwable?) -> Unit
     ) {
-        val userId = auth.currentUser?.uid ?: return
 
         try {
+            val user = auth.currentUser!!
+            val userId = user.uid
+            Log.d(TAG, "user id = $userId")
+            Log.d(TAG, "isAnon = ${user?.isAnonymous}")
+
             val profileData = withContext(Dispatchers.IO) {
 
                 val achievementDocuments = firestore.collection("users")
@@ -455,7 +460,7 @@ class UserRepository @Inject constructor(
                 val userDocuments = firestore.collection("users")
                     .document(userId).get().await()
 
-                val user = userDocuments.toObject<UserResponse>()
+                val userResponse = userDocuments.toObject<UserResponse>()
 
 
                 val dayStreak = DateUtils.getDayStreak(
@@ -479,9 +484,11 @@ class UserRepository @Inject constructor(
                     )
                 }
 
+                val isAnon = user.isAnonymous
+
 
                 Profile(
-                    username = user?.username ?: "Unnamed Entity",
+                    username = userResponse?.username ?: "Unnamed Entity",
                     joined = signupDate ?: Date(1220227200),
                     imgUri = Uri.parse(
                         "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png"
@@ -491,7 +498,8 @@ class UserRepository @Inject constructor(
                     totalAchievement = totalAchievement,
                     totalSelfCare = totalSelfCare,
                     achievementList = achievementList,
-                    historyList = sortedHistoryList
+                    historyList = sortedHistoryList,
+                    isAnon = isAnon
                 )
             }
 

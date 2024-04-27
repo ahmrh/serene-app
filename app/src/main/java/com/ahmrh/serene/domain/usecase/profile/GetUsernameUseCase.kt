@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetUsernameUseCase @Inject constructor(
     private val userRepository: UserRepository
 ){
-    operator fun invoke(onSuccess: (String) -> Unit, onFailure: (Throwable?) -> Unit)
+    operator fun invoke(onSuccess: (String?) -> Unit, onFailure: (Throwable?) -> Unit)
         = userRepository.fetchUsername(onSuccess, onFailure)
 
 }

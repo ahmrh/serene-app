@@ -116,5 +116,8 @@ class PreferencesRepository @Inject constructor(
             .filterNotNull()
             .map{ categoryString -> CategoryUtils.getCategory(categoryString)}
 
+    fun clearSharedPreferences() {
+
+    }
 
 }

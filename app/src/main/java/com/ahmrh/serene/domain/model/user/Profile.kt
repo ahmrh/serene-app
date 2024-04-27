@@ -12,6 +12,7 @@ data class Profile(
     val topSelfCare: String?,
     val totalAchievement: Int,
     val totalSelfCare: Int,
+    val isAnon: Boolean,
 
     val historyList: List<SelfCareHistory>,
     val achievementList: List<Achievement>

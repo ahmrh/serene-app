@@ -7,18 +7,26 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmrh.serene.common.enums.Notification
+import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.data.repository.PreferencesRepository
+import com.ahmrh.serene.data.repository.UserRepository
 import com.ahmrh.serene.domain.handler.NotificationHandler
+import com.ahmrh.serene.domain.model.user.Profile
+import com.ahmrh.serene.domain.usecase.profile.UserProfileUseCases
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SettingViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
-    private val notificationHandler: NotificationHandler
+    private val profileUseCases: UserProfileUseCases,
+    private val notificationHandler: NotificationHandler,
+
 ): ViewModel(){
 
     fun signOut() = Firebase.auth.signOut()
@@ -33,13 +41,33 @@ class SettingViewModel @Inject constructor(
         get() = _notificationState
 
 
+    private var _profileDataUiState: MutableStateFlow<UiState<Profile>> = MutableStateFlow(UiState.Loading)
+    val profileDataUiState: StateFlow<UiState<Profile>>
+        get() = _profileDataUiState
+
     init {
         getDarkModeValue()
         getNotificationValue()
+        getProfileDataUiState()
 
         Log.d(TAG, "Notification: ${_notificationState.value}")
         Log.d(TAG, "Dark Mode: ${_darkModeState.value}")
 
+    }
+
+    private fun getProfileDataUiState(){
+        viewModelScope.launch {
+            profileUseCases.getProfileData(
+                onFailure = {error ->
+                    _profileDataUiState.value = UiState.Error(error?.message ?: "Unexpected Error")
+                },
+                onSuccess = {
+                    _profileDataUiState.value = UiState.Success(it)
+
+                }
+            )
+
+        }
     }
 
     private fun getDarkModeValue(){

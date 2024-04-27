@@ -18,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,6 +61,8 @@ fun HomeScreen(
         viewModel.recommendationSelfCare.collectAsState()
 
     val personalizationResultDialog = remember { mutableStateOf(false) }
+
+    var openPersonalizationDialog by remember { mutableStateOf(personalizationResultState.value == null) }
 
     val navigateToActivities = {
         navController?.navigate(
@@ -135,6 +138,23 @@ fun HomeScreen(
         activity?.finish()
     }
 
+    when {
+        openPersonalizationDialog -> {
+
+            SereneDialog(
+                onDismiss = {
+                    openPersonalizationDialog = false
+                }, onConfirm = {
+                    navigateToPersonalization()
+                },
+                dialogTitle = "Hello,",
+                dialogText =  "Welcome to Serene! It seems you don't have personalization yet. Personalize your Self-care?",
+                dismissText = "Nah",
+                confirmText = "Personalize"
+            )
+        }
+    }
+
 
     Scaffold(
         bottomBar = {
@@ -177,19 +197,24 @@ fun HomeScreen(
                     .padding(vertical = 24.dp, horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        "Welcome back, ",
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    Text(
-                        username,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
 
+                username?.let{username ->
+
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+
+                        Text(
+                            "Welcome back, ",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Text(
+                            username,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
+
+                }
 
                 RecommendationSection(
                     navigateToDetail = navigateToActivityDetail,

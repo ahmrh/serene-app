@@ -37,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -148,7 +149,8 @@ fun ProfileScreen(
         }
 
         is UiState.Error -> {
-            Text("Error")
+            val errorMessage = profileDataUiState.errorMessage
+            Text("Error $errorMessage")
         }
         is UiState.Success -> {
             
@@ -488,7 +490,10 @@ fun AchievementItem(
 fun HistoryTab(
     historyList: List<SelfCareHistory>
 ){
-//    Text("This feature is still in development")
+    if(historyList.isEmpty()){
+        Text("You haven't practice Self-care yet.")
+
+    }
 
     LazyColumn (
         modifier = Modifier.padding(horizontal = 8.dp)
@@ -498,6 +503,7 @@ fun HistoryTab(
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

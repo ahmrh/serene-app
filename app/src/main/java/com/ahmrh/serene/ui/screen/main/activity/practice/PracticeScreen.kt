@@ -68,10 +68,10 @@ fun PracticeScreen(
     activityId: String? = null,
     viewModel: PracticeViewModel = hiltViewModel(),
 ) {
+    viewModel.getActivityDetail(activityId!!)
 
     var openFeedback by remember { mutableStateOf(false) }
 
-    viewModel.getActivityDetail(activityId!!)
 
     val navigateToHome: () -> Unit = {
         navController.navigate(Destination.Serene.Home.route) {
@@ -155,6 +155,205 @@ fun LoadingContent() {
 fun ErrorContent() {
 
 }
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PracticeContent(
+    onPracticeDone: () -> Unit = {},
+    activity: SelfCareActivity,
+    navigateToHome: () -> Unit
+) {
+
+
+    val openAlertDialog = remember { mutableStateOf(false) }
+
+    when {
+        openAlertDialog.value -> {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(0.5f)),
+
+                ) {
+                SereneDialog(
+                    onDismiss = {
+                        openAlertDialog.value = false
+                    },
+                    onConfirm = {
+                        openAlertDialog.value = false
+                        onPracticeDone()
+                    },
+                    dialogTitle = "Hey,",
+                    dialogText = "Are you sure you already finish this Activity? It's good to follow through general how to or " +
+                            "your improvisation to gain the benefit.",
+                    confirmText = "Yeah",
+                    dismissText = "Nah, please take me back",
+                    icon = Icons.Default.Info
+
+                )
+            }
+        }
+    }
+
+    Box {
+
+        Scaffold(
+            topBar = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp)
+                ) {
+                    TopAppBar(
+                        title = {},
+                        navigationIcon = {
+                            IconButton(onClick = navigateToHome) {
+                                Icon(
+                                    painterResource(
+                                        id = R.drawable.serene_icon_close
+                                    ),
+                                    contentDescription = null
+                                )
+                            }
+                        },
+                        actions = {
+//                        IconButton(onClick = {}) {
+//                            Icon(
+//                                painterResource(
+//                                    id = R.drawable.serene_icon_more_vert
+//                                ),
+//                                contentDescription = null
+//                            )
+//                        }
+                        },
+                    )
+
+                }
+            }
+        ) {
+            Surface(
+                modifier = Modifier.padding(it),
+            ) {
+
+                Column(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 20.dp)
+                        .fillMaxHeight(),
+                    verticalArrangement = Arrangement.SpaceBetween,
+                ) {
+
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .verticalScroll(
+                                rememberScrollState()
+                            )
+                            .weight(1f, fill = false),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+
+                        Column(
+
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                "You are currently practicing,",
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                            Spacer(modifier = Modifier.height(12.dp))
+                            Text(
+                                "${activity.name}",
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                            Text(
+                                "${activity.category} Self-care",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+
+                        Image(
+                            painterResource(
+                                id = CategoryUtils.getCategory(
+                                    activity.category!!
+                                ).imageResource
+                            ),
+
+                            contentDescription = null,
+                            Modifier.size(255.dp),
+                            contentScale = ContentScale.Crop
+                        )
+
+
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(
+                                8.dp
+                            ),
+                            modifier = Modifier
+                                .padding(
+                                    horizontal = 16.dp, vertical = 16.dp
+                                )
+                                .fillMaxWidth()
+                        ) {
+                            Text(
+                                "General How to:",
+                                style = MaterialTheme.typography.titleMedium
+                            )
+
+                            val paragraphStyle = ParagraphStyle(
+                                textIndent = TextIndent(restLine = 12.sp)
+                            )
+                            Text(
+                                buildAnnotatedString {
+                                    activity.guide?.forEach {
+                                        withStyle(style = paragraphStyle) {
+                                            append(Typography.bullet)
+                                            append("\t\t")
+                                            append(it)
+                                        }
+                                    }
+                                },
+
+                                style = MaterialTheme.typography.bodyMedium,
+                                textAlign = TextAlign.Justify
+                            )
+                        }
+
+
+                    }
+
+
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+
+                        Text(
+                            text = "This is simply a general guide, adapt it as needed within the given context.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center,
+                        )
+
+                        Button(
+                            onClick = {
+                                openAlertDialog.value = true
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Done")
+                        }
+                    }
+
+                }
+            }
+
+        }
+    }
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -250,205 +449,23 @@ fun FeedbackContent(
 
     }
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun PracticeContent(
-    onPracticeDone: () -> Unit = {},
-    activity: SelfCareActivity,
-    navigateToHome: () -> Unit
-) {
-
-
-    val openAlertDialog = remember { mutableStateOf(false) }
-
-    when {
-        openAlertDialog.value -> {
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(0.5f)),
-
-                ) {
-                SereneDialog(
-                    onDismiss = {
-                        openAlertDialog.value = false
-                    },
-                    onConfirm = {
-                        openAlertDialog.value = false
-                        onPracticeDone()
-                    },
-                    dialogTitle = "Hey,",
-                    dialogText = "Are you sure you already finish this Activity? It's good to follow through general how to or " +
-                            "your improvisation to gain the benefit.",
-                    confirmText = "Yeah",
-                    dismissText = "Nah, please take me back",
-                    icon = Icons.Default.Info
-
-                )
-            }
-        }
-    }
-
-    Box {
-
-        Scaffold(
-            topBar = {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp)
-                ) {
-                    TopAppBar(
-                        title = {},
-                        navigationIcon = {
-                            IconButton(onClick = navigateToHome) {
-                                Icon(
-                                    painterResource(
-                                        id = R.drawable.serene_icon_close
-                                    ),
-                                    contentDescription = null
-                                )
-                            }
-                        },
-                        actions = {
-//                        IconButton(onClick = {}) {
-//                            Icon(
-//                                painterResource(
-//                                    id = R.drawable.serene_icon_more_vert
-//                                ),
-//                                contentDescription = null
-//                            )
-//                        }
-                        },
-                    )
-
-                }
-            }
-        ) {
-            Surface(
-                modifier = Modifier.padding(it),
-            ) {
-
-                Column(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 20.dp)
-                        .fillMaxHeight()
-                        .verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.SpaceBetween,
-                ) {
-
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-
-                        Column(
-
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                "You are currently practicing,",
-                                style = MaterialTheme.typography.titleLarge,
-                            )
-                            Spacer(modifier = Modifier.height(12.dp))
-                            Text(
-                                "${activity.name}",
-                                style = MaterialTheme.typography.titleLarge
-                            )
-                            Text(
-                                "${activity.category} Self-care",
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                        }
-
-                        Image(
-                            painterResource(
-                                id = CategoryUtils.getCategory(
-                                    activity.category!!
-                                ).imageResource
-                            ),
-
-                            contentDescription = null,
-                            Modifier.size(255.dp),
-                            contentScale = ContentScale.Crop
-                        )
-
-
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(
-                                8.dp
-                            ),
-                            modifier = Modifier
-                                .padding(
-                                    horizontal = 16.dp, vertical = 16.dp
-                                )
-                                .weight(1f)
-                        ) {
-                            Text(
-                                "General How to:",
-                                style = MaterialTheme.typography.titleMedium
-                            )
-
-                            val paragraphStyle = ParagraphStyle(
-                                textIndent = TextIndent(restLine = 12.sp)
-                            )
-                            Text(
-                                buildAnnotatedString {
-                                    activity.guide?.forEach {
-                                        withStyle(style = paragraphStyle) {
-                                            append(Typography.bullet)
-                                            append("\t\t")
-                                            append(it)
-                                        }
-                                    }
-                                },
-
-                                style = MaterialTheme.typography.bodyMedium,
-                                textAlign = TextAlign.Justify
-                            )
-                        }
-
-
-                    }
-
-
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-
-                        Text(
-                            text = "This is simply a general guide, adapt it as needed within the given context.",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Center,
-                        )
-
-                        Button(
-                            onClick = {
-                                openAlertDialog.value = true
-                            },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text("Done")
-                        }
-                    }
-
-                }
-            }
-
-        }
-    }
-}
-
-
 @Preview(showBackground = true)
 @Composable
 fun PracticePreview() {
     SereneTheme {
         PracticeScreen()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PracticeContentPreview(){
+    val activity = SelfCareActivity("", null)
+    SereneTheme{
+        PracticeContent(
+            activity = activity,
+            navigateToHome = {}
+        )
+
     }
 }
