@@ -41,9 +41,7 @@ import com.ahmrh.serene.common.state.AuthUiState
 import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.component.dialog.SereneDialog
 import com.ahmrh.serene.ui.component.textfield.SereneEmailTextField
-import com.ahmrh.serene.ui.component.textfield.SereneHiddenTextField
 import com.ahmrh.serene.ui.component.textfield.SerenePasswordTextField
-import com.ahmrh.serene.ui.component.textfield.SereneTextField
 import com.ahmrh.serene.ui.screen.main.activity.practice.LoadingContent
 import com.ahmrh.serene.ui.theme.SereneTheme
 
@@ -54,7 +52,7 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel()
 ) {
 
-    var uiState = viewModel.uiState.value
+    var authUiState = viewModel.uiState.value
     var openErrorDialog by remember{ mutableStateOf(false) }
 
 
@@ -183,13 +181,13 @@ fun LoginScreen(
         }
     }
 
-    when(uiState){
+    when(authUiState){
         is AuthUiState.Idle -> {}
         is AuthUiState.Loading -> {
             LoadingContent()
         }
         is AuthUiState.Success -> {
-            LaunchedEffect(key1 = uiState) {
+            LaunchedEffect(key1 = authUiState) {
                 navController.navigate(Destination.Serene.route) {
                     popUpTo(
                         Destination.Auth.route
@@ -218,7 +216,7 @@ fun LoginScreen(
                             openErrorDialog = false
                         },
                         dialogTitle = "Oops",
-                        dialogText = "${uiState.errorMessage}",
+                        dialogText = "${authUiState.errorMessage}",
                         icon = Icons.Default.Info
                     )
                 }

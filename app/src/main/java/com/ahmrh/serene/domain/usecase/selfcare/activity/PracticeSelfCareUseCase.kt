@@ -1,7 +1,6 @@
 package com.ahmrh.serene.domain.usecase.selfcare.activity
 
 import android.util.Log
-import com.ahmrh.serene.common.enums.Notification
 import com.ahmrh.serene.common.enums.Sentiment
 import com.ahmrh.serene.common.utils.DateUtils
 import com.ahmrh.serene.data.repository.GamificationRepository
@@ -75,7 +74,7 @@ class PracticeSelfCareUseCase @Inject constructor(
     }
 
     private suspend fun getDailyStreak(): DailyStreak? {
-        val selfCareHistoryList = userRepository.fetchSelfCareHistory()!!
+        val selfCareHistoryList = userRepository.fetchSelfCareHistoryList()!!
 
         val dateList = selfCareHistoryList.map { it.date }
             .sortedByDescending { it.time }

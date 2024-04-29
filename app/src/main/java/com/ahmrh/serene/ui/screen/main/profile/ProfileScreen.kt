@@ -9,10 +9,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -37,7 +35,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -60,11 +57,11 @@ import coil.compose.SubcomposeAsyncImageContent
 import coil.request.ImageRequest
 import com.ahmrh.serene.R
 import com.ahmrh.serene.common.state.UiState
-import com.ahmrh.serene.common.utils.Category
 import com.ahmrh.serene.common.utils.CategoryUtils
 import com.ahmrh.serene.common.utils.DateUtils
 import com.ahmrh.serene.domain.model.gamification.Achievement
 import com.ahmrh.serene.domain.model.user.SelfCareHistory
+import com.ahmrh.serene.domain.model.user.UserStats
 import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.component.HistoryItem
 import com.ahmrh.serene.ui.component.card.StatCard
@@ -87,7 +84,13 @@ fun ProfileScreen(
 //    val topSelfCare = viewModel.topSelfCareUiState.collectAsState().value
 //    val totalSelfCare = viewModel.totalSelfCareUiState.collectAsState().value
     
-    val profileDataUiState = viewModel.profileDataUiState.collectAsState().value
+    val profileUiState = viewModel.profileUiState.collectAsState().value
+
+    val historyListUiState = viewModel.historyListUiState.collectAsState().value
+
+    val achievementListUiState = viewModel.achievementListUiState.collectAsState().value
+
+    val userStatsUiState = viewModel.userStatsUiState.collectAsState().value
 
     val TAG = "ProfileScreen"
 
@@ -143,18 +146,18 @@ fun ProfileScreen(
 
     val horizontalPaddingValues = 24.dp
     
-    when(profileDataUiState){
+    when(profileUiState){
         is UiState.Loading -> {
             LoadingContent()
         }
 
         is UiState.Error -> {
-            val errorMessage = profileDataUiState.errorMessage
+            val errorMessage = profileUiState.errorMessage
             Text("Error $errorMessage")
         }
         is UiState.Success -> {
             
-            val profileData = profileDataUiState.data
+            val profileData = profileUiState.data
 
             Scaffold(
                 topBar = {
@@ -211,7 +214,9 @@ fun ProfileScreen(
                             Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 8.dp)
-                                .padding(horizontal = horizontalPaddingValues),
+                                .padding(
+                                    horizontal = horizontalPaddingValues
+                                ),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(
                                 16.dp
@@ -248,7 +253,7 @@ fun ProfileScreen(
                                 )
                             ) {
                                 Text(
-                                    "${profileData.username}",
+                                    "${profileData.displayName}",
                                     style = MaterialTheme.typography.titleLarge
                                 )
                                 Text(
@@ -298,11 +303,14 @@ fun ProfileScreen(
                                 when (state) {
                                     0 -> {
                                         StatisticTab(
-                                            achievementList = profileData.achievementList,
-                                            dayStreak = profileData.dayStreak,
-                                            totalAchievement = profileData.totalAchievement,
-                                            topSelfCare = profileData.topSelfCare,
-                                            totalSelfCare = profileData.totalSelfCare,
+//                                            achievementList = achievementList,
+//                                            dayStreak = profileData.dayStreak,
+//                                            totalAchievement = profileData.totalAchievement,
+//                                            topSelfCare = profileData.topSelfCare,
+//                                            totalSelfCare = profileData.totalSelfCare,
+
+                                            achievementListUiState = achievementListUiState,
+                                            userStatsUiState = userStatsUiState,
                                             navigateToAchievementList = navigateToAchievementList,
                                             navigateToAchievement = navigateToAchievement,
                                             modifier = Modifier.padding(horizontal = horizontalPaddingValues)
@@ -311,7 +319,7 @@ fun ProfileScreen(
 
                                     1 -> {
                                         HistoryTab(
-                                            historyList = profileData.historyList
+                                            historyListUiState = historyListUiState
                                         )
 
                                     }
@@ -334,21 +342,27 @@ fun ProfileScreen(
 
 @Composable
 fun StatisticTab(
-    achievementList: List<Achievement>,
-    dayStreak: Int,
-    totalAchievement: Int,
-    topSelfCare: String?,
-    totalSelfCare: Int,
+//    achievementList: List<Achievement>,
+//    dayStreak: Int,
+//    totalAchievement: Int,
+//    topSelfCare: String?,
+//    totalSelfCare: Int,
+
+    userStatsUiState: UiState<UserStats>,
+    achievementListUiState: UiState<List<Achievement>>,
     navigateToAchievementList: () -> Unit,
     navigateToAchievement: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
+
     Column(
         verticalArrangement = Arrangement.spacedBy(
             8.dp
         ),
-        modifier = modifier.fillMaxWidth().padding(top = 8.dp)
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp)
 
     ) {
         Row(
@@ -356,16 +370,29 @@ fun StatisticTab(
                 8.dp
             ),
         ) {
+
             StatCard(
                 Modifier.weight(1f),
                 R.drawable.serene_stat_icon_streak,
-                value = "$dayStreak",
+                value = when(userStatsUiState) {
+                    is UiState.Success -> {
+                        "${userStatsUiState.data.dayStreak}"
+                    } else -> {
+                        "..."
+                    }
+               },
                 label = "Day Streak",
             )
             StatCard(
                 Modifier.weight(1f),
                 R.drawable.serene_stat_icon_achievement,
-                value = "$totalAchievement",
+                value = when(userStatsUiState) {
+                    is UiState.Success -> {
+                        "${userStatsUiState.data.totalAchievement}"
+                    } else -> {
+                        "..."
+                    }
+                },
                 label = "Achievement",
             )
         }
@@ -375,18 +402,42 @@ fun StatisticTab(
             ),
         ) {
 
-            val topSelfCareCategory = CategoryUtils.getCategory(topSelfCare ?: "Emotional")
-
             StatCard(
                 Modifier.weight(1f),
-                topSelfCareCategory.iconResource,
-                value = topSelfCare ?: "None",
+                iconResource = when(userStatsUiState) {
+                    is UiState.Success -> {
+                        val topSelfCareCategory = CategoryUtils.getCategory(userStatsUiState.data.topSelfCare ?: "Emotional")
+
+                        topSelfCareCategory.iconResource
+                    } else -> {
+                        val topSelfCareCategory = CategoryUtils.getCategory("Emotional")
+
+                        topSelfCareCategory.iconResource
+                    }
+                },
+
+                value = when(userStatsUiState) {
+                    is UiState.Success -> {
+                        val topSelfCareCategory = CategoryUtils.getCategory(userStatsUiState.data.topSelfCare ?: "Emotional")
+
+                        topSelfCareCategory.stringValue
+                    } else -> {
+                        "..."
+                    }
+                },
                 label = "Top Self-care",
             )
             StatCard(
                 Modifier.weight(1f),
                 R.drawable.serene_stat_icon_total,
-                value = "$totalSelfCare",
+                value = when(userStatsUiState) {
+                    is UiState.Success -> {
+
+                        "${userStatsUiState.data.totalSelfCare}"
+                    } else -> {
+                        "..."
+                    }
+                },
                 label = "Total Self-care",
             )
         }
@@ -397,44 +448,54 @@ fun StatisticTab(
         modifier = modifier
 
     ){
+        when(achievementListUiState){
+            is UiState.Success -> {
+                val achievementList = achievementListUiState.data
 
-        if(achievementList.isNotEmpty()){
+                if(achievementList.isNotEmpty()){
 
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    "Achievement",
-                    style = MaterialTheme.typography.titleMedium
-                )
-
-                if(achievementList.size > 3){
-
-                    TextButton(
-                        onClick = {
-                            navigateToAchievementList()
-                        }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("View all")
+                        Text(
+                            "Achievement",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+
+                        if(achievementList.size > 3){
+
+                            TextButton(
+                                onClick = {
+                                    navigateToAchievementList()
+                                }
+                            ) {
+                                Text("View all")
+                            }
+                        }
+
+                    }
+
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(0.dp)
+                    ) {
+                        items(achievementList){
+
+                            AchievementItem(achievement = it, onClick = {
+                                navigateToAchievement(it.id!!)
+                            })
+                        }
                     }
                 }
+            }
+            else -> {
 
             }
 
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(0.dp)
-            ) {
-                items(achievementList){
-
-                    AchievementItem(achievement = it, onClick = {
-                        navigateToAchievement(it.id!!)
-                    })
-                }
-            }
         }
+
 //        else {
 //            Box(
 //                modifier = Modifier.padding(16.dp).fillMaxWidth(),
@@ -488,18 +549,31 @@ fun AchievementItem(
 
 @Composable
 fun HistoryTab(
-    historyList: List<SelfCareHistory>
+    historyListUiState: UiState<List<SelfCareHistory>>
 ){
-    if(historyList.isEmpty()){
-        Text("You haven't practice Self-care yet.")
 
-    }
+    when(historyListUiState){
+        is UiState.Success -> {
+            val historyList = historyListUiState.data
 
-    LazyColumn (
-        modifier = Modifier.padding(horizontal = 8.dp)
-    ){
-        items(historyList){
-            HistoryItem(selfCareHistory = it)
+            if(historyList.isEmpty()){
+                Text("You haven't practice Self-care yet.")
+
+            }
+
+            LazyColumn (
+                modifier = Modifier.padding(horizontal = 8.dp)
+            ){
+                items(historyList){
+                    HistoryItem(selfCareHistory = it)
+                }
+            }
+        }
+        is UiState.Loading -> {
+            LoadingContent()
+        }
+        is UiState.Error -> {
+            Text("Something went wrong.")
         }
     }
 }

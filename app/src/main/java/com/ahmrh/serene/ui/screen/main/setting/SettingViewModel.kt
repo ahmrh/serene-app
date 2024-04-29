@@ -6,10 +6,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ahmrh.serene.common.enums.Notification
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.data.repository.PreferencesRepository
-import com.ahmrh.serene.data.repository.UserRepository
 import com.ahmrh.serene.domain.handler.NotificationHandler
 import com.ahmrh.serene.domain.model.user.Profile
 import com.ahmrh.serene.domain.usecase.profile.UserProfileUseCases
@@ -24,8 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
-    private val profileUseCases: UserProfileUseCases,
     private val notificationHandler: NotificationHandler,
+    private val profileUseCases: UserProfileUseCases
 
 ): ViewModel(){
 
@@ -41,28 +39,28 @@ class SettingViewModel @Inject constructor(
         get() = _notificationState
 
 
-    private var _profileDataUiState: MutableStateFlow<UiState<Profile>> = MutableStateFlow(UiState.Loading)
-    val profileDataUiState: StateFlow<UiState<Profile>>
-        get() = _profileDataUiState
+    private var _profileUiState: MutableStateFlow<UiState<Profile>> = MutableStateFlow(UiState.Loading)
+    val profileUiState: StateFlow<UiState<Profile>>
+        get() = _profileUiState
 
     init {
         getDarkModeValue()
         getNotificationValue()
-        getProfileDataUiState()
+        getProfile()
 
         Log.d(TAG, "Notification: ${_notificationState.value}")
         Log.d(TAG, "Dark Mode: ${_darkModeState.value}")
 
     }
 
-    private fun getProfileDataUiState(){
+    private fun getProfile(){
         viewModelScope.launch {
             profileUseCases.getProfileData(
                 onFailure = {error ->
-                    _profileDataUiState.value = UiState.Error(error?.message ?: "Unexpected Error")
+                    _profileUiState.value = UiState.Error(error?.message ?: "Unexpected Error")
                 },
                 onSuccess = {
-                    _profileDataUiState.value = UiState.Success(it)
+                    _profileUiState.value = UiState.Success(it)
 
                 }
             )

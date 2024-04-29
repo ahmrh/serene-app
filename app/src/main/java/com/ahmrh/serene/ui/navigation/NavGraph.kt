@@ -26,7 +26,6 @@ import com.ahmrh.serene.ui.screen.main.profile.ProfileScreen
 import com.ahmrh.serene.ui.screen.main.result.ResultScreen
 import com.ahmrh.serene.ui.screen.main.setting.SettingScreen
 
-
 @Composable
 fun SereneNavGraph(
     navController: NavHostController = rememberNavController(),

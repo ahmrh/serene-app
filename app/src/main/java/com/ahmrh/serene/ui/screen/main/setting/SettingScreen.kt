@@ -1,13 +1,9 @@
 package com.ahmrh.serene.ui.screen.main.setting
 
 import android.Manifest
-import android.app.Activity
-import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.os.Build
 import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -23,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -52,23 +50,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ahmrh.serene.R
+import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.findActivity
 import com.ahmrh.serene.openAppSettings
 import com.ahmrh.serene.ui.navigation.Destination
-import com.ahmrh.serene.ui.component.textfield.SereneButtonTextField
+import com.ahmrh.serene.ui.component.textfield.SerenePasswordTextField
 import com.ahmrh.serene.ui.component.textfield.SereneTextField
 import com.ahmrh.serene.ui.theme.SereneTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
-import com.google.android.play.integrity.internal.i
 import kotlinx.coroutines.launch
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -91,9 +88,13 @@ fun SettingScreen(
         }
     }
 
+    val profileUiState = viewModel.profileUiState.collectAsState().value
+
     val focusManager = LocalFocusManager.current
-    val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    val scope = rememberCoroutineScope()
+
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
@@ -185,41 +186,97 @@ fun SettingScreen(
                     16.dp
                 ),
                 modifier = Modifier
-                    .padding(horizontal = 24.dp)
+                    .padding(horizontal = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                var nameValue by rememberSaveable { mutableStateOf("Mr. Hyobanshi") }
-                SereneTextField(value = nameValue, label = "Name", onValueChange = { nameValue = it })
+                if(profileUiState is UiState.Success){
+                    val profile = profileUiState.data
 
-                var emailValue by rememberSaveable { mutableStateOf("hyobanshi@gmail.com") }
-                SereneTextField(value = emailValue, label = "Email", onValueChange = { emailValue = it })
+                    if(!profile.isAnon){
 
-                var passwordValue by rememberSaveable{ mutableStateOf("lorem") }
+                        var nameValue by rememberSaveable { mutableStateOf("${profile.displayName}") }
+                        SereneTextField(value = nameValue, label = "Name", onValueChange = { nameValue = it })
 
-                SereneButtonTextField(
-                    label = "Password", value = passwordValue,
-                    visible = false, onClick = { Log.d("debug", "bwaaa")}
-                )
+                        var emailValue by rememberSaveable { mutableStateOf("${profile.email}") }
+                        SereneTextField(value = emailValue, label = "Email", onValueChange = { emailValue = it }, enabled = false)
+
+//                        SereneButtonTextField(
+//                            label = "Password", value = passwordValue,
+//                            visible = false, onClick = { Log.d("debug", "bwaaa")}
+//                        )
+
+                        var passwordValue by rememberSaveable{ mutableStateOf("password") }
+                        var isPasswordVisible by rememberSaveable { mutableStateOf(false) }
+                        SerenePasswordTextField(
+                            label = "Password", value = passwordValue, visible = isPasswordVisible,
+                            onValueChange = { passwordValue = it },
+                            onVisibilityChange = { isPasswordVisible = !isPasswordVisible })
 
 
+                        Button(
+                            onClick = {
+                                viewModel.signOut()
+                                navController.navigate(Destination.Auth.route){
+                                    popUpTo(
+                                        Destination.Serene.route
+                                    ) {
+                                        inclusive =
+                                            true
+                                    }
+                                }
+                            },
+                            Modifier.fillMaxWidth()
+                        ) {
+                            Text("Sign Out")
 
-                Button(
-                    onClick = {
-                        viewModel.signOut()
-                        navController.navigate(Destination.Auth.route){
-                            popUpTo(
-                                Destination.Serene.route
-                            ) {
-                                inclusive =
-                                    true
-                            }
                         }
-                    },
-                    Modifier.fillMaxWidth()
-                ) {
-                    Text("Sign Out")
+                    } else {
+
+                        Text("You are currently anon user")
+
+
+
+                        Button(
+                            onClick = {
+
+                                navController.navigate(Destination.Auth.Register.route)
+                            },
+                            Modifier.fillMaxWidth(),
+                            colors = ButtonDefaults.buttonColors(
+                                contentColor = MaterialTheme.colorScheme.primary,
+                                containerColor = MaterialTheme.colorScheme.onPrimary
+                            )
+                        ) {
+                            Text("Link Account")
+
+                        }
+                        Button(
+                            onClick = {
+                                viewModel.signOut()
+                                navController.navigate(Destination.Auth.route){
+                                    popUpTo(
+                                        Destination.Serene.route
+                                    ) {
+                                        inclusive =
+                                            true
+                                    }
+                                }
+                            },
+                            Modifier.fillMaxWidth()
+                        ) {
+                            Text("Sign Out")
+
+                        }
+                    }
+
 
                 }
+
+
+
+
+
             }
 
             Spacer(Modifier.height(24.dp))

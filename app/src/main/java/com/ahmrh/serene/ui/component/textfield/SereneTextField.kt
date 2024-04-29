@@ -24,6 +24,7 @@ fun SereneTextField(
     value: String,
     label: String,
     onValueChange: (String) -> Unit,
+    enabled: Boolean = true
 ) {
 
     OutlinedTextField(
@@ -31,7 +32,8 @@ fun SereneTextField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(label) },
-        supportingText = {}
+        supportingText = {},
+        enabled = enabled
         
     )
 }

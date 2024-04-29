@@ -4,19 +4,19 @@ import android.net.Uri
 import android.util.Log
 import com.ahmrh.serene.common.enums.Language
 import com.ahmrh.serene.common.enums.Sentiment
-import com.ahmrh.serene.common.utils.ArrayUtils
-import com.ahmrh.serene.common.utils.DateUtils
 import com.ahmrh.serene.data.source.remote.response.AchievementResponse
 import com.ahmrh.serene.data.source.remote.response.SelfCareHistoryResponse
 import com.ahmrh.serene.data.source.remote.response.UserResponse
 import com.ahmrh.serene.data.source.remote.response.toMap
 import com.ahmrh.serene.domain.model.gamification.Achievement
 import com.ahmrh.serene.domain.model.selfcare.SelfCareActivity
+import com.ahmrh.serene.domain.model.user.Auth
 import com.ahmrh.serene.domain.model.user.Profile
 import com.ahmrh.serene.domain.model.user.SelfCareHistory
 import com.ahmrh.serene.domain.model.user.toMap
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.userProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.FirebaseStorage
@@ -71,28 +71,54 @@ class UserRepository @Inject constructor(
 
         auth.currentUser!!.linkWithCredential(credential)
             .addOnSuccessListener {
-                createUserData(username, email, password, {})
+                createAuthData(username, email, password, {})
             }
             .addOnCompleteListener { onResult(it.exception) }
 
 
     }
 
+
     fun createAccount(
         username: String, email: String, password: String,
         onResult: (Throwable?) -> Unit
     ) {
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnSuccessListener {
-                createUserData(username, email, password, {})
-            }
-            .addOnCompleteListener {
-                onResult(it.exception)
-            }
+        val user = auth.currentUser
+        if(user != null && user.isAnonymous){
+
+            val credential = EmailAuthProvider.getCredential(email, password)
+            auth.currentUser!!.linkWithCredential(credential)
+                .addOnSuccessListener {
+                    createAuthData(username, email, password, {})
+
+                    val profileUpdates = userProfileChangeRequest {
+                        displayName = username
+                    }
+
+                    user?.updateProfile(profileUpdates)
+                }
+                .addOnCompleteListener { onResult(it.exception) }
+        } else {
+
+            auth.createUserWithEmailAndPassword(email, password)
+                .addOnSuccessListener {
+                    createAuthData(username, email, password, {})
+
+                    val profileUpdates = userProfileChangeRequest {
+                        displayName = username
+                    }
+
+                    user?.updateProfile(profileUpdates)
+
+                }
+                .addOnCompleteListener {
+                    onResult(it.exception)
+                }
+        }
 
     }
 
-    private fun createUserData(
+    private fun createAuthData(
         username: String, email: String, password: String,
         onResult: (Throwable?) -> Unit
     ) {
@@ -122,6 +148,56 @@ class UserRepository @Inject constructor(
                 )
             }
             .addOnCompleteListener { onResult(it.exception) }
+
+    }
+
+    fun getAuthData(
+        onSuccess: ( Auth ) -> Unit,
+        onFailure: (Throwable?) -> Unit
+    ){
+
+        try {
+
+            val user = auth.currentUser ?: return
+
+            val name = user.displayName
+            val email = user.email
+            val isAnon = user.isAnonymous
+
+            onSuccess(Auth(name ?: "", "", email?:"", isAnon))
+        } catch (e: Exception) {
+            onFailure(e)
+
+        }
+
+
+    }
+
+    fun updateAuthData(
+        data: Auth,
+        onResult: (Throwable?) -> Unit,
+    ){
+        val user = auth.currentUser ?: return
+
+        val email = data.email
+        val password = data.password
+        val username = data.displayName
+
+        val profileUpdates = userProfileChangeRequest {
+            displayName = username
+        }
+
+
+        try{
+            user.updatePassword(password)
+            user.updateEmail(email)
+            user.updateProfile(profileUpdates)
+
+            onResult(null)
+
+        } catch(e: Exception){
+            onResult(e)
+        }
 
     }
 
@@ -165,7 +241,7 @@ class UserRepository @Inject constructor(
     }
 
 
-    suspend fun fetchSelfCareHistory(): List<SelfCareHistory>? {
+    suspend fun fetchSelfCareHistoryList(): List<SelfCareHistory>? {
 
         val userId = auth.currentUser?.uid ?: return listOf()
 
@@ -205,35 +281,50 @@ class UserRepository @Inject constructor(
         return null
     }
 
-    fun fetchSelfCareHistory(
-        onSuccess: (List<SelfCareHistory>) -> Unit,
-        onFailure: (Throwable?) -> Unit
-    ) {
-        val userId = auth.currentUser!!.uid ?: return
+    suspend fun fetchAchievementsList(): List<Achievement>? {
+
+        val userId = auth.currentUser?.uid ?: return listOf()
 
         val collectionReference = firestore.collection("users")
             .document(userId)
-            .collection("history")
-        collectionReference
-            .get()
-            .addOnSuccessListener { documents ->
-                val history =
-                    documents.map { data ->
-                        val selfCareHistoryResponse =
-                            data.toObject<SelfCareHistoryResponse>()
+            .collection("achievements")
 
-                        SelfCareHistory(
-                            selfCareHistoryResponse.selfCareId!!,
-                            selfCareHistoryResponse.selfCareCategory!!,
-                            selfCareHistoryResponse.feedbackSentiment!!,
-                            selfCareHistoryResponse.selfCareName!!,
-                            Date(selfCareHistoryResponse.date!!),
-                        )
-                    }
-                onSuccess(history)
 
+        try {
+
+            val documents = collectionReference
+                .get()
+                .await()
+
+            val achievementList = documents.map { data ->
+                val achievementResponse =
+                    data.toObject<AchievementResponse>()
+
+                val imageRef = storage.reference.child(
+                    "achievements/${achievementResponse.image}.png"
+                )
+
+                val imageUrl = imageRef.downloadUrl.await()
+
+                Achievement(
+                    id = data.id,
+                    imageUri = imageUrl,
+                    name = achievementResponse.name,
+                    progress = achievementResponse.progress,
+                    description =
+                    if (language == Language.ID.code) achievementResponse.description?.id
+                    else achievementResponse.description?.en,
+                    category = achievementResponse.category
+                )
             }
-            .addOnFailureListener(onFailure)
+
+            return achievementList
+
+        } catch (e: Exception) {
+            Log.e(TAG, "Error fetching self care history: $e")
+        }
+
+        return null
     }
 
 
@@ -267,7 +358,7 @@ class UserRepository @Inject constructor(
     suspend fun getLatestPracticeDate(): Date? {
         try{
 
-            val selfCareHistory = fetchSelfCareHistory() ?: return null
+            val selfCareHistory = fetchSelfCareHistoryList() ?: return null
 
             val sortedHistory = selfCareHistory.sortedBy { it.date }
 
@@ -351,6 +442,39 @@ class UserRepository @Inject constructor(
 
     }
 
+//    fun fetchSelfCareHistoryList(
+//        onSuccess: (List<SelfCareHistory>) -> Unit,
+//        onFailure: (Throwable?) -> Unit
+//    ) {
+//        val userId = auth.currentUser!!.uid ?: return
+//
+//        val collectionReference = firestore.collection("users")
+//            .document(userId)
+//            .collection("history")
+//        collectionReference
+//            .get()
+//            .addOnSuccessListener { documents ->
+//                val historyList =
+//                    documents.map { data ->
+//                        val selfCareHistoryResponse =
+//                            data.toObject<SelfCareHistoryResponse>()
+//
+//                        SelfCareHistory(
+//                            selfCareHistoryResponse.selfCareId!!,
+//                            selfCareHistoryResponse.selfCareCategory!!,
+//                            selfCareHistoryResponse.feedbackSentiment!!,
+//                            selfCareHistoryResponse.selfCareName!!,
+//                            Date(selfCareHistoryResponse.date!!),
+//                        )
+//                    }
+//                val sortedHistoryList =
+//                    historyList.sortedByDescending { it.date }
+//
+//                onSuccess(sortedHistoryList)
+//
+//            }
+//            .addOnFailureListener(onFailure)
+//    }
     suspend fun fetchUserAchievements(
         onSuccess: (List<Achievement>) -> Unit,
         onFailure: (Throwable?) -> Unit
@@ -396,112 +520,148 @@ class UserRepository @Inject constructor(
 
 
 
-    suspend fun fetchProfileData(
+//    suspend fun fetchProfileData(
+//        onSuccess: (Profile) -> Unit,
+//         onFailure: (Throwable?) -> Unit
+//    ) {
+//
+//        try {
+//            val user = auth.currentUser!!
+//            val userId = user.uid
+//            Log.d(TAG, "user id = $userId")
+//            Log.d(TAG, "isAnon = ${user?.isAnonymous}")
+//
+//            val profileData = withContext(Dispatchers.IO) {
+//
+////                val achievementDocuments = firestore.collection("users")
+////                    .document(userId)
+////                    .collection("achievements").get().await()
+////
+////                val achievementList = achievementDocuments.map { data ->
+////                    val achievementResponse =
+////                        data.toObject<AchievementResponse>()
+////
+////                    val imageRef = storage.reference.child(
+////                        "achievements/${achievementResponse.image}.png"
+////                    )
+////
+////                    val imageUrl = imageRef.downloadUrl.await()
+////
+////                    Achievement(
+////                        id = data.id,
+////                        imageUri = imageUrl,
+////                        name = achievementResponse.name,
+////                        progress = achievementResponse.progress,
+////                        description =
+////                        if (language == Language.ID.code) achievementResponse.description?.id
+////                        else achievementResponse.description?.en,
+////                        category = achievementResponse.category
+////                    )
+////                }
+//
+////                val historyDocuments = firestore.collection("users")
+////                    .document(userId)
+////                    .collection("history").get().await()
+////
+////                val historyList = historyDocuments.map { data ->
+////
+////                    val selfCareHistoryResponse =
+////                        data.toObject<SelfCareHistoryResponse>()
+////
+////                    SelfCareHistory(
+////                        selfCareHistoryResponse.selfCareId!!,
+////                        selfCareHistoryResponse.selfCareCategory!!,
+////                        selfCareHistoryResponse.feedbackSentiment
+////                            ?: "Very Satisfied",
+////                        selfCareHistoryResponse.selfCareName!!,
+////                        Date(selfCareHistoryResponse.date!!),
+////                    )
+////                }
+//
+////                val sortedHistoryList =
+////                    historyList.sortedByDescending { it.date }
+//
+//
+//                val displayName = user.displayName
+//
+////                val dayStreak = DateUtils.getDayStreak(
+////                    historyList.map {
+////                        it.date
+////                    }
+////                )
+////
+////                val topSelfCare = ArrayUtils.getMaxOccurringString(
+////                    historyList.map {
+////                        it.selfCareCategory
+////                    }
+////                )
+////
+////                val totalSelfCare = historyList.size
+////                val totalAchievement = achievementList.size
+//                val signupDate = auth.currentUser?.metadata?.let {
+//                    Date(
+//                        it.creationTimestamp
+//                    )
+//                }
+//
+//                val isAnon = user.isAnonymous
+//
+//
+//                Profile(
+//                    displayName = if(isAnon) "Anon" else "$displayName",
+//                    joined = signupDate ?: Date(1220227200),
+//                    imgUri = Uri.parse(
+//                        "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png"
+//                    ),
+//                    dayStreak = dayStreak ?: 0,
+//                    topSelfCare = topSelfCare,
+//                    totalAchievement = totalAchievement,
+//                    totalSelfCare = totalSelfCare,
+//                    achievementList = achievementList,
+//                    historyList = sortedHistoryList,
+//                    isAnon = isAnon
+//                )
+//            }
+//
+//
+//            onSuccess(profileData)
+//        } catch (e: Exception) {
+//            onFailure(e)
+//            throw (e)
+//        }
+//    }
+
+
+    fun fetchProfileData(
         onSuccess: (Profile) -> Unit,
         onFailure: (Throwable?) -> Unit
     ) {
 
+        val user = auth.currentUser ?: return
+
         try {
-            val user = auth.currentUser!!
-            val userId = user.uid
-            Log.d(TAG, "user id = $userId")
-            Log.d(TAG, "isAnon = ${user?.isAnonymous}")
 
-            val profileData = withContext(Dispatchers.IO) {
+            val displayName = user.displayName
 
-                val achievementDocuments = firestore.collection("users")
-                    .document(userId)
-                    .collection("achievements").get().await()
-
-                val achievementList = achievementDocuments.map { data ->
-                    val achievementResponse =
-                        data.toObject<AchievementResponse>()
-
-                    val imageRef = storage.reference.child(
-                        "achievements/${achievementResponse.image}.png"
-                    )
-
-                    val imageUrl = imageRef.downloadUrl.await()
-
-                    Achievement(
-                        id = data.id,
-                        imageUri = imageUrl,
-                        name = achievementResponse.name,
-                        progress = achievementResponse.progress,
-                        description =
-                        if (language == Language.ID.code) achievementResponse.description?.id
-                        else achievementResponse.description?.en,
-                        category = achievementResponse.category
-                    )
-                }
-
-                val historyDocuments = firestore.collection("users")
-                    .document(userId)
-                    .collection("history").get().await()
-
-                val historyList = historyDocuments.map { data ->
-
-                    val selfCareHistoryResponse =
-                        data.toObject<SelfCareHistoryResponse>()
-
-                    SelfCareHistory(
-                        selfCareHistoryResponse.selfCareId!!,
-                        selfCareHistoryResponse.selfCareCategory!!,
-                        selfCareHistoryResponse.feedbackSentiment
-                            ?: "Very Satisfied",
-                        selfCareHistoryResponse.selfCareName!!,
-                        Date(selfCareHistoryResponse.date!!),
-                    )
-                }
-
-                val sortedHistoryList =
-                    historyList.sortedByDescending { it.date }
-
-                val userDocuments = firestore.collection("users")
-                    .document(userId).get().await()
-
-                val userResponse = userDocuments.toObject<UserResponse>()
-
-
-                val dayStreak = DateUtils.getDayStreak(
-                    historyList.map {
-                        it.date
-                    }
-                )
-
-
-                val topSelfCare = ArrayUtils.getMaxOccurringString(
-                    historyList.map {
-                        it.selfCareCategory
-                    }
-                )
-
-                val totalSelfCare = historyList.size
-                val totalAchievement = achievementList.size
-                val signupDate = auth.currentUser?.metadata?.let {
-                    Date(
-                        it.creationTimestamp
-                    )
-                }
-
-                val isAnon = user.isAnonymous
-
-
-                Profile(
-                    username = userResponse?.username ?: "Unnamed Entity",
-                    joined = signupDate ?: Date(1220227200),
-                    imgUri = Uri.parse(
-                        "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png"
-                    ),
-                    dayStreak = dayStreak ?: 0,
-                    topSelfCare = topSelfCare,
-                    totalAchievement = totalAchievement,
-                    totalSelfCare = totalSelfCare,
-                    achievementList = achievementList,
-                    historyList = sortedHistoryList,
-                    isAnon = isAnon
+            val signupDate = auth.currentUser?.metadata?.let {
+                Date(
+                    it.creationTimestamp
                 )
             }
+
+            val isAnon = user.isAnonymous
+            val email = user.email
+
+
+            val profileData = Profile(
+                displayName = displayName ?: "Anon",
+                email = email ?: "Unregistered",
+                joined = signupDate ?: Date(),
+                imgUri = Uri.parse(
+                    "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png"
+                ),
+                isAnon = isAnon
+            )
 
 
             onSuccess(profileData)

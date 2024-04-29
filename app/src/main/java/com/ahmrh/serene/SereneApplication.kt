@@ -8,7 +8,6 @@ class SereneApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
-
     }
 }
 
