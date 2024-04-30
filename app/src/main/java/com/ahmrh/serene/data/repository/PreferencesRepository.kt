@@ -42,7 +42,7 @@ class PreferencesRepository @Inject constructor(
 
     fun getFirstTimeValue(): Flow<Boolean> =
         dataStore.data.map { preferences ->
-            preferences[FIRST_TIME_KEY] ?: false
+            preferences[FIRST_TIME_KEY] ?: true
         }
 
 

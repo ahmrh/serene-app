@@ -1,26 +1,37 @@
 package com.ahmrh.serene.ui.screen.main.home
 
 import android.app.Activity
+import android.graphics.drawable.Icon
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.outlined.Info
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,6 +39,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.ahmrh.serene.R
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.common.utils.Category
 import com.ahmrh.serene.domain.model.selfcare.SelfCareRecommendation
@@ -38,12 +50,12 @@ import com.ahmrh.serene.ui.component.dialog.SereneDialog
 import com.ahmrh.serene.ui.component.navbar.SereneNavBar
 import com.ahmrh.serene.ui.theme.SereneTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     navController: NavHostController = rememberNavController(),
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
-    val currentUser = viewModel.currentUser.collectAsState().value
     val username = viewModel.usernameState.collectAsState().value
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -56,6 +68,8 @@ fun HomeScreen(
 
     val personalizationResultState =
         viewModel.personalizationResultState.collectAsState()
+
+    val firstTimeOpenedState = viewModel.firstTimeOpenedState.collectAsState()
 
     val recommendationUiState =
         viewModel.recommendationSelfCare.collectAsState()
@@ -131,6 +145,12 @@ fun HomeScreen(
         )
     }
 
+    val navigateToIntro: () -> Unit = {
+        navController.navigate(
+            Destination.Serene.Introduction.route
+        )
+    }
+
     val activity = LocalContext.current as? Activity
 
     BackHandler {
@@ -141,17 +161,33 @@ fun HomeScreen(
     when {
         openPersonalizationDialog -> {
 
-            SereneDialog(
-                onDismiss = {
-                    openPersonalizationDialog = false
-                }, onConfirm = {
-                    navigateToPersonalization()
-                },
-                dialogTitle = "Hello,",
-                dialogText =  "Welcome to Serene! It seems you don't have personalization yet. Personalize your Self-care?",
-                dismissText = "Nah",
-                confirmText = "Personalize"
-            )
+            if(!firstTimeOpenedState.value){
+
+                SereneDialog(
+                    onDismiss = {
+                        openPersonalizationDialog = false
+                    }, onConfirm = {
+                        navigateToPersonalization()
+                    },
+                    dialogTitle = "Hello,",
+                    dialogText =  "Welcome to Serene! It seems you don't have personalization yet. Personalize your Self-care?",
+                    dismissText = "Nah",
+                    confirmText = "Personalize"
+                )
+            } else {
+
+                SereneDialog(
+                    onDismiss = {
+                        navigateToIntro()
+                    }, onConfirm = {
+                       navigateToIntro()
+                    },
+                    dialogTitle = "Hello,",
+                    dialogText =  "Welcome to Serene! It seems it seems it's your first time using this app, let's go through some introduction.",
+                    confirmText = "Okay"
+                )
+            }
+
         }
     }
 
@@ -186,6 +222,42 @@ fun HomeScreen(
                 selfCareStarted = selfCareStartedUiState.value
 
             )
+        },
+        topBar = {
+            TopAppBar(title = {
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(top = 24.dp)
+                ) {
+
+                    Text(
+                        "Welcome back, ",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Text(
+                        username ?: "Anon",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+            },
+                actions = {
+                    Box(
+                        modifier = Modifier.fillMaxHeight(),
+                        contentAlignment = Alignment.Center
+                    ) {
+
+                        IconButton(onClick = {
+                            navigateToIntro()
+                        }) {
+                            Icon(
+                                Icons.Outlined.Info,
+                                contentDescription = null
+                            )
+                        }
+                    }
+                }
+            )
         }
     ) {
         Surface(
@@ -194,27 +266,11 @@ fun HomeScreen(
 
             Column(
                 modifier = Modifier
-                    .padding(vertical = 24.dp, horizontal = 16.dp),
+                    .padding(horizontal = 16.dp)
+                    .padding(vertical = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
 
-                username?.let{username ->
-
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-
-                        Text(
-                            "Welcome back, ",
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Text(
-                            username,
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                    }
-
-                }
 
                 RecommendationSection(
                     navigateToDetail = navigateToActivityDetail,

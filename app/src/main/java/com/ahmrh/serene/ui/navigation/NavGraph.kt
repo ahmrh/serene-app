@@ -1,5 +1,7 @@
 package com.ahmrh.serene.ui.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -26,6 +28,7 @@ import com.ahmrh.serene.ui.screen.main.profile.ProfileScreen
 import com.ahmrh.serene.ui.screen.main.result.ResultScreen
 import com.ahmrh.serene.ui.screen.main.setting.SettingScreen
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun SereneNavGraph(
     navController: NavHostController = rememberNavController(),

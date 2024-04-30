@@ -119,18 +119,18 @@ fun SettingScreen(
                     }
                 },
                 actions = {
-                    TextButton(
-                        onClick = {
-                            viewModel.saveChange()
-                            navigateToProfile()
-
-                        }
-                    ) {
-                        Text(
-                            "Save",
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                    }
+//                    TextButton(
+//                        onClick = {
+//                            viewModel.saveChange()
+//                            navigateToProfile()
+//
+//                        }
+//                    ) {
+//                        Text(
+//                            "Save",
+//                            style = MaterialTheme.typography.titleMedium
+//                        )
+//                    }
 
 
                 })
@@ -195,25 +195,26 @@ fun SettingScreen(
 
                     if(!profile.isAnon){
 
-                        var nameValue by rememberSaveable { mutableStateOf("${profile.displayName}") }
-                        SereneTextField(value = nameValue, label = "Name", onValueChange = { nameValue = it })
-
-                        var emailValue by rememberSaveable { mutableStateOf("${profile.email}") }
-                        SereneTextField(value = emailValue, label = "Email", onValueChange = { emailValue = it }, enabled = false)
+//                        var nameValue by rememberSaveable { mutableStateOf("${profile.displayName}") }
+//                        SereneTextField(value = nameValue, label = "Name", onValueChange = { nameValue = it })
+//
+//                        var emailValue by rememberSaveable { mutableStateOf("${profile.email}") }
+//                        SereneTextField(value = emailValue, label = "Email", onValueChange = { emailValue = it }, enabled = false)
 
 //                        SereneButtonTextField(
 //                            label = "Password", value = passwordValue,
 //                            visible = false, onClick = { Log.d("debug", "bwaaa")}
 //                        )
 
-                        var passwordValue by rememberSaveable{ mutableStateOf("password") }
-                        var isPasswordVisible by rememberSaveable { mutableStateOf(false) }
-                        SerenePasswordTextField(
-                            label = "Password", value = passwordValue, visible = isPasswordVisible,
-                            onValueChange = { passwordValue = it },
-                            onVisibilityChange = { isPasswordVisible = !isPasswordVisible })
+//                        var passwordValue by rememberSaveable{ mutableStateOf("password") }
+//                        var isPasswordVisible by rememberSaveable { mutableStateOf(false) }
+//                        SerenePasswordTextField(
+//                            label = "Password", value = passwordValue, visible = isPasswordVisible,
+//                            onValueChange = { passwordValue = it },
+//                            onVisibilityChange = { isPasswordVisible = !isPasswordVisible })
 
 
+                        Text("You are currently registered user")
                         Button(
                             onClick = {
                                 viewModel.signOut()
@@ -244,8 +245,8 @@ fun SettingScreen(
                             },
                             Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(
-                                contentColor = MaterialTheme.colorScheme.primary,
-                                containerColor = MaterialTheme.colorScheme.onPrimary
+                                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                                containerColor = MaterialTheme.colorScheme.primaryContainer
                             )
                         ) {
                             Text("Link Account")

@@ -26,6 +26,12 @@ class HomeViewModel @Inject constructor(
     private val profileUseCases: UserProfileUseCases
 ): ViewModel() {
 
+    private var _firstTimeOpenedState: MutableStateFlow<Boolean> =
+        MutableStateFlow(false)
+
+    val firstTimeOpenedState: MutableStateFlow<Boolean> =
+        _firstTimeOpenedState
+
     private var _selfCareStartedUiState: MutableStateFlow<Boolean> =
         MutableStateFlow(false)
 
@@ -44,11 +50,6 @@ class HomeViewModel @Inject constructor(
     val personalizationResultState: StateFlow<Category?>
         get() = _personalizationResultState
 
-    private var _currentUser: MutableStateFlow<FirebaseUser?> = MutableStateFlow(Firebase.auth.currentUser)
-
-    val currentUser: StateFlow<FirebaseUser?>
-        get() = _currentUser
-
     private var _usernameState: MutableStateFlow<String?> =
         MutableStateFlow("null")
 
@@ -64,12 +65,12 @@ class HomeViewModel @Inject constructor(
 
     init {
         getPersonalizationResult()
+        getFirstTimeOpened()
+
         getStartedActivityId()
         getRecommendation()
 
         getUsername()
-
-        Log.d(TAG, "Init : ${personalizationResultState.value} and ${selfCareStartedUiState.value}")
     }
 
     private fun getRecommendation() =
@@ -108,6 +109,15 @@ class HomeViewModel @Inject constructor(
 
             preferencesRepository.getPersonalizationResultValue().collect{
                 _personalizationResultState.value  = it
+            }
+        }
+    }
+
+    private fun getFirstTimeOpened() {
+        viewModelScope.launch {
+
+            preferencesRepository.getFirstTimeValue().collect{
+                _firstTimeOpenedState.value = it
             }
         }
     }

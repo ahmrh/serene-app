@@ -85,8 +85,11 @@ fun IntroductionScreen(
                 ) {
                     if(index < 9)
                         viewModel.nextIndex()
-                    else
+                    else{
+                        viewModel.changeFirstTimeOpenedValue(false)
                         navController.navigate(Destination.Serene.Personalization.route)
+
+                    }
 
                 }
         ) {
