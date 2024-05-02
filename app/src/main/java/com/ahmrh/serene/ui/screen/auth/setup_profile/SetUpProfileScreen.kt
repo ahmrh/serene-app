@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.ahmrh.serene.R
+import com.ahmrh.serene.common.state.AuthUiState
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.screen.main.activity.practice.LoadingContent
@@ -38,36 +39,36 @@ fun SetUpProfileScreen(
     navController: NavHostController,
     viewModel: SetUpProfileViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.activityDetailUiState.collectAsState().value
+    Surface {
 
-    when(uiState){
-        is UiState.Success -> {
-            LaunchedEffect(key1 = uiState) {
-                navController.navigate(Destination.Serene.route){
-                    popUpTo(
-                        Destination.Serene.route
-                    ) {
-                        inclusive =
-                            true
+        when(val uiState = viewModel.uiState.value){
+
+            is AuthUiState.Success -> {
+                LaunchedEffect(key1 = uiState) {
+                    navController.navigate(Destination.Serene.route){
+                        popUpTo(
+                            Destination.Serene.route
+                        ) {
+                            inclusive =
+                                true
+                        }
                     }
                 }
             }
-        }
-        is UiState.Loading -> {
-            LoadingContent()
-        }
-        is UiState.Error -> {
-            Text(uiState.errorMessage)
-        }
+            is AuthUiState.Loading -> {
+                LoadingContent()
+            }
+            is AuthUiState.Error -> {
+                Text(uiState.errorMessage)
+            }
 
-        null -> {
+            is AuthUiState.Idle -> {
 
-            Scaffold {
-                Surface(modifier = Modifier.padding(it)) {
-
+                Scaffold {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
+                            .padding(it)
 
                             .padding(horizontal = 24.dp)
                             .padding(bottom = 20.dp),

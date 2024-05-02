@@ -41,6 +41,13 @@ class UserRepository @Inject constructor(
 
         auth.signInAnonymously()
             .addOnCompleteListener {
+
+                val user = auth.currentUser
+                val profileUpdates = userProfileChangeRequest {
+                    displayName = "Anon User"
+                }
+
+                user?.updateProfile(profileUpdates)
                 onResult(it.exception)
             }
     }

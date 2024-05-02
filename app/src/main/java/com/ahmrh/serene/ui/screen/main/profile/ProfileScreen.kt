@@ -253,7 +253,7 @@ fun ProfileScreen(
                                 )
                             ) {
                                 Text(
-                                    "${profileData.displayName}",
+                                    profileData.displayName,
                                     style = MaterialTheme.typography.titleLarge
                                 )
                                 Text(

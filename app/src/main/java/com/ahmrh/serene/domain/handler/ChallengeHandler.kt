@@ -1,6 +1,7 @@
 package com.ahmrh.serene.domain.handler
 
 import androidx.compose.runtime.collectAsState
+import com.ahmrh.serene.common.enums.ChallengeType
 import com.ahmrh.serene.common.utils.Category
 import com.ahmrh.serene.common.utils.CategoryUtils
 import com.ahmrh.serene.data.repository.PreferencesRepository
@@ -27,11 +28,6 @@ class ChallengeHandler @Inject constructor(
 //    private val listTodayChallenge: MutableList<Challenge> = generateTodayChallenge()
 
     init {
-        // TODO i wanted to create this daily challenge here, and then randomize or if day % 5 == 0 choose personalization
-        // Also think on how the progression work
-        // After challenge is finished, get that challenge and put on user's challenge history
-
-        // 何をしたの？？
         getPersonalizationResultCategory()
     }
 
@@ -47,28 +43,30 @@ class ChallengeHandler @Inject constructor(
 //
 //    }
 
-    private fun generateChallenge(){
 
-        Category.entries.forEach{ category ->
-            challengeList.add(
-                Challenge(
-                    challengeType = ChallengeType.PRACTICE(category),
-                    name = "Practice ${category.stringValue} Self-care Activity today",
-                    progress = 0,
-                    isDone = false
-                )
-            )
-        }
-
-        challengeList.add(
-            Challenge(
-                challengeType = ChallengeType.PERSONALIZATION,
-                name = "Get your personalization today",
-                progress = 0,
-                isDone = false
-            )
-        )
-    }
+//    private fun generateChallenge(){
+//
+//        Category.entries.forEach{ category ->
+//            challengeList.add(
+//                Challenge(
+//                    challengeType = ChallengeType.PRACTICE(category),
+//
+//                    name = "Practice ${category.stringValue} Self-care Activity today",
+//                    progress = 0,
+//                    isDone = false
+//                )
+//            )
+//        }
+//
+//        challengeList.add(
+//            Challenge(
+//                challengeType = ChallengeType.PERSONALIZATION,
+//                name = "Get your personalization today",
+//                progress = 0,
+//                isDone = false
+//            )
+//        )
+//    }
 
     private fun resetChallenge() = challengeList.clear()
 
@@ -87,11 +85,4 @@ class ChallengeHandler @Inject constructor(
         const val TAG = "ChallengeHandler"
     }
 
-}
-
-sealed class ChallengeType{
-
-    data class PRACTICE(val category: Category): ChallengeType()
-
-    data object PERSONALIZATION : ChallengeType()
 }

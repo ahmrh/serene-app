@@ -19,6 +19,8 @@ class LoginViewModel @Inject constructor(
 
     fun onLogin(email: String, password: String){
         Log.d(TAG, "Email: $email, Password: $password")
+        uiState.value = AuthUiState.Loading
+
         userRepository.authenticate(email, password){
             if(it == null) uiState.value = AuthUiState.Success
             else{

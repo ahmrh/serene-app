@@ -1,6 +1,9 @@
 package com.ahmrh.serene.ui.screen.auth.setup_profile
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.ahmrh.serene.common.state.AuthUiState
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.domain.usecase.auth.AuthUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,18 +15,16 @@ import javax.inject.Inject
 class SetUpProfileViewModel @Inject constructor(
     private val authUseCases: AuthUseCases
 ): ViewModel(){
-    private var _activityDetailUiState: MutableStateFlow<UiState<Boolean>?> =
-        MutableStateFlow(null)
-
-    val activityDetailUiState: StateFlow<UiState<Boolean>?>
-        get() = _activityDetailUiState
+    val uiState: MutableState<AuthUiState> = mutableStateOf(AuthUiState.Idle)
 
     fun signInAnonymously(){
+        uiState.value = AuthUiState.Loading
+        
         authUseCases.signInAnonymously{
             if(it == null){
-                _activityDetailUiState.value = UiState.Success(data = true)
+                uiState.value = AuthUiState.Success
             } else {
-                _activityDetailUiState.value = UiState.Error(it.message.toString())
+                uiState.value = AuthUiState.Error(it.message.toString())
             }
 
         }

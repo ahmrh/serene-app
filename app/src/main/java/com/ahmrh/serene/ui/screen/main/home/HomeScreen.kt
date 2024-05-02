@@ -242,20 +242,20 @@ fun HomeScreen(
                 }
             },
                 actions = {
-                    Box(
-                        modifier = Modifier.fillMaxHeight(),
-                        contentAlignment = Alignment.Center
-                    ) {
-
-                        IconButton(onClick = {
-                            navigateToIntro()
-                        }) {
-                            Icon(
-                                Icons.Outlined.Info,
-                                contentDescription = null
-                            )
-                        }
-                    }
+//                    Box(
+//                        modifier = Modifier.fillMaxHeight(),
+//                        contentAlignment = Alignment.Center
+//                    ) {
+//
+//                        IconButton(onClick = {
+//                            navigateToIntro()
+//                        }) {
+//                            Icon(
+//                                Icons.Outlined.Info,
+//                                contentDescription = null
+//                            )
+//                        }
+//                    }
                 }
             )
         }

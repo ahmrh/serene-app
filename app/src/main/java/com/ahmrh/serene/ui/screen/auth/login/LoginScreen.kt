@@ -93,137 +93,140 @@ fun LoginScreen(
         }
     )
     {
-        val focusManager = LocalFocusManager.current
-        Column(
-            Modifier
-                .padding(it)
-                .padding(horizontal = 24.dp)
-                .padding(bottom = 64.dp)
-                .fillMaxSize()
-                .clickable {
-                   focusManager.clearFocus(true)
-                },
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
-                Text(
-                    "Login",
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Spacer(Modifier.height(8.dp))
-                Text(
-                    "Please fill your registered credential below",
-                    style = MaterialTheme.typography.bodyMedium
-                )
 
+        when(authUiState){
+            is AuthUiState.Idle -> {
+
+                val focusManager = LocalFocusManager.current
                 Column(
-                    horizontalAlignment = Alignment.End,
-                    modifier = Modifier.padding(
-                        vertical = 16.dp
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(
-                        8.dp
-                    )
+                    Modifier
+                        .padding(it)
+                        .padding(horizontal = 24.dp)
+                        .padding(bottom = 64.dp)
+                        .fillMaxSize()
+                        .clickable {
+                            focusManager.clearFocus(true)
+                        },
+                    verticalArrangement = Arrangement.SpaceBetween
                 ) {
+                    Column {
+                        Text(
+                            "Login",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                        Spacer(Modifier.height(8.dp))
+                        Text(
+                            "Please fill your registered credential below",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
 
-                    SereneEmailTextField(
-                        value = emailValue,
-                        label = "Email",
-                        onValueChange = {
-                            emailValue = it
-                        })
-
-                    Column(
-                        horizontalAlignment = Alignment.End,
-                    ) {
-
-                        SerenePasswordTextField(
-                            label = "Password",
-                            value = passwordValue,
-                            visible = passwordVisible,
-                            onValueChange = {
-                                passwordValue = it
-                            }, onVisibilityChange = {
-                                passwordVisible =
-                                    !passwordVisible
-                            })
-
-                        TextButton(
-                            onClick = {
-                                navController.navigate(Destination.Auth.ForgotPassword.route)
-                            }
+                        Column(
+                            horizontalAlignment = Alignment.End,
+                            modifier = Modifier.padding(
+                                vertical = 16.dp
+                            ),
+                            verticalArrangement = Arrangement.spacedBy(
+                                8.dp
+                            )
                         ) {
-                            Text("Forgot password?", fontWeight = FontWeight.Bold)
-                        }
-                    }
 
-                    TextButton(
-                        onClick = {
-                            navController.navigate(Destination.Auth.Register.route){
-                                popUpTo(Destination.Auth.SetUpProfile.route) {
-                                    saveState = true
+                            SereneEmailTextField(
+                                value = emailValue,
+                                label = "Email",
+                                onValueChange = {
+                                    emailValue = it
+                                })
+
+                            Column(
+                                horizontalAlignment = Alignment.End,
+                            ) {
+
+                                SerenePasswordTextField(
+                                    label = "Password",
+                                    value = passwordValue,
+                                    visible = passwordVisible,
+                                    onValueChange = {
+                                        passwordValue = it
+                                    }, onVisibilityChange = {
+                                        passwordVisible =
+                                            !passwordVisible
+                                    })
+
+                                TextButton(
+                                    onClick = {
+                                        navController.navigate(Destination.Auth.ForgotPassword.route)
+                                    }
+                                ) {
+                                    Text("Forgot password?", fontWeight = FontWeight.Bold)
                                 }
                             }
+
+                            TextButton(
+                                onClick = {
+                                    navController.navigate(Destination.Auth.Register.route){
+                                        popUpTo(Destination.Auth.SetUpProfile.route) {
+                                            saveState = true
+                                        }
+                                    }
+                                }
+                            ) {
+                                Text("Don't have an account?", fontWeight = FontWeight.Bold)
+                            }
                         }
-                    ) {
-                        Text("Don't have an account?", fontWeight = FontWeight.Bold)
                     }
+
+                    Button(
+                        onClick = { viewModel.onLogin(emailValue, passwordValue) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = "Login")
+                    }
+
                 }
             }
+            is AuthUiState.Loading -> {
+                LoadingContent()
+            }
+            is AuthUiState.Success -> {
+                LaunchedEffect(key1 = authUiState) {
+                    navController.navigate(Destination.Serene.route) {
+                        popUpTo(
+                            Destination.Auth.route
+                        ) {
+                            inclusive =
+                                true
+                        }
+                    }
+                }
 
-            Button(
-                onClick = { viewModel.onLogin(emailValue, passwordValue) },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "Login")
             }
 
+            is AuthUiState.Error -> {
+                LaunchedEffect(key1 = null) {
+                    openErrorDialog = true
+                }
+
+                when{
+                    openErrorDialog -> {
+
+                        SereneDialog(
+                            onDismiss = {
+                                openErrorDialog = false
+                            },
+                            onConfirm = {
+                                openErrorDialog = false
+                            },
+                            dialogTitle = "Oops",
+                            dialogText = "${authUiState.errorMessage}",
+                            icon = Icons.Default.Info
+                        )
+                    }
+                }
+
+            }
         }
     }
 
-    when(authUiState){
-        is AuthUiState.Idle -> {}
-        is AuthUiState.Loading -> {
-            LoadingContent()
-        }
-        is AuthUiState.Success -> {
-            LaunchedEffect(key1 = authUiState) {
-                navController.navigate(Destination.Serene.route) {
-                    popUpTo(
-                        Destination.Auth.route
-                    ) {
-                        inclusive =
-                            true
-                    }
-                }
-            }
-
-        }
-
-        is AuthUiState.Error -> {
-            LaunchedEffect(key1 = null) {
-                openErrorDialog = true
-            }
-
-            when{
-                openErrorDialog -> {
-
-                    SereneDialog(
-                        onDismiss = {
-                            openErrorDialog = false
-                        },
-                        onConfirm = {
-                            openErrorDialog = false
-                        },
-                        dialogTitle = "Oops",
-                        dialogText = "${authUiState.errorMessage}",
-                        icon = Icons.Default.Info
-                    )
-                }
-            }
-
-        }
-    }
 
 
 }
