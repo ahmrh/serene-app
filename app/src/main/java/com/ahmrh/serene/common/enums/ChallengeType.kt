@@ -11,7 +11,7 @@ sealed class ChallengeType{
     data object DEFAULT: ChallengeType()
 
     companion object{
-        fun fromString(string: String, categoryString: String?): ChallengeType {
+        fun fromString(string: String, categoryString: String? = null): ChallengeType {
             return when(string){
                 "Practice" ->  PRACTICE(Category.fromName(categoryString!!))
                 "Personalization" -> PERSONALIZATION

@@ -33,6 +33,7 @@ fun ChallengeCard(
     modifier: Modifier = Modifier,
     value: Long = 1,
     maxValue: Long = 10,
+    isDone: Boolean = false,
     title: String = "For your mental",
     description: String = "Do 10 mental Self-care today"
 ){

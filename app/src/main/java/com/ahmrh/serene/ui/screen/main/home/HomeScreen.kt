@@ -1,22 +1,15 @@
 package com.ahmrh.serene.ui.screen.main.home
 
 import android.app.Activity
-import android.graphics.drawable.Icon
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -28,10 +21,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -39,9 +30,9 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.ahmrh.serene.R
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.common.utils.Category
+import com.ahmrh.serene.domain.model.gamification.Challenge
 import com.ahmrh.serene.domain.model.selfcare.SelfCareRecommendation
 import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.component.card.ChallengeCard
@@ -72,11 +63,14 @@ fun HomeScreen(
     val firstTimeOpenedState = viewModel.firstTimeOpenedState.collectAsState()
 
     val recommendationUiState =
-        viewModel.recommendationSelfCare.collectAsState()
+        viewModel.recommendationSelfCareState.collectAsState()
+
+    val challengeListUiState = viewModel.challengeListState.collectAsState()
 
     val personalizationResultDialog = remember { mutableStateOf(false) }
 
     var openPersonalizationDialog by remember { mutableStateOf(personalizationResultState.value == null) }
+
 
     val navigateToActivities = {
         navController?.navigate(
@@ -278,7 +272,9 @@ fun HomeScreen(
                 )
 
 
-                ChallengesSection()
+                ChallengesSection(
+                    challengeListState = challengeListUiState.value
+                )
 
 
 //                Text(
@@ -316,43 +312,43 @@ fun RecommendationSection(
     navigateToDetail: (id: String) -> Unit = {},
     recommendationUiState: UiState<List<SelfCareRecommendation>?>
 ) {
+    when(recommendationUiState){
+        is UiState.Success -> {
 
+            Column {
+                Text("For you", style = MaterialTheme.typography.titleMedium)
+            }
+            val recommendations = recommendationUiState.data!!
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(recommendations){
 
-    if(recommendationUiState is UiState.Success){
-        Column {
-            Text("For you", style = MaterialTheme.typography.titleMedium)
-        }
-        val recommendations = recommendationUiState.data!!
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            items(recommendations){
-
-                RecommendationCard(
-                    onClick = {
-                      navigateToDetail(it.selfCareId!!)
-                    },
-                    recommendation = it
-                )
+                    RecommendationCard(
+                        onClick = {
+                            navigateToDetail(it.selfCareId!!)
+                        },
+                        recommendation = it
+                    )
+                }
             }
         }
-    } else {
-        when(recommendationUiState){
-            is UiState.Loading -> {
-            }
-            is UiState.Error -> {
-                Text("error: ${recommendationUiState.errorMessage}")
-            }
 
-            else -> {
-                Text("unidentified")
-            }
+        is UiState.Loading -> {
+
+        }
+        is UiState.Error -> {
+            Text("error: ${recommendationUiState.errorMessage}")
         }
     }
+
+
 }
 
 @Composable
-fun ChallengesSection() {
+fun ChallengesSection(
+    challengeListState: UiState<List<Challenge>>
+) {
 
     Column {
         Text(
@@ -360,32 +356,51 @@ fun ChallengesSection() {
             style = MaterialTheme.typography.titleMedium
         )
     }
+    when(challengeListState){
+        is UiState.Success -> {
+            val challengeList = challengeListState.data
 
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        ChallengeCard(
-            value = 1,
-            maxValue = 5,
-            title = "For your mental",
-            description = "Do 5 mental Self-care today"
-        )
-        ChallengeCard(
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                challengeList.forEach{
 
-            value = 4,
-            maxValue = 10,
-            title = "Beat the laziness",
-            description = "Do 10 Physical Self-care today"
-        )
-        ChallengeCard(
+                    ChallengeCard(
+                        value = 1,
+                        maxValue = 1,
+                        isDone = it.isDone,
+                        title = it.title,
+                        description = it.description
+                    )
+                }
 
-            value = 2,
-            maxValue = 10,
-            title = "Mind your emotion",
-            description = "Do 10 Emotional Self-care today"
-        )
+                /* ChallengeCard(
 
+                    value = 4,
+                    maxValue = 10,
+                    title = "Beat the laziness",
+                    description = "Do 10 Physical Self-care today"
+                )
+                ChallengeCard(
+
+                    value = 2,
+                    maxValue = 10,
+                    title = "Mind your emotion",
+                    description = "Do 10 Emotional Self-care today"
+                )
+                */
+
+            }
+        }
+        is UiState.Error -> {
+
+        }
+        is UiState.Loading -> {
+
+        }
     }
+
+
 
 
 }

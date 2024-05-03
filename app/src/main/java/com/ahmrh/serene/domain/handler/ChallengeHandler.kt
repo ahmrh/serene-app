@@ -4,6 +4,7 @@ import androidx.compose.runtime.collectAsState
 import com.ahmrh.serene.common.enums.ChallengeType
 import com.ahmrh.serene.common.utils.Category
 import com.ahmrh.serene.common.utils.CategoryUtils
+import com.ahmrh.serene.data.repository.GamificationRepository
 import com.ahmrh.serene.data.repository.PreferencesRepository
 import com.ahmrh.serene.domain.model.gamification.Challenge
 import com.google.android.play.integrity.internal.i
@@ -19,6 +20,7 @@ import javax.inject.Singleton
 @Singleton
 class ChallengeHandler @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
+    private val gamificationRepository: GamificationRepository
 ){
 
     private var personalizationCategory : Category? = null

@@ -7,12 +7,11 @@ import com.ahmrh.serene.common.state.ResourceState
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.common.utils.Category
 import com.ahmrh.serene.data.repository.PreferencesRepository
+import com.ahmrh.serene.domain.model.gamification.Challenge
 import com.ahmrh.serene.domain.model.selfcare.SelfCareRecommendation
+import com.ahmrh.serene.domain.usecase.gamification.GamificationUseCases
 import com.ahmrh.serene.domain.usecase.profile.UserProfileUseCases
 import com.ahmrh.serene.domain.usecase.selfcare.activity.ActivityUseCases
-import com.google.firebase.Firebase
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.auth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,8 +22,9 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val activityUseCases: ActivityUseCases,
-    private val profileUseCases: UserProfileUseCases
-): ViewModel() {
+    private val profileUseCases: UserProfileUseCases,
+    private val gamificationUseCases: GamificationUseCases
+) : ViewModel() {
 
     private var _firstTimeOpenedState: MutableStateFlow<Boolean> =
         MutableStateFlow(false)
@@ -38,7 +38,7 @@ class HomeViewModel @Inject constructor(
     val selfCareStartedUiState: StateFlow<Boolean>
         get() = _selfCareStartedUiState
 
-    private  var _startedActivityIdState: MutableStateFlow<String?> =
+    private var _startedActivityIdState: MutableStateFlow<String?> =
         MutableStateFlow(null)
 
     val startedActivityIdState: StateFlow<String?>
@@ -56,11 +56,15 @@ class HomeViewModel @Inject constructor(
     val usernameState: StateFlow<String?> = _usernameState
 
 
-
-    private var _recommendationSelfCare: MutableStateFlow<UiState<List<SelfCareRecommendation>?>> =
+    private var _recommendationSelfCareState: MutableStateFlow<UiState<List<SelfCareRecommendation>?>> =
         MutableStateFlow(UiState.Loading)
-    val recommendationSelfCare: StateFlow<UiState<List<SelfCareRecommendation>?>>
-        get() = _recommendationSelfCare
+    val recommendationSelfCareState: StateFlow<UiState<List<SelfCareRecommendation>?>>
+        get() = _recommendationSelfCareState
+
+    private var _challengeListState: MutableStateFlow<UiState<List<Challenge>>> =
+        MutableStateFlow(UiState.Loading)
+    val challengeListState: StateFlow<UiState<List<Challenge>>>
+        get() = _challengeListState
 
 
     init {
@@ -71,18 +75,38 @@ class HomeViewModel @Inject constructor(
         getRecommendation()
 
         getUsername()
+        getChallengeList()
+    }
+
+    private fun getChallengeList(){
+        viewModelScope.launch {
+            gamificationUseCases.getTodayChallengeList(
+                onSuccess = {
+
+                    _challengeListState.value = UiState.Success(it)
+                },
+                onFailure = {
+                    _challengeListState.value = UiState.Error(it.localizedMessage ?: "Unexpected Error")
+                }
+            )
+        }
     }
 
     private fun getRecommendation() =
-        viewModelScope.launch{
+        viewModelScope.launch {
             personalizationResultState.value?.let { category ->
-                activityUseCases.getRecommendation(category).collect{
-                    when(it) {
+                activityUseCases.getRecommendation(category).collect {
+                    when (it) {
                         is ResourceState.Success -> {
-                            _recommendationSelfCare.value = UiState.Success(it.data as List<SelfCareRecommendation>)
+                            _recommendationSelfCareState.value =
+                                UiState.Success(
+                                    it.data as List<SelfCareRecommendation>
+                                )
                         }
+
                         is ResourceState.Failed -> {
-                            _recommendationSelfCare.value = UiState.Error("Error: ${it.exception}")
+                            _recommendationSelfCareState.value =
+                                UiState.Error("Error: ${it.exception}")
                         }
                     }
                 }
@@ -104,11 +128,11 @@ class HomeViewModel @Inject constructor(
 
         }
 
-    private fun getPersonalizationResult(){
+    private fun getPersonalizationResult() {
         viewModelScope.launch {
 
-            preferencesRepository.getPersonalizationResultValue().collect{
-                _personalizationResultState.value  = it
+            preferencesRepository.getPersonalizationResultValue().collect {
+                _personalizationResultState.value = it
             }
         }
     }
@@ -116,18 +140,18 @@ class HomeViewModel @Inject constructor(
     private fun getFirstTimeOpened() {
         viewModelScope.launch {
 
-            preferencesRepository.getFirstTimeValue().collect{
+            preferencesRepository.getFirstTimeValue().collect {
                 _firstTimeOpenedState.value = it
             }
         }
     }
 
 
-    private fun getStartedActivityId(){
+    private fun getStartedActivityId() {
 
         viewModelScope.launch {
             // get data
-            preferencesRepository.getStartedActivityIdValue().collect{
+            preferencesRepository.getStartedActivityIdValue().collect {
                 _selfCareStartedUiState.value = it != null
                 _startedActivityIdState.value = it
             }
@@ -136,7 +160,7 @@ class HomeViewModel @Inject constructor(
     }
 
 
-    companion object{
+    companion object {
         const val TAG = "HomeViewModel"
     }
 

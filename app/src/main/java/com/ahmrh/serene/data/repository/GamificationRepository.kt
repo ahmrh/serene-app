@@ -8,7 +8,6 @@ import com.ahmrh.serene.data.source.remote.response.AchievementResponse
 import com.ahmrh.serene.data.source.remote.response.ChallengeResponse
 import com.ahmrh.serene.domain.model.gamification.Achievement
 import com.ahmrh.serene.domain.model.gamification.Challenge
-import com.google.android.gms.tasks.Tasks.await
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.storage.FirebaseStorage
@@ -153,7 +152,7 @@ class GamificationRepository @Inject constructor(
 
     suspend fun fetchTodayChallenges(
         onSuccess: (List<Challenge>) -> Unit,
-        onFailure: (Throwable?) -> Unit
+        onFailure: (Throwable) -> Unit
     ){
 
         val todayDate = Date()
@@ -161,15 +160,38 @@ class GamificationRepository @Inject constructor(
 
         val isPersonalizationDay = DateUtils.daysBetween(todayDate, accountCreatedDate) % 7L == 0L
 
+        Log.d(TAG, "Is personalization day value = $isPersonalizationDay")
+
         val collectionReference = firestore.collection("challenges")
         try{
+
+            val todayChallenges: MutableList<Challenge> = mutableListOf()
             if(!isPersonalizationDay){
 
-                val documents = collectionReference.whereEqualTo("Category", "").get().await()
+                val personalizationChallengeDocument = collectionReference.whereEqualTo("challengeType", "Personalization").get().await().firstOrNull()
 
-                val challenges = documents.map { data ->
-                    val challengeResponse =
-                        data.toObject<ChallengeResponse>()
+                val personalizationChallenge = personalizationChallengeDocument?.let {
+
+                    val personalizationChallengeResponse = it.toObject<ChallengeResponse>()
+
+                    Challenge(
+                        id = it.id,
+                        title = personalizationChallengeResponse.title
+                            ?: "Unidentified Title",
+                        description = personalizationChallengeResponse.description
+                            ?: "There is no description",
+                        challengeType = ChallengeType.fromString(
+                            personalizationChallengeResponse.challengeType ?: "Personalization",
+                        ),
+                        progress = personalizationChallengeResponse.progress ?: 0,
+                        isDone = false
+                    )
+                }
+
+
+                val challengeDocuments = collectionReference.whereNotEqualTo("challengeType", "Personalization").get().await()
+                val challenges = challengeDocuments.map { data ->
+                    val challengeResponse = data.toObject<ChallengeResponse>()
 
                     Challenge(
                         id = data.id,
@@ -184,12 +206,36 @@ class GamificationRepository @Inject constructor(
                         progress = challengeResponse.progress ?: 0,
                         isDone = false
                     )
-                }
+                }.shuffled().take(2)
 
-                val todayChallenges = challenges.shuffled().take(3)
+                personalizationChallenge?.let{ todayChallenges.add(it) }
+                challenges.forEach{ todayChallenges.add(it)}
 
+            } else {
+
+
+                val challengeDocuments = collectionReference.whereNotEqualTo("challengeType", "Personalization").get().await()
+                val challenges = challengeDocuments.map { data ->
+                    val challengeResponse = data.toObject<ChallengeResponse>()
+
+                    Challenge(
+                        id = data.id,
+                        title = challengeResponse.title
+                            ?: "Unidentified Title",
+                        description = challengeResponse.description
+                            ?: "There is no description",
+                        challengeType = ChallengeType.fromString(
+                            challengeResponse.challengeType ?: "Practice",
+                            challengeResponse.selfCareCategory
+                        ),
+                        progress = challengeResponse.progress ?: 0,
+                        isDone = false
+                    )
+                }.shuffled().take(3)
+
+                challenges.forEach{ todayChallenges.add(it)}
             }
-            onSuccess(challenges)
+            onSuccess(todayChallenges)
         } catch(e: Exception){
             onFailure(e)
         }

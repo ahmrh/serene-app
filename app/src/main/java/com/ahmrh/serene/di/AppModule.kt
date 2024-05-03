@@ -49,11 +49,13 @@ object AppModule {
     @Provides
     @Singleton
     fun provideGamificationRepository(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        userRepository: UserRepository
     ): GamificationRepository {
         return GamificationRepository(
             storage = Firebase.storage,
             firestore = Firebase.firestore,
+            userRepository = userRepository
         )
     }
 
