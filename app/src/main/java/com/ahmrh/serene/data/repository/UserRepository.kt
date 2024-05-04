@@ -37,6 +37,8 @@ class UserRepository @Inject constructor(
 
     private var language: String = Locale.getDefault().language
 
+    fun getCurrentUser() = auth.currentUser
+
     fun createAnonymousAccount(onResult: (Throwable?) -> Unit) {
 
         auth.signInAnonymously()

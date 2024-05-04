@@ -40,9 +40,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideChallengeHandler(
-        preferencesRepository: PreferencesRepository
+        preferencesRepository: PreferencesRepository,
+        gamificationRepository: GamificationRepository
     ): ChallengeHandler {
-        return ChallengeHandler(preferencesRepository)
+        return ChallengeHandler(preferencesRepository, gamificationRepository)
     }
 
 

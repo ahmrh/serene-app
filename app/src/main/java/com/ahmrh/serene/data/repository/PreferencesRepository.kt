@@ -4,12 +4,14 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.ahmrh.serene.common.utils.Category
 import com.ahmrh.serene.common.utils.CategoryUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
+import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -31,6 +33,9 @@ class PreferencesRepository @Inject constructor(
 
         val PERSONALIZATION_RESULT_KEY =
             stringPreferencesKey("personalization_result_key")
+
+        val CHALLENGE_FETCHED_DATE_LONG_KEY =
+            longPreferencesKey("challenge_fetched_date_long_key")
     }
 
     // FIRST TIME
@@ -114,7 +119,29 @@ class PreferencesRepository @Inject constructor(
         dataStore.data
             .map { preferences -> preferences[PERSONALIZATION_RESULT_KEY] }
             .filterNotNull()
-            .map{ categoryString -> CategoryUtils.getCategory(categoryString)}
+            .map { categoryString ->
+                CategoryUtils.getCategory(
+                    categoryString
+                )
+            }
+
+
+    // CHALLENGE FETCHED DATE STRING
+    suspend fun changeChallengeFetchedDateValue(dateLong: Long) {
+        dataStore.edit { preferences ->
+            preferences[CHALLENGE_FETCHED_DATE_LONG_KEY] = dateLong
+        }
+    }
+
+    fun getChallengeFetchedDateValue(): Flow<Date?> =
+        dataStore.data
+            .map { preferences ->
+                val dateLong = preferences[CHALLENGE_FETCHED_DATE_LONG_KEY]
+
+                if (dateLong == null) null
+                else Date(dateLong)
+            }
+
 
     fun clearSharedPreferences() {
 

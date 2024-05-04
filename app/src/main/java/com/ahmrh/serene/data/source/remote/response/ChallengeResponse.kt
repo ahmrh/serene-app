@@ -1,5 +1,8 @@
 package com.ahmrh.serene.data.source.remote.response
 
+import com.ahmrh.serene.common.enums.ChallengeType
+import com.ahmrh.serene.common.utils.Category
+import com.ahmrh.serene.domain.model.gamification.Challenge
 import com.google.gson.annotations.SerializedName
 
 data class ChallengeResponse(
@@ -19,3 +22,19 @@ data class ChallengeResponse(
 	@field:SerializedName("selfCareCategory")
 	val selfCareCategory: String? = null
 )
+
+fun ChallengeResponse.toChallenge(id: String): Challenge {
+
+	return Challenge(
+		id = id,
+		title = title
+			?: "Unidentified Title",
+		description = description
+			?: "There is no description",
+		challengeType = ChallengeType.fromString(challengeType ?: "Personalization", selfCareCategory
+		),
+		progress = progress ?: 0,
+		selfCareCategory = Category.fromName(selfCareCategory ?: "Emotional"),
+		isDone = false
+	)
+}

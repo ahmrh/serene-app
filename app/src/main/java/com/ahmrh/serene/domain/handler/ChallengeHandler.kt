@@ -1,18 +1,17 @@
 package com.ahmrh.serene.domain.handler
 
-import androidx.compose.runtime.collectAsState
-import com.ahmrh.serene.common.enums.ChallengeType
+import android.util.Log
 import com.ahmrh.serene.common.utils.Category
-import com.ahmrh.serene.common.utils.CategoryUtils
+import com.ahmrh.serene.common.utils.DateUtils
 import com.ahmrh.serene.data.repository.GamificationRepository
 import com.ahmrh.serene.data.repository.PreferencesRepository
 import com.ahmrh.serene.domain.model.gamification.Challenge
-import com.google.android.play.integrity.internal.i
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.singleOrNull
 import kotlinx.coroutines.launch
-import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -21,24 +20,66 @@ import javax.inject.Singleton
 class ChallengeHandler @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val gamificationRepository: GamificationRepository
-){
+) {
 
-    private var personalizationCategory : Category? = null
+//    private var personalizationCategory: Category? = null
 
-    private val challengeList: MutableList<Challenge> = mutableListOf()
+    private var _todayChallengeListState: MutableStateFlow<List<Challenge>?> =
+        MutableStateFlow(null)
+    val todayChallengeList: StateFlow<List<Challenge>?>
+        get() = _todayChallengeListState
 
-//    private val listTodayChallenge: MutableList<Challenge> = generateTodayChallenge()
 
     init {
-        getPersonalizationResultCategory()
+        CoroutineScope(Dispatchers.IO).launch {
+
+//            fetchTodayChallenge()
+            Log.d(TAG, "Challenge initialization done")
+        }
+
+
     }
 
-    private fun getPersonalizationResultCategory(){
-        CoroutineScope(Dispatchers.IO).launch {
-            val category = preferencesRepository.getPersonalizationResultValue().singleOrNull()
-            category?.let { personalizationCategory = it }
-        }
-    }
+//    private suspend fun fetchTodayChallenge() {
+//        val category =
+//            preferencesRepository.getPersonalizationResultValue()
+//                .singleOrNull()
+//
+//        val lastFetchedDate = preferencesRepository.getChallengeFetchedDateValue().singleOrNull()
+//
+//        val todayDate = Date()
+//
+//        val shouldFetch =
+//            if (lastFetchedDate != null) !DateUtils.isSameDay(
+//                lastFetchedDate, todayDate
+//            ) else true
+//
+//        Log.d(TAG, "Last fetched date: $lastFetchedDate")
+//        Log.d(TAG, "Should fetch: $shouldFetch")
+//        Log.d(TAG, "Personalization category: $category")
+//        if (shouldFetch) {
+//            gamificationRepository.fetchTodayChallenges(
+//                category,
+//                onSuccess = {
+//                    _todayChallengeListState.value = it
+//                    Log.d(TAG, "Challenge list: $it")
+//                },
+//                onFailure = {
+//                    Log.d(
+//                        TAG,
+//                        "Error fetching challenge: $it"
+//                    )
+//                }
+//            )
+//            preferencesRepository.changeChallengeFetchedDateValue(
+//                todayDate.time
+//            )
+//
+//        }
+//    }
+
+
+
 //    fun generateTodayChallenge(): List<Challenge>{
 //        val todayDate = Calendar.getInstance().time.day
 //
@@ -70,21 +111,16 @@ class ChallengeHandler @Inject constructor(
 //        )
 //    }
 
-    private fun resetChallenge() = challengeList.clear()
+//    private fun resetChallenge() = challengeList.clear()
 
 
+fun addProgress() {
+
+}
 
 
-
-
-
-    fun addProgress(){
-
-    }
-
-
-    companion object {
-        const val TAG = "ChallengeHandler"
-    }
+companion object {
+    const val TAG = "ChallengeHandler"
+}
 
 }

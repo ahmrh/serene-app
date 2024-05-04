@@ -80,13 +80,13 @@ class HomeViewModel @Inject constructor(
 
     private fun getChallengeList(){
         viewModelScope.launch {
-            gamificationUseCases.getTodayChallengeList(
+            gamificationUseCases.getTodayChallengeList( _personalizationResultState.value,
                 onSuccess = {
-
                     _challengeListState.value = UiState.Success(it)
                 },
                 onFailure = {
                     _challengeListState.value = UiState.Error(it.localizedMessage ?: "Unexpected Error")
+                    Log.e(TAG, "Error getting challenge: $it")
                 }
             )
         }

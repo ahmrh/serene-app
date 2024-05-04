@@ -4,6 +4,7 @@ import android.util.Log
 import com.ahmrh.serene.common.utils.Category
 import com.ahmrh.serene.common.enums.Language
 import com.ahmrh.serene.common.state.ResourceState
+import com.ahmrh.serene.common.utils.DateUtils
 import com.ahmrh.serene.data.source.remote.response.ActivityResponse
 import com.ahmrh.serene.data.source.remote.response.QuestionResponse
 import com.ahmrh.serene.domain.model.personalization.PersonalizationQuestion
@@ -164,7 +165,7 @@ class PersonalizationRepository @Inject constructor(
         )
         val result = personalizationResult.toMap()
 
-        firestore.collection("personalization_results").document()
+        firestore.collection("personalization_results").document(DateUtils.getYearMonthDayFormat(date))
             .set(result)
             .addOnSuccessListener { Log.d(TAG, "DocumentSnapshot successfully written!") }
             .addOnFailureListener { e -> Log.w(TAG, "Error writing document", e) }

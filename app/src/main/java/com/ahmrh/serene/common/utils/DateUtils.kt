@@ -8,6 +8,24 @@ import kotlin.math.abs
 
 object DateUtils {
     const val TAG = "DateUtils"
+    fun getYesterdayDate(): Date {
+        val currentDate = Date()
+        val yesterdayMillis = currentDate.time - (1000 * 60 * 60 * 24)
+        return Date(yesterdayMillis)
+    }
+
+    fun getDayOfMonth(date: Date): Int {
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        return calendar.get(Calendar.DAY_OF_MONTH)
+    }
+
+    fun getYearMonthDayFormat(date: Date): String {
+        val formatter = SimpleDateFormat("yyyy-MM-dd")
+
+        return formatter.format(date)
+    }
+
 
     fun formatJoinedDate(date: Date): String {
         val monthYearDateFormat = SimpleDateFormat("MMMM yyyy", Locale.US)
