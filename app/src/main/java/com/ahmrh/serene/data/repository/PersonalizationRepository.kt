@@ -28,7 +28,7 @@ import javax.inject.Singleton
 @Singleton
 class PersonalizationRepository @Inject constructor(
     private val storage: FirebaseStorage,
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
 ) {
 
     private var language: String = Locale.getDefault().language

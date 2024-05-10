@@ -14,17 +14,18 @@ class GetTodayChallengeListUseCase @Inject constructor(
 
 //        gamificationRepository.addTodayChallenge(personalizationCategory)
 
-//        gamificationRepository.getTodayChallenge(
-//            onSuccess = onSuccess,
-//            onFailure = onFailure
-//        )
+        gamificationRepository.fetchTodayChallenge(
+            personalizationCategory = personalizationCategory,
+            onSuccess = onSuccess,
+            onFailure = onFailure
+        )
 
-        try{
-            val challengeList = gamificationRepository.generateTodayChallenge(personalizationCategory)
-            onSuccess(challengeList)
-        } catch (e: Exception){
-            onFailure(e)
-        }
+//        try{
+//            val challengeList = gamificationRepository.generateTodayChallenge(personalizationCategory)
+//            onSuccess(challengeList)
+//        } catch (e: Exception){
+//            onFailure(e)
+//        }
 
     }
 

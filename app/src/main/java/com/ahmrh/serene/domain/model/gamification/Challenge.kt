@@ -3,6 +3,7 @@ package com.ahmrh.serene.domain.model.gamification
 import com.ahmrh.serene.common.enums.ChallengeType
 import com.ahmrh.serene.common.utils.Category
 import com.ahmrh.serene.data.source.remote.response.AchievementResponse
+import com.ahmrh.serene.data.source.remote.response.ChallengeResponse
 
 data class Challenge(
     val id: String,
@@ -13,6 +14,16 @@ data class Challenge(
     val progress: Int,
     val isDone: Boolean,
 )
+
+fun Challenge.toChallengeResponse(): ChallengeResponse{
+    return ChallengeResponse(
+        description = description,
+        progress = progress,
+        challengeType = challengeType.stringValue,
+        title = title,
+        selfCareCategory = if(challengeType is ChallengeType.PRACTICE) challengeType.category.stringValue else null
+    )
+}
 
 fun Challenge.toMap(): Map<String, Any> {
     val map = mutableMapOf<String, Any>()

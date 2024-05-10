@@ -4,6 +4,7 @@ import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -21,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -356,47 +358,50 @@ fun ChallengesSection(
             style = MaterialTheme.typography.titleMedium
         )
     }
-    when(challengeListState){
-        is UiState.Success -> {
-            val challengeList = challengeListState.data
+    Column (
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth()
+    ){
 
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                challengeList.forEach{
+        when(challengeListState){
+            is UiState.Success -> {
+                val challengeList = challengeListState.data
 
-                    ChallengeCard(
-                        value = 1,
-                        maxValue = 1,
-                        isDone = it.isDone,
-                        title = it.title,
-                        description = it.description
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    challengeList.forEach{
+
+                        ChallengeCard(
+                            value = it.progress.toLong(),
+                            maxValue = 1,
+                            isDone = it.isDone,
+                            title = it.title,
+                            description = it.description
+                        )
+                    }
+
+                    /* ChallengeCard(
+
+                        value = 4,
+                        maxValue = 10,
+                        title = "Beat the laziness",
+                        description = "Do 10 Physical Self-care today"
                     )
+                    ChallengeCard(
+
+                        value = 2,
+                        maxValue = 10,
+                        title = "Mind your emotion",
+                        description = "Do 10 Emotional Self-care today"
+                    )
+                    */
+
                 }
-
-                /* ChallengeCard(
-
-                    value = 4,
-                    maxValue = 10,
-                    title = "Beat the laziness",
-                    description = "Do 10 Physical Self-care today"
-                )
-                ChallengeCard(
-
-                    value = 2,
-                    maxValue = 10,
-                    title = "Mind your emotion",
-                    description = "Do 10 Emotional Self-care today"
-                )
-                */
-
             }
-        }
-        is UiState.Error -> {
-
-        }
-        is UiState.Loading -> {
-
+            else -> {
+                Text("Generating challenges...")
+            }
         }
     }
 

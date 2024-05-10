@@ -63,11 +63,13 @@ object AppModule {
     @Provides
     @Singleton
     fun providePersonalizationRepository(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        gamificationRepository: GamificationRepository
     ): PersonalizationRepository {
         return PersonalizationRepository(
             storage = Firebase.storage,
-            firestore = Firebase.firestore
+            firestore = Firebase.firestore,
+
         )
 
     }

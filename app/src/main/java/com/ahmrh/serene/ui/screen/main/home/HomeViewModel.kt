@@ -81,7 +81,7 @@ class HomeViewModel @Inject constructor(
 
     private fun getChallengeList(){
         viewModelScope.launch {
-            personalizationResultState.value.let { category ->
+            personalizationResultState.value?.let { category ->
                 gamificationUseCases.getTodayChallengeList( category,
                     onSuccess = {
                         _challengeListState.value = UiState.Success(it)
