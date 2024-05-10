@@ -1,16 +1,24 @@
 package com.ahmrh.serene.ui.component.card
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.progressSemantics
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
 import androidx.compose.material3.Text
@@ -36,7 +44,7 @@ fun ChallengeCard(
     isDone: Boolean = false,
     title: String = "For your mental",
     description: String = "Do 10 mental Self-care today"
-){
+) {
 
     Card(
         modifier = modifier
@@ -44,35 +52,39 @@ fun ChallengeCard(
                 RoundedCornerShape(12.dp)
             ),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(2.dp),
+            containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
+                2.dp
+            ),
 
-        ),
+            ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
         )
-    ){
+    ) {
         Row(
             modifier = Modifier
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
 
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
                     .weight(1f)
-            ){
+            ) {
                 Text(title, style = MaterialTheme.typography.titleMedium)
-                Text(description, style = MaterialTheme.typography.bodySmall)
+                Text(
+                    description, style = MaterialTheme.typography.bodySmall
+                )
             }
+
             ChallengeProgressIndicator(
                 value = value,
-                maxValue = maxValue
+                maxValue = maxValue,
+                isDone = isDone
             )
         }
     }
-
-
 
 
 }
@@ -80,27 +92,49 @@ fun ChallengeCard(
 @Composable
 fun ChallengeProgressIndicator(
     value: Long = 10,
-    maxValue: Long = 10
-){
+    maxValue: Long = 10,
+    isDone: Boolean = false
+) {
 
-    val sweepAngle = value / maxValue.toFloat() * 360
+//    val sweepAngle = value / maxValue.toFloat() * 360
+//    Box(
+//        contentAlignment = Alignment.Center
+//    ) {
+//        Indicator(
+//            sweepAngle = sweepAngle,
+//        )
+//
+//        Text("$value/$maxValue", style = MaterialTheme.typography.titleSmall)
+//    }
+
+    val sweepAngle = 1F * 360
     Box(
-        contentAlignment = Alignment.Center
-    ){
+        contentAlignment = Alignment.Center,
+    ) {
         Indicator(
-            sweepAngle = sweepAngle
+            sweepAngle = sweepAngle,
+
+            color = if (isDone) MaterialTheme.colorScheme.primary
+            else MaterialTheme.colorScheme.outlineVariant,
+            size = 40.dp
         )
-        Text("$value/$maxValue", style = MaterialTheme.typography.titleSmall)
+        Icon(
+            Icons.Default.Check, contentDescription = null,
+            tint = if (isDone) MaterialTheme.colorScheme.primary
+            else MaterialTheme.colorScheme.outlineVariant,
+            modifier = Modifier.size(30.dp)
+        )
+
     }
-    
+
 }
 
 @Composable
 fun Indicator(
-    size: Dp = 56.dp, // indicator size
+    size: Dp = 48.dp, // indicator size
     sweepAngle: Float = 180f, // angle (lenght) of indicator arc
     color: Color = MaterialTheme.colorScheme.primary, // color of indicator arc line
-    strokeWidth: Dp = ProgressIndicatorDefaults.CircularStrokeWidth //width of cicle and ar lines
+    strokeWidth: Dp = ProgressIndicatorDefaults.CircularStrokeWidth, //width of cicle and ar lines
 ) {
 
     val stroke = with(LocalDensity.current) {
@@ -111,7 +145,9 @@ fun Indicator(
             .progressSemantics() // (optional) for Accessibility services
             .size(size) // canvas size
 
-            .padding(strokeWidth / 2) //padding. otherwise, not the whole circle will fit in the canvas
+            .padding(
+                strokeWidth / 4
+            ) //padding. otherwise, not the whole circle will fit in the canvas
     ) {
         drawArc(
             color,
@@ -125,8 +161,8 @@ fun Indicator(
 
 @Preview(showBackground = true)
 @Composable
-fun ChallengeCardPreview(){
-    SereneTheme{
+fun ChallengeCardPreview() {
+    SereneTheme {
         ChallengeCard()
     }
 

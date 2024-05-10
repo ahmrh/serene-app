@@ -1,7 +1,10 @@
 package com.ahmrh.serene.domain.usecase.selfcare.activity
 
 import android.util.Log
+import com.ahmrh.serene.common.enums.ChallengeType
 import com.ahmrh.serene.common.enums.Sentiment
+import com.ahmrh.serene.common.utils.Category
+import com.ahmrh.serene.common.utils.CategoryUtils
 import com.ahmrh.serene.common.utils.DateUtils
 import com.ahmrh.serene.data.repository.GamificationRepository
 import com.ahmrh.serene.data.repository.UserRepository
@@ -30,7 +33,22 @@ class PracticeSelfCareUseCase @Inject constructor(
         )
         onDailyStreakEvent(getDailyStreak())
         scheduleReminderNotification()
+        addChallengeProgress(
+            selfCareActivity.category?.let {
+                CategoryUtils.getCategory(
+                    it
+                )
+            }
+        )
 
+    }
+
+    private suspend fun addChallengeProgress( category: Category?){
+        category?.let{
+            val challengeType = ChallengeType.PRACTICE(it)
+
+            gamificationRepository.addChallengeProgress(challengeType)
+        }
     }
 
     private fun scheduleReminderNotification(){

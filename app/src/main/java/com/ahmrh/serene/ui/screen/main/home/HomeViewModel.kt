@@ -85,6 +85,7 @@ class HomeViewModel @Inject constructor(
                 gamificationUseCases.getTodayChallengeList( category,
                     onSuccess = {
                         _challengeListState.value = UiState.Success(it)
+                        Log.d(TAG, "getChallengeList: $it")
                     },
                     onFailure = {
                         _challengeListState.value = UiState.Error(it.localizedMessage ?: "Unexpected Error")

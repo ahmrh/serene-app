@@ -21,7 +21,8 @@ fun Challenge.toChallengeResponse(): ChallengeResponse{
         progress = progress,
         challengeType = challengeType.stringValue,
         title = title,
-        selfCareCategory = if(challengeType is ChallengeType.PRACTICE) challengeType.category.stringValue else null
+        selfCareCategory = if(challengeType is ChallengeType.PRACTICE) challengeType.category.stringValue else null,
+        isDone = isDone
     )
 }
 

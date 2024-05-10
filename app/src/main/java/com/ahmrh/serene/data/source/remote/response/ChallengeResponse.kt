@@ -19,6 +19,10 @@ data class ChallengeResponse(
 	@field:SerializedName("title")
 	val title: String? = null,
 
+	@field:SerializedName("isDone")
+	val isDone: Boolean? = null,
+
+
 	@field:SerializedName("selfCareCategory")
 	val selfCareCategory: String? = null
 )
@@ -35,6 +39,6 @@ fun ChallengeResponse.toChallenge(id: String): Challenge {
 		),
 		progress = progress ?: 0,
 		selfCareCategory = Category.fromName(selfCareCategory ?: "Emotional"),
-		isDone = false
+		isDone = isDone ?: false
 	)
 }
