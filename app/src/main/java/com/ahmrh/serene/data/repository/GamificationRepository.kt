@@ -197,7 +197,7 @@ class GamificationRepository @Inject constructor(
                     todayChallenges.first {
                         it.selfCareCategory.stringValue == categoryString
                     }
-                val data = hashMapOf("isDone" to true)
+                val data = hashMapOf("done" to true)
 
                 docRef.document(challenge.id).update(
                     data as Map<String, Any>
@@ -217,10 +217,11 @@ class GamificationRepository @Inject constructor(
             is ChallengeType.PERSONALIZATION -> {
 
                 val challenge =
-                    todayChallenges.first {
-                        it.challengeType.equals(ChallengeType.PERSONALIZATION)
-                    }
-                val data = hashMapOf("isDone" to true)
+                    todayChallenges.firstOrNull {
+                        it.challengeType is ChallengeType.PERSONALIZATION
+                    } ?: return
+
+                val data = hashMapOf("done" to true)
 
                 docRef.document(challenge.id).update(
                     data as Map<String, Any>
@@ -274,7 +275,7 @@ class GamificationRepository @Inject constructor(
                     val challengeResponse =
                         data.toObject<ChallengeResponse>()
 
-                    val isDone = data.get("isDone") as Boolean
+                    val isDone = data.get("done") as Boolean
 
                     val challenge = challengeResponse?.toChallenge(data.id)
 
@@ -366,7 +367,6 @@ class GamificationRepository @Inject constructor(
         val todayDate = Date()
         val accountCreatedDate = userRepository.getAccountCreatedDate()!!
 
-//        val isPersonalizationDay = DateUtils.daysBetween(todayDate, accountCreatedDate) % 7L == 0L
         val isPersonalizationDay = (DateUtils.daysBetween(
             todayDate, accountCreatedDate
         ) % 7L == 0L) && !DateUtils.isSameDay(

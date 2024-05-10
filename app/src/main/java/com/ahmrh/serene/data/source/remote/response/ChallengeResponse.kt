@@ -19,7 +19,7 @@ data class ChallengeResponse(
 	@field:SerializedName("title")
 	val title: String? = null,
 
-	@field:SerializedName("isDone")
+	@field:SerializedName("done")
 	val isDone: Boolean? = null,
 
 
