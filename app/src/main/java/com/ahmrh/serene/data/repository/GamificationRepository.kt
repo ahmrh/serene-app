@@ -169,192 +169,13 @@ class GamificationRepository @Inject constructor(
         return achievementId
     }
 
-//    suspend fun fetchTodayChallenges(
-//        personalizationCategory: Category? = null,
-//        onSuccess: (List<Challenge>) -> Unit,
-//        onFailure: (Throwable) -> Unit
-//    ){
-//
-//        val todayDate = Date()
-//        val accountCreatedDate = userRepository.getAccountCreatedDate()!!
-//
-////        val isPersonalizationDay = DateUtils.daysBetween(todayDate, accountCreatedDate) % 7L == 0L
-//        val isPersonalizationDay = DateUtils.daysBetween(todayDate, accountCreatedDate) % 7L == 0L
-//
-//        Log.d(TAG, "Is personalization day value = $isPersonalizationDay")
-//
-//        val collectionReference = firestore.collection("challenges")
-//
-//        ////
-//
-//        val todayChallenges: MutableList<Challenge> = mutableListOf()
-//
-//        if(isPersonalizationDay){
-//            val personalizationChallengeDocument = collectionReference
-//                .whereEqualTo("challengeType", "Personalization")
-//                .get()
-//                .await()
-//                .firstOrNull()
-//
-//            val personalizationChallengeResponse = personalizationChallengeDocument?.toObject<ChallengeResponse>()
-//
-//            personalizationChallengeResponse?.let{ todayChallenges.add(personalizationChallengeResponse.toChallenge(personalizationChallengeDocument.id)) }
-//        }
-//        if(personalizationCategory != null){
-//
-//            val personalizationCategoryString = personalizationCategory.stringValue
-//
-//            val personalizedChallengeDocument = collectionReference
-//                .whereEqualTo("challengeType", "Practice")
-//                .whereEqualTo("selfCareCategory", personalizationCategoryString)
-//                .get()
-//                .await()
-//                .firstOrNull()
-//
-//            val personalizedChallengeResponse = personalizedChallengeDocument?.toObject<ChallengeResponse>()
-//
-//            personalizedChallengeResponse?.let{ todayChallenges.add(personalizedChallengeResponse.toChallenge(personalizedChallengeDocument.id)) }
-//
-//            val challengeDocument =  collectionReference
-//                .whereEqualTo("challengeType", "Practice")
-//                .whereNotEqualTo("selfCareCategory", personalizationCategoryString)
-//                .get()
-//                .await()
-//
-//            challengeDocument.map {data ->
-//                val challengeResponse = data.toObject<ChallengeResponse>()
-//
-//                challengeResponse.toChallenge(data.id)
-//            }.shuffled().forEach{challenge ->
-//                todayChallenges.add(challenge)
-//            }
-//
-//        } else {
-//
-//            val challengeDocument =  collectionReference
-//                .whereEqualTo("challengeType", "Practice")
-//                .get()
-//                .await()
-//
-//            challengeDocument.map {data ->
-//                val challengeResponse = data.toObject<ChallengeResponse>()
-//
-//                challengeResponse.toChallenge(data.id)
-//            }.shuffled().forEach{challenge ->
-//                todayChallenges.add(challenge)
-//            }
-//
-//        }
-//
-//        onSuccess(todayChallenges.subList(0, 3))
-//
-////        try{
-////
-////        } catch(e: Exception){
-////            onFailure(e)
-////        }
-//    }
 
 
-    suspend fun getTodayChallenge(
 
-        onSuccess: (List<Challenge>) -> Unit,
-        onFailure: (Throwable) -> Unit
-    ) {
-
-        val currentUser = userRepository.getCurrentUser()!!
-        val userId = currentUser.uid
-        val date = Calendar.getInstance().time
-
-        val todayChallenge = generateTodayChallenge()
-        val dateString = DateUtils.getYearMonthDayFormat(date)
-
-        val docRef = firestore.collection("users").document(userId)
-            .collection("today_challenges")
-            .document(dateString)
-
-        docRef.get().addOnSuccessListener {
-            val todayChallengeResponse =
-                it.toObject<TodayChallengeResponse>()!!
-
-            val todayChallengeItems = todayChallengeResponse.challenges
-
-            val todayChallengeList =
-                todayChallengeItems!!.map { challengeItem ->
-                    val selfCareCategory = Category.fromName(
-                        challengeItem?.selfCareCategory ?: "Emotional"
-                    )
-                    Challenge(
-                        id = challengeItem?.id!!,
-                        title = challengeItem?.title
-                            ?: "Untitled Challenge",
-                        description = challengeItem?.description
-                            ?: "No description available",
-                        challengeType = ChallengeType.fromString(
-                            challengeItem?.challengeType ?: "Practice",
-                            selfCareCategory.stringValue
-                        ),
-                        selfCareCategory = selfCareCategory,
-                        progress = challengeItem?.progress ?: 0,
-                        isDone = challengeItem?.isDone ?: false
-
-                    )
-                }
-
-            onSuccess(todayChallengeList)
-
-        }.addOnFailureListener {
-            onFailure(it)
-        }
-    }
-
-    suspend fun addTodayChallenge(personalizationCategory: Category?) {
-        val currentUser = userRepository.getCurrentUser()!!
-        val userId = currentUser.uid
-        val date = Calendar.getInstance().time
-
-        Log.d(TAG, "Whats wrong with this??")
-        val todayChallenge =
-            generateTodayChallenge(personalizationCategory)
-        val dateString = DateUtils.getYearMonthDayFormat(date)
-
-        Log.d(TAG, "Whats wrong with this?? 2")
-        val map: Map<String, Any> = mapOf(
-            "date_generated" to date.time,
-            "challenges" to todayChallenge.map { it.toMap() },
-        )
-
-        val docRef = firestore.collection("users").document(userId)
-            .collection("today_challenges")
-            .document(dateString)
-
-        docRef.get().addOnSuccessListener { snapshot ->
-            if (!snapshot.exists()) {
-                docRef.set(map)
-                    .addOnSuccessListener {
-                        Log.d(
-                            TAG, "DocumentSnapshot successfully written!"
-                        )
-                    }
-                    .addOnFailureListener { e ->
-                        Log.e(
-                            TAG, "Error writing document", e
-                        )
-                    }
-            } else {
-                Log.d(TAG, "Document with $dateString already exists")
-            }
-        }.addOnFailureListener {
-            Log.w(
-                TAG, "Error fetching document:", it
-            )
-        }
-
-    }
 
     // TODO: Something wrong here
-    private suspend fun generateTodayChallenge(
-        personalizationCategory: Category? = null,
+     suspend fun generateTodayChallenge(
+        personalizationCategory: Category? ,
     ): List<Challenge> {
 
         val todayDate = Date()
@@ -364,10 +185,12 @@ class GamificationRepository @Inject constructor(
         val isPersonalizationDay =
             DateUtils.daysBetween(todayDate, accountCreatedDate) % 7L == 0L
 
+        val random = Random(DateUtils.getDayOfMonth(todayDate).toLong())
+
         Log.d(
             TAG, "Logging value when adding challenge \npersonalizationDay: $isPersonalizationDay \ndaysBetween: ${
                 DateUtils.daysBetween(todayDate, accountCreatedDate)
-            } \npersonalizationCategory: $personalizationCategory"
+            } \npersonalizationCategory: $personalizationCategory \nrandom: $random"
         )
 
 
@@ -421,8 +244,6 @@ class GamificationRepository @Inject constructor(
 
         }
 
-        val random =
-            Random(DateUtils.getDayOfMonth(todayDate).toLong())
         personalizationCategory.let {category ->
             challengeDocument.documents
                 .filter { data ->
@@ -444,7 +265,7 @@ class GamificationRepository @Inject constructor(
         }
 
 
-        return todayChallenges.subList(0, 2)
+        return todayChallenges.subList(0, 3)
     }
 
     companion object {

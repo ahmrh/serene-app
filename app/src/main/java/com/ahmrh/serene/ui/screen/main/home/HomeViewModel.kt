@@ -67,6 +67,7 @@ class HomeViewModel @Inject constructor(
         get() = _challengeListState
 
 
+
     init {
         getPersonalizationResult()
         getFirstTimeOpened()
@@ -80,15 +81,17 @@ class HomeViewModel @Inject constructor(
 
     private fun getChallengeList(){
         viewModelScope.launch {
-            gamificationUseCases.getTodayChallengeList( _personalizationResultState.value,
-                onSuccess = {
-                    _challengeListState.value = UiState.Success(it)
-                },
-                onFailure = {
-                    _challengeListState.value = UiState.Error(it.localizedMessage ?: "Unexpected Error")
-                    Log.e(TAG, "Error getting challenge: $it")
-                }
-            )
+            personalizationResultState.value.let { category ->
+                gamificationUseCases.getTodayChallengeList( category,
+                    onSuccess = {
+                        _challengeListState.value = UiState.Success(it)
+                    },
+                    onFailure = {
+                        _challengeListState.value = UiState.Error(it.localizedMessage ?: "Unexpected Error")
+                        Log.e(TAG, "Error getting challenge: $it")
+                    }
+                )
+            }
         }
     }
 

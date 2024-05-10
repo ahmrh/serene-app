@@ -39,7 +39,8 @@ fun ResultScreen(
     val navigateToHome = {
         navController?.navigate(
             Destination.Serene.Home.route){
-            popUpTo(navController.graph.findStartDestination().id) {
+            popUpTo(Destination.Serene.route) {
+                inclusive = true
                 saveState = true
             }
         }
@@ -49,7 +50,8 @@ fun ResultScreen(
         navController?.navigate(
             Destination.Serene.ActivityList.createRoute(categoryId = it)
         ){
-            popUpTo(navController.graph.findStartDestination().id) {
+            popUpTo(Destination.Serene.route) {
+                inclusive = true
                 saveState = true
             }
         }

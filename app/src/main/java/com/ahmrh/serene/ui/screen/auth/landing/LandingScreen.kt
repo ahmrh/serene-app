@@ -48,7 +48,7 @@ fun LandingScreen(
                 LaunchedEffect(key1 = null) {
                     navController.navigate(Destination.Serene.route) {
                         popUpTo(
-                            Destination.Auth.route
+                            Destination.Serene.route
                         ) {
                             inclusive =
                                 true

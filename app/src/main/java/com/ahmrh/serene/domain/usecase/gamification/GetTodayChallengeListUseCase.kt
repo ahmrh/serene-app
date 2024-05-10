@@ -12,25 +12,23 @@ class GetTodayChallengeListUseCase @Inject constructor(
 ){
     suspend operator fun invoke(personalizationCategory: Category?, onSuccess: (List<Challenge>) -> Unit, onFailure: (Throwable) -> Unit){
 
-        gamificationRepository.addTodayChallenge(personalizationCategory)
+//        gamificationRepository.addTodayChallenge(personalizationCategory)
 
-        gamificationRepository.getTodayChallenge(
-            onSuccess = onSuccess,
-            onFailure = onFailure
-        )
-
-//        gamificationRepository.getTodayChallenges(null,
-//            onSuccess = onSuccess, onFailure = onFailure
+//        gamificationRepository.getTodayChallenge(
+//            onSuccess = onSuccess,
+//            onFailure = onFailure
 //        )
 
-//        val todayChallengeListState = challengeHandler.todayChallengeList
-//
-//        onSuccess(todayChallengeListState)
+        try{
+            val challengeList = gamificationRepository.generateTodayChallenge(personalizationCategory)
+            onSuccess(challengeList)
+        } catch (e: Exception){
+            onFailure(e)
+        }
 
-//        try{
-//        } catch(e: Exception){
-//            Log.e("GetTodayChallengeListUseCase", "$e")
-//        }
     }
+
+//    suspend operator fun invoke(personalizationCategory: Category?): List<Challenge>
+//        = gamificationRepository.generateTodayChallenge(personalizationCategory)
 
 }
