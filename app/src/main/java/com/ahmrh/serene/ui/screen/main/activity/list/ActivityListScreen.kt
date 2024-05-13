@@ -42,8 +42,8 @@ fun ActivityListScreen(
     navController: NavHostController = rememberNavController(),
     categoryId: Int,
     viewModel: ActivityListViewModel = hiltViewModel()
-
 ) {
+
     val category = CategoryUtils.getCategory(categoryId)
 
     viewModel.getActivityByCategory(category)
@@ -70,7 +70,7 @@ fun ActivityListScreen(
                     navController.navigate(Destination.Serene.ActivityDetail.createRoute(it))
                 },
                 navigateBack = {
-                    navController.popBackStack()
+                    navController.navigateUp()
                 },
             )
         }

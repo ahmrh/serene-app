@@ -119,7 +119,7 @@ fun SetUpProfileScreen(
 
                             Button(
                                 onClick = {
-                                    navController.navigate(Destination.Auth.Register.route)
+                                    navController.navigate(Destination.Auth.Login.route)
                                 },
                                 modifier = Modifier.fillMaxWidth(),
 

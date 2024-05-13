@@ -78,7 +78,10 @@ fun LoginScreen(
             TopAppBar(
                 title = { },
                 navigationIcon = {
-                    IconButton(onClick = {}) {
+                    IconButton(onClick = {
+
+                        navController.navigateUp()
+                    }) {
 
                         Icon(
                             painter = painterResource(

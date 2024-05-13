@@ -194,9 +194,10 @@ class GamificationRepository @Inject constructor(
                 val categoryString = challengeType.category.stringValue
 
                 val challenge =
-                    todayChallenges.first {
+                    todayChallenges.firstOrNull {
                         it.selfCareCategory.stringValue == categoryString
-                    }
+                    } ?: return
+
                 val data = hashMapOf("done" to true)
 
                 docRef.document(challenge.id).update(

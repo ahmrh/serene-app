@@ -46,7 +46,7 @@ class UserRepository @Inject constructor(
 
                 val user = auth.currentUser
                 val profileUpdates = userProfileChangeRequest {
-                    displayName = "Anon User"
+                    displayName = "Anon"
                 }
 
                 user?.updateProfile(profileUpdates)
@@ -104,20 +104,21 @@ class UserRepository @Inject constructor(
                         displayName = username
                     }
 
-                    user?.updateProfile(profileUpdates)
+                    user.updateProfile(profileUpdates)
                 }
                 .addOnCompleteListener { onResult(it.exception) }
         } else {
 
             auth.createUserWithEmailAndPassword(email, password)
-                .addOnSuccessListener {
+                .addOnSuccessListener {authResult ->
                     createAuthData(username, email, password, {})
-
                     val profileUpdates = userProfileChangeRequest {
                         displayName = username
                     }
 
-                    user?.updateProfile(profileUpdates)
+                    authResult.user?.updateProfile(profileUpdates)?.addOnCompleteListener{
+                        onResult(it.exception)
+                    }
 
                 }
                 .addOnCompleteListener {
@@ -669,7 +670,7 @@ class UserRepository @Inject constructor(
                 imgUri = Uri.parse(
                     "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_1280.png"
                 ),
-                isAnon = isAnon
+                isAnon = isAnon,
             )
 
 

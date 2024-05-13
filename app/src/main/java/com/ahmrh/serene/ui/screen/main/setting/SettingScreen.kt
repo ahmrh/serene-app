@@ -48,6 +48,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -234,7 +235,7 @@ fun SettingScreen(
                         }
                     } else {
 
-                        Text("You are currently anon user")
+                        Text("You are currently anon user, your progress won't be synced online", textAlign = TextAlign.Center)
 
 
 
