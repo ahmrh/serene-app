@@ -26,9 +26,9 @@ Serene is a gamified self-care mobile android application, part of author's thes
 <br> <br>
 
 <img src="https://github.com/ahmrh/serene-app/assets/79359426/7069837b-6ff9-47da-a860-147c3c6f012d" width="200" >
+<img src="https://github.com/ahmrh/serene-app/assets/79359426/06222213-9ce7-4cb6-90d5-8cd2b131b5ac" width="200" >
 <img src="https://github.com/ahmrh/serene-app/assets/79359426/729d8b6d-cffa-422e-b87a-ce7eb115f79d" width="200" >
 <img src="https://github.com/ahmrh/serene-app/assets/79359426/1e9c68a4-ba18-4d7c-b41e-ab0fc2328a64" width="200" >
-<img src="https://github.com/ahmrh/serene-app/assets/79359426/2da6a4ea-51d2-4dc1-a312-9ee69fd7121e" width="200" >
 
 <br> <br>
 
