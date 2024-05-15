@@ -211,7 +211,7 @@ class UserRepository @Inject constructor(
 
     }
 
-    fun addSelfCareHistory(
+    suspend fun addSelfCareHistory(
         selfCareActivity: SelfCareActivity,
         sentiment: Sentiment,
         onResult: (Throwable?) -> Unit
@@ -233,21 +233,23 @@ class UserRepository @Inject constructor(
         )
 
         val history = selfCareHistory.toMap()
+        try {
 
-        firestore.collection("users").document(userId)
-            .collection("history")
-            .add(history)
-            .addOnSuccessListener {
-                Log.d(
-                    TAG, "DocumentSnapshot successfully written!"
-                )
-            }
-            .addOnFailureListener { e ->
-                Log.w(
-                    TAG, "Error writing document", e
-                )
-            }
-            .addOnCompleteListener { onResult(it.exception) }
+            firestore.collection("users").document(userId)
+                .collection("history")
+                .add(history)
+                .await()
+
+            Log.d(
+                TAG, "DocumentSnapshot successfully written!"
+            )
+        } catch(e: Exception){
+            Log.w(
+                TAG, "Error writing document", e
+            )
+            onResult(e)
+        }
+
     }
 
 

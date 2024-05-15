@@ -57,7 +57,7 @@ class PracticeSelfCareUseCase @Inject constructor(
         notificationHandler.scheduleSelfCareReminderNotification()
     }
 
-    private fun addSelfCareHistory(selfCareActivity: SelfCareActivity, sentiment: Sentiment) {
+    private suspend fun addSelfCareHistory(selfCareActivity: SelfCareActivity, sentiment: Sentiment) {
         userRepository.addSelfCareHistory(selfCareActivity, sentiment) {
             if (it != null) Log.e(TAG, "Error: $it")
         }
