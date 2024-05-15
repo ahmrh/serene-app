@@ -11,17 +11,26 @@ Serene is a gamified self-care mobile android application, part of author's thes
 - Self-care personalization based on what user might need.
 
 
-## 📷 Screenshots (In development)
+## 📷 Screenshots 
+<img src="https://github.com/ahmrh/serene-app/assets/79359426/6c4d3282-da98-4154-b744-0d13df11d16c" width="200" >
+<img src="https://github.com/ahmrh/serene-app/assets/79359426/7693a355-6a95-47a0-a765-df842e35f885" width="200" >
+<img src="https://github.com/ahmrh/serene-app/assets/79359426/bce698e1-1a5e-4fea-a917-4ed96e8a443e" width="200" >
+<img src="https://github.com/ahmrh/serene-app/assets/79359426/30c90549-73f8-405e-8838-d64f46da29a7" width="200" >
 
-<img src="https://github.com/ahmrh/Serene/assets/79359426/2cb19b8b-f14a-4843-b935-bfeca30f16fb" width="200" >
-<img src="https://github.com/ahmrh/Serene/assets/79359426/9d11c5a4-ab7c-4a44-83c7-9e5def86d2bf" width="200" >
-<img src="https://github.com/ahmrh/Serene/assets/79359426/2932e90a-810f-439b-b807-6c551a34dffb" width="200" >
-<img src="https://github.com/ahmrh/Serene/assets/79359426/fb5de0bb-bbaf-48af-985c-6e096442b44c" width="200" >
 <br> <br>
-<img src="https://github.com/ahmrh/Serene/assets/79359426/7551ef55-98f0-4434-b9fe-856384414339" width="200" >
-<img src="https://github.com/ahmrh/Serene/assets/79359426/a52332ae-ce65-4431-894b-b149753b4003" width="200" >
-<img src="https://github.com/ahmrh/Serene/assets/79359426/73f70d5b-8f1d-4927-aaee-cf4e568710e7" width="200" >
-<img src="https://github.com/ahmrh/Serene/assets/79359426/1315b974-e6f7-4c0d-a599-e7a382a45063" width="200" >
+<img src="https://github.com/ahmrh/serene-app/assets/79359426/9bb86bdc-ba12-4367-b44e-75deb5150adf" width="200" >
+<img src="https://github.com/ahmrh/serene-app/assets/79359426/d84d438e-8b1b-4d9f-8f8d-1cd45527dc99" width="200" >
+<img src="https://github.com/ahmrh/serene-app/assets/79359426/e196e28b-bee0-478f-825e-812d0ef6a4fa" width="200" >
+<img src="https://github.com/ahmrh/serene-app/assets/79359426/4b598cdf-3206-45a6-a409-a9a4ed73a757" width="200" >
+
+<br> <br>
+
+<img src="https://github.com/ahmrh/serene-app/assets/79359426/7069837b-6ff9-47da-a860-147c3c6f012d" width="200" >
+<img src="https://github.com/ahmrh/serene-app/assets/79359426/729d8b6d-cffa-422e-b87a-ce7eb115f79d" width="200" >
+<img src="https://github.com/ahmrh/serene-app/assets/79359426/1e9c68a4-ba18-4d7c-b41e-ab0fc2328a64" width="200" >
+<img src="https://github.com/ahmrh/serene-app/assets/79359426/2da6a4ea-51d2-4dc1-a312-9ee69fd7121e" width="200" >
+
+<br> <br>
 
 ## 🤖 Tech Stack
 
