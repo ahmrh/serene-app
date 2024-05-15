@@ -251,7 +251,7 @@ class UserRepository @Inject constructor(
     }
 
 
-    suspend fun fetchSelfCareHistoryList(): List<SelfCareHistory>? {
+    suspend fun fetchSelfCareHistoryList(): List<SelfCareHistory> {
 
         val userId = auth.currentUser?.uid ?: return listOf()
 
@@ -288,7 +288,7 @@ class UserRepository @Inject constructor(
             Log.e(TAG, "Error fetching self care history: $e")
         }
 
-        return null
+        return listOf()
     }
 
     suspend fun fetchAchievementsList(): List<Achievement>? {

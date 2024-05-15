@@ -92,7 +92,7 @@ class PracticeSelfCareUseCase @Inject constructor(
     }
 
     private suspend fun getDailyStreak(): DailyStreak? {
-        val selfCareHistoryList = userRepository.fetchSelfCareHistoryList()!!
+        val selfCareHistoryList = userRepository.fetchSelfCareHistoryList()
 
         val dateList = selfCareHistoryList.map { it.date }
             .sortedByDescending { it.time }
