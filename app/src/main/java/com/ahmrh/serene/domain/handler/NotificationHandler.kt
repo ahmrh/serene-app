@@ -35,6 +35,7 @@ class NotificationHandler @Inject constructor(
                 repeatInterval = 1L, // there is a limit of 15 Minutes :(
                 repeatIntervalTimeUnit = TimeUnit.DAYS
             )
+                .setInitialDelay(1L, TimeUnit.DAYS)
                 .setConstraints(constraints)
                 .build()
 
