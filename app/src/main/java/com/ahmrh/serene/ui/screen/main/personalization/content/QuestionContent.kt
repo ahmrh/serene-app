@@ -48,7 +48,9 @@ import com.ahmrh.serene.ui.theme.SereneTheme
 fun QuestionContent(
     navigateToResult: (int: Int)-> Unit = {},
     questionList: List<PersonalizationQuestion> = listOf(),
-    viewModel: PersonalizationViewModel
+    viewModel: PersonalizationViewModel,
+
+    onBackHandler: () -> Unit = {},
 ) {
 
 
@@ -74,7 +76,8 @@ fun QuestionContent(
 
     val onBackPressed = {
         if(progress == 1) {
-            viewModel?.changeToBaseType()
+//            viewModel?.changeToBaseType()
+            onBackHandler()
         } else {
             viewModel?.revertAnswerQuestion()
             progress -= 1
@@ -181,6 +184,7 @@ fun QuestionContent(
                 }
 
                 Button(
+                    enabled = selectedOption != "",
                     onClick = {
                         if(progress < maxProgress) {
                             if(selectedOption == "") return@Button

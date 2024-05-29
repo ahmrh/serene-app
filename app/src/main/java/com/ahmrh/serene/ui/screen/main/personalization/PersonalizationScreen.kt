@@ -45,6 +45,7 @@ fun PersonalizationScreen(
             }
         }
     }
+
     val navigateToActivities: (category: Category) -> Unit = {
         navController?.navigate(
             Destination.Serene.ActivityList.createRoute(categoryId = it.id)
@@ -99,6 +100,10 @@ fun PersonalizationScreen(
                         navigateToResult = navigateToResult,
                         questionList = questionList,
                         viewModel = viewModel,
+                        onBackHandler = {
+
+                            openAlertDialog = true
+                        }
                     )
 
                 }
