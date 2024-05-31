@@ -8,6 +8,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -69,7 +70,6 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import kotlinx.coroutines.launch
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun SettingScreen(
@@ -368,7 +368,6 @@ fun SettingScreen(
 
 
 
-
                 var darkModeChecked by rememberSaveable {
                     mutableStateOf(
                         viewModel.darkModeState.value
@@ -406,7 +405,6 @@ fun SettingScreen(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Preview(
     name = "Light Mode", showBackground = true
 )

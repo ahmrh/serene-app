@@ -10,6 +10,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -98,22 +99,27 @@ fun IntroductionScreen(
                 verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
                 horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
                 modifier = androidx.compose.ui.Modifier
-                    .height(580.dp)
-                    .fillMaxWidth()
                     .padding(it),
             ) {
                 if(index <= 2){
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ){
 
-                    Text(
-                        text =  stringResource(
-                            id =
+                        Text(
+                            text =  stringResource(
+                                id =
                                 if(index == 1) com.ahmrh.serene.R.string.serene_introduction_1
                                 else com.ahmrh.serene.R.string.serene_introduction_2
-                        ),
-                        style = MaterialTheme.typography.bodyLarge,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.width(278.dp)
-                    )
+                            ),
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.width(278.dp)
+                                .height(320.dp)
+                        )
+                    }
+
                 }
                 else {
                     SelfcareIntroSection(
@@ -136,8 +142,11 @@ fun SelfcareIntroSection(
     val category =
         CategoryUtils.getCategory(selfCareId)
     Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(
+                top = 56.dp
+            ),
     ){
 
         Column(
@@ -157,7 +166,9 @@ fun SelfcareIntroSection(
                     id = category.imageResource
                 ),
                 contentDescription = null,
-                modifier = Modifier.width(300.dp).padding(bottom = 8.dp)
+                modifier = Modifier
+                    .width(300.dp)
+                    .padding(bottom = 8.dp)
             )
 
             Text(

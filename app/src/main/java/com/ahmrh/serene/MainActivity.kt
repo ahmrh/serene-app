@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -30,7 +31,10 @@ class MainActivity : ComponentActivity() {
     ) {
         super.onCreate(savedInstanceState)
         setContent {
+            val systemDarkTheme = isSystemInDarkTheme()
             val viewModel: SettingViewModel = viewModel()
+            viewModel.changeDarkModeValue(systemDarkTheme)
+
             navController = rememberNavController()
             SereneTheme(
                 darkTheme = viewModel.darkModeState.value
