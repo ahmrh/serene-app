@@ -367,10 +367,11 @@ fun SettingScreen(
                 )
 
 
+                val systemDarkTheme = isSystemInDarkTheme()
 
                 var darkModeChecked by rememberSaveable {
                     mutableStateOf(
-                        viewModel.darkModeState.value
+                        viewModel.darkModeState.value ?: systemDarkTheme
                     )
                 }
 

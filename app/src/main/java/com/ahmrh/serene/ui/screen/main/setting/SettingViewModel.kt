@@ -29,8 +29,8 @@ class SettingViewModel @Inject constructor(
 
     fun signOut() = Firebase.auth.signOut()
 
-    private var _darkModeState: MutableState<Boolean> = mutableStateOf(true)
-    val darkModeState: State<Boolean>
+    private var _darkModeState: MutableState<Boolean?> = mutableStateOf(null)
+    val darkModeState: State<Boolean?>
         get() = _darkModeState
     
 

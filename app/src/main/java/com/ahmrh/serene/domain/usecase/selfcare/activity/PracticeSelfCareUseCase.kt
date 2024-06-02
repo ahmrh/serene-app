@@ -11,7 +11,9 @@ import com.ahmrh.serene.data.repository.UserRepository
 import com.ahmrh.serene.domain.handler.NotificationHandler
 import com.ahmrh.serene.domain.model.gamification.DailyStreak
 import com.ahmrh.serene.domain.model.selfcare.SelfCareActivity
+import com.ahmrh.serene.domain.model.user.SelfCareHistory
 import java.util.Calendar
+import java.util.Date
 import javax.inject.Inject
 
 class PracticeSelfCareUseCase @Inject constructor(
@@ -93,23 +95,39 @@ class PracticeSelfCareUseCase @Inject constructor(
 
     private suspend fun getDailyStreak(): DailyStreak? {
         val selfCareHistoryList = userRepository.fetchSelfCareHistoryList()
+        if (selfCareHistoryList.isEmpty()) return null
 
         val dateList = selfCareHistoryList.map { it.date }
             .sortedByDescending { it.time }
 
         val todayDate = Calendar.getInstance().time
 
-        if (dateList.size >= 2) {
-
-            val previousDate = dateList[1]
-
-            if (DateUtils.isSameDay(todayDate, previousDate)) {
-                return null
+        if (DateUtils.isSameDay(todayDate, dateList[0])) {
+            // Calculate streak including today
+            val dayStreakCount = DateUtils.calculateStreak(dateList)
+            return DailyStreak(dayStreakCount, todayDate)
+        }
+        else {
+            // No self-care activity for today, return streak up to yesterday
+            val yesterdayDate = Calendar.getInstance().apply { add(Calendar.DATE, -1) }.time
+            if (DateUtils.isSameDay(yesterdayDate, dateList[0])) {
+                val dayStreakCount = DateUtils.calculateStreak(dateList)
+                return DailyStreak(dayStreakCount, yesterdayDate)
+            } else {
+                return DailyStreak(0, todayDate)
             }
         }
-
-        val dayStreakCount = DateUtils.getDayStreak(dateList)
-        return DailyStreak(dayStreakCount, todayDate)
+//        if (dateList.size >= 2) {
+//
+//            val previousDate = dateList[1]
+//
+//            if (DateUtils.isSameDay(todayDate, previousDate)) {
+//                return null
+//            }
+//        }
+//
+//        val dayStreakCount = DateUtils.getDayStreak(dateList)
+//        return DailyStreak(dayStreakCount, todayDate)
 
     }
 

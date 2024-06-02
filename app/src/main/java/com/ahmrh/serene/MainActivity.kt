@@ -33,11 +33,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             val systemDarkTheme = isSystemInDarkTheme()
             val viewModel: SettingViewModel = viewModel()
-            viewModel.changeDarkModeValue(systemDarkTheme)
+
+//            viewModel.changeDarkModeValue(systemDarkTheme)
 
             navController = rememberNavController()
             SereneTheme(
-                darkTheme = viewModel.darkModeState.value
+                darkTheme = viewModel.darkModeState.value ?: systemDarkTheme
             ) {
                 SereneNavGraph(navController)
             }

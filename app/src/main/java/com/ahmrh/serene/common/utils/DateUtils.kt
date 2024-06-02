@@ -60,6 +60,22 @@ object DateUtils {
         }
     }
 
+     fun calculateStreak(dateList: List<Date>): Int {
+        var streak = 1 // Start with 1 to count the first date in the streak
+        for (i in 1 until dateList.size) {
+            val previousDate = Calendar.getInstance().apply { time = dateList[i - 1] }
+            val currentDate = Calendar.getInstance().apply { time = dateList[i] }
+            previousDate.add(Calendar.DATE, -1)
+
+            if (DateUtils.isSameDay(previousDate.time, currentDate.time)) {
+                streak++
+            } else {
+                break
+            }
+        }
+        return streak
+    }
+
     // Function to calculate the difference in days between two dates
     fun daysBetween(date1: Date, date2: Date): Long {
         val diffInMs = abs(date1.time - date2.time)
