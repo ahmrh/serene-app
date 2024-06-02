@@ -141,11 +141,11 @@ fun ForgotPasswordScreen(
             SereneDialog(
                 onDismiss = {
                     openConfirmationDialog = false
-                    navController.popBackStack()
+                    navController.navigateUp()
                 },
                 onConfirm = {
                     openConfirmationDialog = false
-                    navController.popBackStack()
+                    navController.navigateUp()
 
                 },
                 dialogTitle = "Check your email",

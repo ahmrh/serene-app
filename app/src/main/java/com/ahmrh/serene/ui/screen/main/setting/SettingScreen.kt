@@ -107,7 +107,7 @@ fun SettingScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = {
-                        navController.popBackStack()
+                        navController.navigateUp()
                     }) {
 
                         Icon(

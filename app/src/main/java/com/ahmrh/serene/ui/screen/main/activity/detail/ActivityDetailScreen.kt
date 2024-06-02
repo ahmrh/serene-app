@@ -85,7 +85,7 @@ fun ActivityDetailScreen(
 
             ActivityDetailContent(
                 navigateBack = {
-                    navController.popBackStack()
+                    navController.navigateUp()
                 },
                 navigateToPractice = {
                     viewModel.changeStartedActivityIdValue(activity.id)

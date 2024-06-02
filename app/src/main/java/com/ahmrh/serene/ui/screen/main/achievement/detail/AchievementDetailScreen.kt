@@ -72,7 +72,7 @@ fun AchievementDetailScreen(
                     TopAppBar(
                         title = {}, navigationIcon = {
                             IconButton(onClick = {
-                                navController.popBackStack()
+                                navController.navigateUp()
                             }) {
                                 Icon(
                                     painter = painterResource(
