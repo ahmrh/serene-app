@@ -45,6 +45,7 @@ import coil.compose.SubcomposeAsyncImageContent
 import coil.request.ImageRequest
 import com.ahmrh.serene.R
 import com.ahmrh.serene.common.state.UiState
+import com.ahmrh.serene.common.utils.DateUtils
 import com.ahmrh.serene.domain.model.gamification.Achievement
 import com.ahmrh.serene.domain.model.gamification.DailyStreak
 import com.ahmrh.serene.ui.navigation.Destination
@@ -144,16 +145,16 @@ fun DailyStreakEvent(
                     title = {},
                     actions = {
 
-                        IconButton(onClick = {}) {
-
-                            Icon(
-                                painter = painterResource(
-                                    id = R.drawable.serene_icon_share
-                                ),
-                                contentDescription = null,
-                            )
-
-                        }
+//                        IconButton(onClick = {}) {
+//
+//                            Icon(
+//                                painter = painterResource(
+//                                    id = R.drawable.serene_icon_share
+//                                ),
+//                                contentDescription = null,
+//                            )
+//
+//                        }
                     })
             }
         ) {
@@ -269,16 +270,16 @@ fun AchievementEvent(
                         title = {},
                         actions = {
 
-                            IconButton(onClick = {}) {
-
-                                Icon(
-                                    painter = painterResource(
-                                        id = R.drawable.serene_icon_share
-                                    ),
-                                    contentDescription = null,
-                                )
-
-                            }
+//                            IconButton(onClick = {}) {
+//
+//                                Icon(
+//                                    painter = painterResource(
+//                                        id = R.drawable.serene_icon_share
+//                                    ),
+//                                    contentDescription = null,
+//                                )
+//
+//                            }
                         })
                 }
             ) {
@@ -336,12 +337,13 @@ fun AchievementEvent(
 
                             Spacer(modifier = Modifier.height(16.dp))
 
+                            val date = Calendar.getInstance().time
                             ElevatedFilterChip(
                                 selected = false,
                                 onClick = { },
                                 label = {
                                     Text(
-                                        "Dec 19, 2023",
+                                        DateUtils.formatSimpleDate(date),
                                         style = MaterialTheme.typography.titleSmall
                                     )
                                 })

@@ -5,7 +5,7 @@ import java.util.Date
 
 data class DailyStreak(
     val count: Int,
-    val date: Date
+    val date: Date // ga kepake
 )
 fun DailyStreak.toMap(): Map<String, Any> {
     val map = mutableMapOf<String, Any>()

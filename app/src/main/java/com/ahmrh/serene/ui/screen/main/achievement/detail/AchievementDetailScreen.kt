@@ -85,16 +85,16 @@ fun AchievementDetailScreen(
                         },
                         actions = {
 
-                            IconButton(onClick = {}) {
-
-                                Icon(
-                                    painter = painterResource(
-                                        id = R.drawable.serene_icon_share
-                                    ),
-                                    contentDescription = null,
-                                )
-
-                            }
+//                            IconButton(onClick = {}) {
+//
+//                                Icon(
+//                                    painter = painterResource(
+//                                        id = R.drawable.serene_icon_share
+//                                    ),
+//                                    contentDescription = null,
+//                                )
+//
+//                            }
                         })
                 }
             ) {
@@ -136,13 +136,13 @@ fun AchievementDetailScreen(
                     Text("${achievement.name}", style = MaterialTheme.typography.titleLarge)
 
                     Spacer(modifier = Modifier.height(16.dp))
-
-                    ElevatedFilterChip(
-                        selected = false,
-                        onClick = {  },
-                        label = {
-                            Text("Dec 19, 2023", style = MaterialTheme.typography.titleSmall)
-                        })
+//
+//                    ElevatedFilterChip(
+//                        selected = false,
+//                        onClick = {  },
+//                        label = {
+//                            Text("Dec 19, 2023", style = MaterialTheme.typography.titleSmall)
+//                        })
 
                     Spacer(modifier = Modifier.height(16.dp))
                     Text("${achievement.description}",

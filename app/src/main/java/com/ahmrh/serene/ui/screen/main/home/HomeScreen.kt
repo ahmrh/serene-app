@@ -2,6 +2,7 @@ package com.ahmrh.serene.ui.screen.main.home
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,6 +33,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.ahmrh.serene.common.enums.ChallengeType
 import com.ahmrh.serene.common.state.UiState
 import com.ahmrh.serene.common.utils.Category
 import com.ahmrh.serene.domain.model.gamification.Challenge
@@ -85,6 +87,15 @@ fun HomeScreen(
             }
         }
     }
+
+    val navigateToActivityList =  { categoryId: Int ->
+        navController.navigate(
+            Destination.Serene.ActivityList.createRoute(
+                categoryId = categoryId
+            )
+        )
+    }
+
     val navigateToProfile = {
         navController?.navigate(
             Destination.Serene.Profile.route
@@ -275,6 +286,10 @@ fun HomeScreen(
 
 
                 ChallengesSection(
+                    navigateToActivityList = navigateToActivityList,
+                    navigateToPersonalization = {
+                        navigateToPersonalization()
+                    },
                     challengeListState = challengeListUiState.value
                 )
 
@@ -318,7 +333,7 @@ fun RecommendationSection(
         is UiState.Success -> {
 
             Column {
-                Text("For you", style = MaterialTheme.typography.titleMedium)
+                Text("Based on your personalization", style = MaterialTheme.typography.titleMedium)
             }
             val recommendations = recommendationUiState.data!!
             LazyRow(
@@ -349,6 +364,8 @@ fun RecommendationSection(
 
 @Composable
 fun ChallengesSection(
+    navigateToActivityList: (Int) -> Unit,
+    navigateToPersonalization: () -> Unit ,
     challengeListState: UiState<List<Challenge>>
 ) {
 
@@ -377,7 +394,25 @@ fun ChallengesSection(
                             maxValue = 1,
                             isDone = it.isDone,
                             title = it.title,
-                            description = it.description
+                            description = it.description,
+                            modifier =
+                                when(it.challengeType) {
+
+                                    is ChallengeType.DEFAULT -> {
+                                        Modifier
+                                    }
+                                    is ChallengeType.PERSONALIZATION -> {
+                                        Modifier.clickable {
+                                            navigateToPersonalization()
+                                        }
+                                    }
+                                    is ChallengeType.PRACTICE -> {
+                                        Modifier.clickable {
+                                            navigateToActivityList(it.challengeType.category.id)
+
+                                        }
+                                    }
+                                }
                         )
                     }
 

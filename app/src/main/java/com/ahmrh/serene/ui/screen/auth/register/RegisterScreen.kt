@@ -46,6 +46,10 @@ import com.ahmrh.serene.ui.component.textfield.SereneTextField
 import com.ahmrh.serene.ui.navigation.Destination
 import com.ahmrh.serene.ui.screen.main.activity.practice.LoadingContent
 import com.ahmrh.serene.ui.theme.SereneTheme
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
+import com.google.firebase.auth.ktx.auth
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -190,19 +194,24 @@ fun RegisterScreen(
                     )
 
 
-                    TextButton(onClick = {
-                        navController.navigate(
-                            Destination.Auth.Login.route
-                        ) {
-                            popUpTo(Destination.Auth.SetUpProfile.route) {
-                                saveState = true
+                    val firebaseUser = Firebase.auth.currentUser
+
+                    if(firebaseUser == null){
+
+                        TextButton(onClick = {
+                            navController.navigate(
+                                Destination.Auth.Login.route
+                            ) {
+                                popUpTo(Destination.Auth.SetUpProfile.route) {
+                                    saveState = true
+                                }
                             }
+                        }) {
+                            Text(
+                                "Already have an account?",
+                                fontWeight = FontWeight.Bold
+                            )
                         }
-                    }) {
-                        Text(
-                            "Already have an account?",
-                            fontWeight = FontWeight.Bold
-                        )
                     }
                 }
 
@@ -222,6 +231,8 @@ fun RegisterScreen(
         }
 
     }
+
+
 
     var openErrorDialog by remember { mutableStateOf(false) }
 

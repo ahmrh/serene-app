@@ -326,7 +326,7 @@ class UserRepository @Inject constructor(
                     description =
                     if (language == Language.ID.code) achievementResponse.description?.id
                     else achievementResponse.description?.en,
-                    category = achievementResponse.category
+                    category = achievementResponse.category,
                 )
             }
 
@@ -418,7 +418,7 @@ class UserRepository @Inject constructor(
             .await()
             .toObject<AchievementResponse>()!!
 
-        val achievement = achievementResponse.toMap()
+        val achievementMap = achievementResponse.toMap()
 
         val userId = auth.currentUser?.uid ?: return
 
@@ -426,7 +426,7 @@ class UserRepository @Inject constructor(
             .document(userId)
             .collection("achievements")
             .document(achievementId)
-            .set(achievement)
+            .set(achievementMap)
             .addOnCompleteListener {
                 onResult(it.exception)
             }

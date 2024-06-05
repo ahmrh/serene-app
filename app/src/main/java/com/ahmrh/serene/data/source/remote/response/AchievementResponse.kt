@@ -1,7 +1,9 @@
 package com.ahmrh.serene.data.source.remote.response
 
+import com.ahmrh.serene.common.utils.DateUtils
 import com.ahmrh.serene.domain.model.personalization.PersonalizationPoint
 import com.google.gson.annotations.SerializedName
+import java.util.Date
 
 data class AchievementResponse(
 

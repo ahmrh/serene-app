@@ -32,6 +32,12 @@ object DateUtils {
         return "Joined " + monthYearDateFormat.format(date)
     }
 
+    fun formatSimpleDate(date: Date): String {
+        val format = SimpleDateFormat("MMM dd, yyyy")
+
+        return format.format(date)
+    }
+
     fun getDayStreak(dates: List<Date>): Int {
         if (dates.isEmpty()) {
             return 0
@@ -42,38 +48,23 @@ object DateUtils {
         var currentStreak = 1
         var previousDate = sortedDates[0]
 
+        val calendar = Calendar.getInstance()
+
         for (date in sortedDates.subList(1, sortedDates.size)) {
-            val daysDifference = daysBetween(previousDate, date)
-            if (daysDifference == 1L) {
+            calendar.time = previousDate
+            calendar.add(Calendar.DAY_OF_YEAR, 1)
+            val nextDay = calendar.time
+
+            if (isSameDay(date, nextDay)) {
                 currentStreak++
-            } else {
-                break
+            } else if (date.after(nextDay)) {
+                return 0  // Streak is broken
             }
+
             previousDate = date
         }
 
-        // Check for broken streak even with previous entries
-        return if (currentStreak == 0 && sortedDates.size > 1) {
-            0  // No streak or broken streak
-        } else {
-            currentStreak
-        }
-    }
-
-     fun calculateStreak(dateList: List<Date>): Int {
-        var streak = 1 // Start with 1 to count the first date in the streak
-        for (i in 1 until dateList.size) {
-            val previousDate = Calendar.getInstance().apply { time = dateList[i - 1] }
-            val currentDate = Calendar.getInstance().apply { time = dateList[i] }
-            previousDate.add(Calendar.DATE, -1)
-
-            if (DateUtils.isSameDay(previousDate.time, currentDate.time)) {
-                streak++
-            } else {
-                break
-            }
-        }
-        return streak
+        return currentStreak
     }
 
     // Function to calculate the difference in days between two dates

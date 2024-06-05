@@ -103,21 +103,15 @@ class PracticeSelfCareUseCase @Inject constructor(
         val todayDate = Calendar.getInstance().time
 
         if (DateUtils.isSameDay(todayDate, dateList[0])) {
-            // Calculate streak including today
-            val dayStreakCount = DateUtils.calculateStreak(dateList)
-            return DailyStreak(dayStreakCount, todayDate)
+            // If there is an entry for today, return null
+            return null
         }
-        else {
-            // No self-care activity for today, return streak up to yesterday
-            val yesterdayDate = Calendar.getInstance().apply { add(Calendar.DATE, -1) }.time
-            if (DateUtils.isSameDay(yesterdayDate, dateList[0])) {
-                val dayStreakCount = DateUtils.calculateStreak(dateList)
-                return DailyStreak(dayStreakCount, yesterdayDate)
-            } else {
-                return DailyStreak(0, todayDate)
-            }
-        }
-//        if (dateList.size >= 2) {
+
+        // If there is no entry for today, calculate the streak
+        val dayStreakCount = DateUtils.getDayStreak(dateList)
+        return DailyStreak(dayStreakCount, todayDate)
+
+//        if (dateList.size >= 1) {
 //
 //            val previousDate = dateList[1]
 //
