@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -190,7 +191,7 @@ fun HomeScreen(
                        navigateToIntro()
                     },
                     dialogTitle = "Hello,",
-                    dialogText =  "Welcome to Serene! It seems it seems it's your first time using this app, let's go through some introduction.",
+                    dialogText =  "Welcome to Serene! It seems it's your first time using this app, let's go through some introduction.",
                     confirmText = "Okay"
                 )
             }
@@ -244,7 +245,8 @@ fun HomeScreen(
                     )
                     Text(
                         username ?: "Anon",
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.height(36.dp)
                     )
                 }
             },
