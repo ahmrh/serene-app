@@ -102,13 +102,19 @@ class PracticeSelfCareUseCase @Inject constructor(
 
         val todayDate = Calendar.getInstance().time
 
-        if (DateUtils.isSameDay(todayDate, dateList[0])) {
-            // If there is an entry for today, return null
-            return null
+        if(dateList.size > 1){
+
+            if (DateUtils.isSameDay(todayDate, dateList[1])) {
+                // If there is an entry for today, return null
+                Log.d(TAG, "Day is same day")
+                return null
+            }
         }
+
 
         // If there is no entry for today, calculate the streak
         val dayStreakCount = DateUtils.getDayStreak(dateList)
+        Log.d(TAG, "Day is not same day: $dayStreakCount")
         return DailyStreak(dayStreakCount, todayDate)
 
 //        if (dateList.size >= 1) {
