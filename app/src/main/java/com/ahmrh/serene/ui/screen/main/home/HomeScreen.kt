@@ -404,15 +404,19 @@ fun ChallengesSection(
                                         Modifier
                                     }
                                     is ChallengeType.PERSONALIZATION -> {
-                                        Modifier.clickable {
-                                            navigateToPersonalization()
-                                        }
+                                        if(!it.isDone){
+                                            Modifier.clickable {
+                                                navigateToPersonalization()
+                                            }
+                                        } else Modifier
                                     }
                                     is ChallengeType.PRACTICE -> {
-                                        Modifier.clickable {
-                                            navigateToActivityList(it.challengeType.category.id)
+                                        if(!it.isDone){
+                                            Modifier.clickable {
+                                                navigateToActivityList(it.challengeType.category.id)
 
-                                        }
+                                            }
+                                        } else Modifier
                                     }
                                 }
                         )
