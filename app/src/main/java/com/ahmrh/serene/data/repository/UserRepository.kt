@@ -41,34 +41,48 @@ class UserRepository @Inject constructor(
 
     fun createAnonymousAccount(onResult: (Throwable?) -> Unit) {
 
-        auth.signInAnonymously()
-            .addOnCompleteListener {
+        try{
 
-                val user = auth.currentUser
-                val profileUpdates = userProfileChangeRequest {
-                    displayName = "Anon"
+            auth.signInAnonymously()
+                .addOnCompleteListener {
+
+                    val user = auth.currentUser
+                    val profileUpdates = userProfileChangeRequest {
+                        displayName = "Anon"
+                    }
+
+                    user?.updateProfile(profileUpdates)
+                    onResult(it.exception)
                 }
-
-                user?.updateProfile(profileUpdates)
-                onResult(it.exception)
-            }
+        } catch(e: Exception){
+            onResult(e)
+        }
     }
 
     fun authenticate(
         email: String, password: String, onResult: (Throwable?) -> Unit
     ) {
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener { onResult(it.exception) }
+        try{
+
+            auth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener { onResult(it.exception) }
+        } catch(e: Exception){
+            onResult(e)
+        }
     }
 
     fun recoverPassword(
         email: String,
         onResult: (Throwable?) -> Unit
     ) {
-        auth.sendPasswordResetEmail(email)
-            .addOnCompleteListener { task ->
-                onResult(task.exception)
-            }
+        try{
+            auth.sendPasswordResetEmail(email)
+                .addOnCompleteListener { task ->
+                    onResult(task.exception)
+                }
+        } catch(e: Exception){
+            onResult(e)
+        }
 
     }
 
@@ -92,39 +106,44 @@ class UserRepository @Inject constructor(
         username: String, email: String, password: String,
         onResult: (Throwable?) -> Unit
     ) {
-        val user = auth.currentUser
-        if(user != null && user.isAnonymous){
+        try {
+            val user = auth.currentUser
+            if(user != null && user.isAnonymous){
 
-            val credential = EmailAuthProvider.getCredential(email, password)
-            auth.currentUser!!.linkWithCredential(credential)
-                .addOnSuccessListener {
-                    createAuthData(username, email, password, {})
+                val credential = EmailAuthProvider.getCredential(email, password)
+                auth.currentUser!!.linkWithCredential(credential)
+                    .addOnSuccessListener {
+                        createAuthData(username, email, password, {})
 
-                    val profileUpdates = userProfileChangeRequest {
-                        displayName = username
+                        val profileUpdates = userProfileChangeRequest {
+                            displayName = username
+                        }
+
+                        user.updateProfile(profileUpdates)
                     }
+                    .addOnCompleteListener { onResult(it.exception) }
+            } else {
 
-                    user.updateProfile(profileUpdates)
-                }
-                .addOnCompleteListener { onResult(it.exception) }
-        } else {
+                auth.createUserWithEmailAndPassword(email, password)
+                    .addOnSuccessListener {authResult ->
+                        createAuthData(username, email, password, {})
+                        val profileUpdates = userProfileChangeRequest {
+                            displayName = username
+                        }
 
-            auth.createUserWithEmailAndPassword(email, password)
-                .addOnSuccessListener {authResult ->
-                    createAuthData(username, email, password, {})
-                    val profileUpdates = userProfileChangeRequest {
-                        displayName = username
+                        authResult.user?.updateProfile(profileUpdates)?.addOnCompleteListener{
+                            onResult(it.exception)
+                        }
+
                     }
-
-                    authResult.user?.updateProfile(profileUpdates)?.addOnCompleteListener{
+                    .addOnCompleteListener {
                         onResult(it.exception)
                     }
-
-                }
-                .addOnCompleteListener {
-                    onResult(it.exception)
-                }
+            }
+        } catch (e: Exception){
+            onResult(e)
         }
+
 
     }
 
